@@ -79,7 +79,8 @@ def main():
     for epoch in pbar:
         train_loss, train_acc1 = lit_epoch(
                 teacher, student, train_loader, optimizer, scheduler, 
-                ir_loss, kd_loss, train=True)
+                # ir_loss, kd_loss, train=True)
+                ir_loss, kd_loss, train=False)
         val_loss, val_acc1 = lit_epoch(
                 teacher, student, val_loader, optimizer, scheduler,
                 ir_loss, kd_loss, train=False)
