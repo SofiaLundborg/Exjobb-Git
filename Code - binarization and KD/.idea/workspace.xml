@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lit-code-master/cifar10/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../lit-code-master/cifar10/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

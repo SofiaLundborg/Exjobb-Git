@@ -17,7 +17,8 @@ from distillation_loss import AlphaDistillationLoss
 #################
 # Model Specs
 teacher_arch = "resnet110"
-teacher_model_checkpoint = "./models/resnet110.pth"
+teacher_model_checkpoint = "./pretrained_resnet_cifar10_models/teacher/resnet110.pth"
+
 student_arch = "resnet20"
 NB_SECTIONS = 3
 
@@ -209,10 +210,12 @@ def setup_teacher_student(teacher_pth):
     teacher_checkpoint = torch.load(teacher_pth)
     teacher_model.load_state_dict(teacher_checkpoint)
 
-    student_model = resnet.resnet_models["cifar"][student_arch]()
-    student_model.conv1.load_state_dict(teacher_model.conv1.state_dict())
-    student_model.bn1.load_state_dict(teacher_model.bn1.state_dict())
-    student_model.linear.load_state_dict(teacher_model.linear.state_dict())
+    # student_model = resnet.resnet_models["cifar"][student_arch]()
+    # student_model.conv1.load_state_dict(teacher_model.conv1.state_dict())
+    # student_model.bn1.load_state_dict(teacher_model.bn1.state_dict())
+    # student_model.linear.load_state_dict(teacher_model.linear.state_dict())
+
+    student_model = teacher_model
 
     teacher_model = teacher_model.cuda()
     student_model = student_model.cuda()
