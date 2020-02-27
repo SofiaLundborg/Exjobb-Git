@@ -74,6 +74,8 @@ def calculate_accuracy(data_loader, net):
         for i, data in enumerate(data_loader):
             images, targets = data
 
+
+
             outputs = net(images)
             prec1 = accuracy(outputs, targets)
             accuracy1.update(prec1[0], images.size(0))
@@ -146,6 +148,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
     # criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.9)
 
+
     train_results = np.empty(max_epochs)
     if accuracy_calc:
         validation_results = np.empty(max_epochs)
@@ -172,8 +175,8 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             else:
                 device = 'cpu'
 
-            inputs.to(device)
-            targets.to(device)
+            inputs = inputs.to(device)
+            targets = targets.to(device)
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -254,7 +257,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor++'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 150
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
@@ -292,7 +295,12 @@ def main():
     #copy_parameters(student_net, teacher_net)
 
     sample_batch = get_one_sample(test_loader)
-    sample_batch.to(device)
+    sample_batch = sample_batch.to(device)
+
+    if torch.cuda.is_available():
+        teacher_net_org = teacher_net_org.cuda()
+        teacher_net = teacher_net.cuda()
+        student_net = student_net.cuda()
 
     teacher_net_org.eval()
     teacher_net.eval()
@@ -302,10 +310,7 @@ def main():
     out_teach = teacher_net(sample_batch)
     out_stud = student_net(sample_batch)
 
-    if torch.cuda.is_available():
-        teacher_net_org = teacher_net_org.cuda()
-        teacher_net = teacher_net.cuda()
-        student_net = student_net.cuda()
+
 
     #set_layers_to_binarize(student_net, [1, 1])
     #set_layers_to_update(student_net, [1, 1])
