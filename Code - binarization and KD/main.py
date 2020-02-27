@@ -4,10 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch.optim as optim
 from binaryUtils import *
-from extraUtils import copy_parameters
+from extraUtils import copy_parameters, change_loaded_checkpoint
 from models import originalResnet, resNet
 import distillation_loss
+from datetime import datetime
 
+import dataloaders
 
 def load_data():
     # Load data
@@ -42,38 +44,48 @@ def load_data():
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
     # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [800, len(train_set)-800])
-    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [2000, len(validation_set)-2000])
+    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=4,
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=32,
                                                shuffle=True, num_workers=2)
-    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=4,
-                                                    shuffle=True, num_workers=2)
+    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=32,
+                                                    shuffle=False, num_workers=2)
     test_loader = torch.utils.data.DataLoader(test_set, batch_size=4,
                                               shuffle=False, num_workers=2)
 
     return train_loader, validation_loader, test_loader
 
 
+def get_data_loaders():
+    return dataloaders.CIFAR10DataLoaders.train_loader(batch_size=32), dataloaders.CIFAR10DataLoaders.val_loader()
+
+
 def get_one_sample(data_loader):
     image, targets = next(iter(data_loader))
     return image
 
+
 def calculate_accuracy(data_loader, net):
+    net.eval()
     n_correct = 0
     n_total = 0
     accuracy1 = AverageMeter()
     with torch.no_grad():
-        for data in data_loader:
+        for i, data in enumerate(data_loader):
             images, targets = data
+
             outputs = net(images)
             prec1 = accuracy(outputs, targets)
             accuracy1.update(prec1[0], images.size(0))
+
+            #if i % 10 == 9:
+            #    print('mean accuarcy: ' + str(accuracy1.avg))
 
             # _, predicted = torch.max(outputs.data, 1)
             # n_total += targets.size(0)
             # n_correct += (predicted == targets).sum().item()
 
-    return accuracy1.avg        #100 * n_correct / n_total
+    return accuracy1.avg.item()        #100 * n_correct / n_total
 
 
 def accuracy(output, target, topk=(1,)):
@@ -111,36 +123,57 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def train_first_layers(n_layers, student_net, teacher_net, train_loader, validation_loader, max_epochs):
+def train_first_layers(n_layers, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type):
     set_layers_to_binarize(student_net, [1, n_layers])
     set_layers_to_update(student_net, [1, n_layers])
     cut_network = n_layers
 
     criterion = distillation_loss.Loss(0, 0, 0)
 
-    train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs, )
+    filename = str(n_layers) + 'layers_bin_' + str(net_type)
+    title = 'loss, ' + str(n_layers) + ' layers binarized, ' + str(net_type)
+    train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs,
+                                                        criterion, teacher_net, cut_network=cut_network,
+                                                        filename=filename, title=title, accuracy_calc=False)
+    min_loss = min(train_results)
+
+    return min_loss
 
 
-
-def train_one_block(student_net, train_loader, validation_loader, max_epochs, net_name, net_type, criterion,
-                    intermediate_layers=None, teacher_net=None, cut_network=None, filename=None):
+def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None,
+                    intermediate_layers=None, cut_network=None, filename=None, title=None, accuracy_calc=True):
 
     # criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.9)
 
     train_results = np.empty(max_epochs)
-    validation_results = np.empty(max_epochs)
+    if accuracy_calc:
+        validation_results = np.empty(max_epochs)
+    else:
+        validation_results = None
     best_validation_accuracy = 0
+    lowest_loss = np.inf
     best_epoch = 0
+
+    fig, ax = plt.subplots()
 
     for epoch in range(max_epochs):  # loop over the data set multiple times
         student_net.train()
         running_loss = 0.0
+        running_loss_minibatch = 0.0
         for i, data in enumerate(train_loader, 0):
             # get the inputs; data is a list of [inputs, labels]
             inputs, targets = data
 
             # Cuda
+            if torch.cuda.is_available():
+                device = 'cuda'
+                criterion = criterion.cuda()
+            else:
+                device = 'cpu'
+
+            inputs.to(device)
+            targets.to(device)
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -156,146 +189,71 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, ne
 
             # print statistics
             running_loss += loss.item()
-            if i % 500 == 499:  # print every 500 mini-batches
+            running_loss_minibatch += loss.item()
+            if i % 100 == 99:  # print every 100 mini-batches
                 print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
-                running_loss = 0.0
+                      (epoch + 1, i + 1, running_loss / 100))
+                running_loss_minibatch = 0.0
 
         binarize_weights(student_net)
 
-        student_net.eval()
-        accuracy_train = calculate_accuracy(train_loader, student_net)
-        accuracy_validation = calculate_accuracy(validation_loader, student_net)
-        train_results[epoch] = accuracy_train
-        validation_results[epoch] = accuracy_validation
-        print('Epoch: ' + str(epoch))
-        print('Accuracy of the network on the train images: %d %%' % accuracy_train)
-        print('Accuracy of the network on the validation images: %d %%' % accuracy_validation)
+        if accuracy_calc:
+            student_net.eval()
+            accuracy_train = calculate_accuracy(train_loader, student_net)
+            accuracy_validation = calculate_accuracy(validation_loader, student_net)
+            train_results[epoch] = accuracy_train
+            validation_results[epoch] = accuracy_validation
+            print('Accuracy of the network on the train images: %d %%' % accuracy_train)
+            print('Accuracy of the network on the validation images: %d %%' % accuracy_validation)
+            if accuracy_validation > best_validation_accuracy:
+                # save network
+                PATH = './Trained Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+                torch.save(student_net.state_dict(), PATH)
+                best_validation_accuracy = accuracy_validation
+                best_epoch = epoch
+        else:
+            train_results[epoch] = running_loss
+            if lowest_loss > running_loss:
+                # save network
+                PATH = './Trained Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+                torch.save(student_net.state_dict(), PATH)
+                lowest_loss = running_loss
+                best_epoch = epoch
 
         make_weights_real(student_net)
 
-        if accuracy_validation > best_validation_accuracy:
-            # save network
-            PATH = './cifar10_' + net_type + '_' + net_name + '.pth'
-            torch.save(student_net.state_dict(), PATH)
+        print('Epoch: ' + str(epoch))
+        print('Best epoch: ' + str(best_epoch))
+        print('Best loss: ' + str(lowest_loss))
+        if accuracy_calc:
+            print('Best validation accuracy: ' + str(best_validation_accuracy))
 
-            best_validation_accuracy = accuracy_validation
-            best_epoch = epoch
-
-        print('Best epoch: ' + str(best_epoch + 1))
-
-        plot_results(train_results, validation_results, epoch+1, net_name, net_type)
+        plot_results(ax, fig, train_results, validation_results, epoch+1, filename, title)
 
     print('Finished Training')
 
     return train_results, validation_results
 
 
-def loss_KT(output_features_fp, output_features_bin, output_classifier_bin, targets, scaling_factor):
-    criterion_class = nn.CrossEntropyLoss()
-    criterion_feature = nn.MSELoss()
-    classification_loss = criterion_class.forward(output_classifier_bin, targets)
-    feature_loss = criterion_feature.forward(output_features_bin, output_features_fp)
-
-    total_loss = classification_loss + scaling_factor*feature_loss
-
-    return total_loss
-
-
-def train_with_KT(fp_net, net, train_loader, validation_loader, max_epochs, scaling_factor_loss, net_name, net_type):
-    feature_net_fp = nn.Sequential(*list(fp_net.children())[:-1])
-    feature_net_bin = nn.Sequential(*list(net.children())[:-1])
-    classifier_net_bin = nn.Sequential(*list(net.children())[-1])
-
-    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-
-    train_results = np.empty(max_epochs)
-    validation_results = np.empty(max_epochs)
-    best_validation_accuracy = 0
-    best_epoch = 0
-
-    for epoch in range(max_epochs):  # loop over the dataset multiple times
-
-        net.train()
-        running_loss = 0.0
-        for i, data in enumerate(train_loader, 0):
-            # get the inputs; data is a list of [inputs, labels]
-            inputs, labels = data
-
-            # zero the parameter gradients
-            optimizer.zero_grad()
-
-            # forward + backward + optimize
-            binarize_weights(net)
-
-            output_features_fp = feature_net_fp(inputs)
-            output_features_bin = feature_net_bin(inputs)
-            input_classifier_bin = output_features_bin.view(-1, list(classifier_net_bin.modules())[0][0].in_features)
-            output_classifier_bin = classifier_net_bin(input_classifier_bin)
-            loss = loss_KT(output_features_fp, output_features_bin, output_classifier_bin, labels, scaling_factor_loss)
-            loss.backward()  # calculate loss
-
-            make_weights_real(net)
-            optimizer.step()
-
-            # print statistics
-            running_loss += loss.item()
-            if i % 500 == 499:  # print every 500 mini-batches
-                print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
-                running_loss = 0.0
-
-        binarize_weights(net)
-
-        net.eval()
-        accuracy_train = calculate_accuracy(train_loader, net)
-        accuracy_validation = calculate_accuracy(validation_loader, net)
-        train_results[epoch] = accuracy_train
-        validation_results[epoch] = accuracy_validation
-        print('Epoch: ' + str(epoch+1))
-        print('Accuracy of the network on the train images: %d %%' % accuracy_train)
-        print('Accuracy of the network on the validation images: %d %%' % accuracy_validation)
-
-        make_weights_real(net)
-
-        if accuracy_validation > best_validation_accuracy:
-            # save network
-            PATH = './cifar10_' + net_type + '_' + net_name + '_KT_true' + '.pth'
-            torch.save(net.state_dict(), PATH)
-
-            best_validation_accuracy = accuracy_validation
-            best_epoch = epoch
-
-        print('Best epoch: ' + str(best_epoch+1))
-
-        plot_results(train_results, validation_results, epoch+1, net_name, net_type, True)
-
-    print('Finished Training')
-    return train_results, validation_results
-
-
-def plot_results(train_results, validation_results, max_epochs, net_name, net_type, filename=None, title=None):
-    fig, ax = plt.subplots()
-    ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs], label='train accuracy')
-    ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs], label='validation accuracy')
-    ax.legend()
+def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None):
+    # ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs], label='train')
+    ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs])
+    if validation_results:
+        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs], label='validation')
+    # ax.legend()
 
     if title:
         ax.set_title(title)
-    else:
-        ax.set_title('accuracy for ' + net_name + ' ' + net_type)
 
     if not filename:
-        if net_type == 'Xnor++':
-            n_type = 'XnorPp'
-        else:
-            n_type = net_type
-        filename = 'accuracy_' + net_name + '_' + n_type + '.eps'
-    fig.savefig(filename, format='eps')
+        f_name = 'latest_plot.eps'
+    else:
+        f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.eps'
+    fig.savefig(f_name, format='eps')
 
 
 def main():
-    net_name = 'resnet110'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
+    net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
     net_type = 'Xnor'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 150
     scaling_factor_total = 0.75     # LIT: 0.75
@@ -304,52 +262,70 @@ def main():
 
     # train_loader, validation_loader = get_data_loaders()
 
+    if torch.cuda.is_available():
+        device = 'cuda'
+    else:
+        device = 'cpu'
+
+
     train_loader, validation_loader, test_loader = load_data()
+    # train_loader, validation_loader = get_data_loaders()
+    # test_loader = validation_loader
 
     # load pre trained teacher network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
-    teacher_pth = './pretrained_resnet_cifar10_models/teacher/' + net_name + '.pth'
 
     teacher_net_org = originalResnet.resnet_models["cifar"][net_name]()
     teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
     teacher_net_org.load_state_dict(teacher_checkpoint)
     teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
-    copy_parameters(teacher_net, teacher_net_org)
+
+    new_teacher_checkpoint = change_loaded_checkpoint(teacher_checkpoint)
+
+    teacher_net.load_state_dict(new_teacher_checkpoint)
+    #teacher_net = originalResnet.resnet_models["cifar"][net_name]()
 
     # initialize student network as the teacher network
+    # student_net = originalResnet.resnet_models["cifar"][net_name]()
     student_net = resNet.resnet_models["cifar"][net_name](net_type)
-    copy_parameters(student_net, teacher_net)
-
+    student_net.load_state_dict(new_teacher_checkpoint)
+    #copy_parameters(student_net, teacher_net)
 
     sample_batch = get_one_sample(test_loader)
-    set_layers_to_binarize(student_net, [1, 1])
-    set_layers_to_update(student_net, [1, 1])
+    sample_batch.to(device)
+
+    teacher_net_org.eval()
+    teacher_net.eval()
+    student_net.eval()
+
+    out_org = teacher_net_org(sample_batch)
+    out_teach = teacher_net(sample_batch)
+    out_stud = student_net(sample_batch)
+
+    if torch.cuda.is_available():
+        teacher_net_org = teacher_net_org.cuda()
+        teacher_net = teacher_net.cuda()
+        student_net = student_net.cuda()
+
+    #set_layers_to_binarize(student_net, [1, 1])
+    #set_layers_to_update(student_net, [1, 1])
     intermediate_layers = [1]
     cut_network = 2
-    # out = student_net(sample_batch, feature_layers_to_extract=None, cut_network=cut_network)
-    out = student_net(sample_batch, feature_layers_to_extract=None)
+    out = student_net(sample_batch, feature_layers_to_extract=None, cut_network=cut_network)
+    # out = student_net(sample_batch, feature_layers_to_extract=None)
 
-
-    acc2 = calculate_accuracy(test_loader, teacher_net_org)
-    print(acc2)
-
-    acc2 = calculate_accuracy(validation_loader, teacher_net_org)
-    print(acc2)
-
-    acc1 = calculate_accuracy(validation_loader, teacher_net)
-    print(acc1)
-
-    acc3 = calculate_accuracy(validation_loader, student_net)
-    print(acc3)
-
-
-
-
+    teacher_net_org
+    teacher_net
+    student_net
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
 
-    #train_one_block(student_net, train_loader, validation_loader, max_epochs, net_name, net_type, criterion,
-    #                intermediate_layers, teacher_net)
+    #train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
+    #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
+
+    n_layers = 2
+
+    train_first_layers(n_layers, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
 
 
 if __name__ == '__main__':

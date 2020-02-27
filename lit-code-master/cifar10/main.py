@@ -9,10 +9,13 @@ import torch.backends.cudnn as cudnn
 import torch.cuda
 import torch.optim
 import torch.utils.data
+from datetime import datetime
+
 
 import dataloaders
 import resnet
 from distillation_loss import AlphaDistillationLoss
+
 
 #################
 # Model Specs

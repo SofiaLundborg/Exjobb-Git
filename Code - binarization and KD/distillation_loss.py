@@ -16,16 +16,29 @@ class Loss(nn.Module):
 
     def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, cut_network=None):
 
+        if cut_network:
+            output_student = student_net(inputs, intermediate_layers, cut_network)
+            output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
+
+            return self.ir_loss(output_student, output_teacher)
+
         if (self.beta != 1) and not (intermediate_layers or cut_network):
             print('need intermediate layers')
 
-        features_student, output_student = student_net(inputs, intermediate_layers, cut_network)
+        if intermediate_layers:
+            features_student, output_student = student_net(inputs, intermediate_layers, cut_network)
+        else:
+            output_student = student_net(inputs, intermediate_layers, cut_network)
         if teacher_net:
-            features_teacher, output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
+            if intermediate_layers:
+                features_teacher, output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
+            else:
+                output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
 
             loss_intermediate_results = 0
-            for (key, value) in features_student.items():
-                loss_intermediate_results += self.ir_loss(features_student[key], features_teacher[key])
+            if intermediate_layers:
+                for (key, value) in features_student.items():
+                    loss_intermediate_results += self.ir_loss(features_student[key], features_teacher[key])
 
             loss_knowledge_distillation = self.kd_loss(output_student, output_teacher, targets)
             total_loss = self.beta*loss_knowledge_distillation + (1-self.beta)*loss_intermediate_results

@@ -83,7 +83,7 @@ class CIFAR10DataLoaders():
         return DataPrefetcher(train_loader)
 
     @staticmethod
-    def train_loader_with_random(workers= 4, batch_size= 32, num_random= 30000, root= "./data"):
+    def train_loader_with_random(workers= 4, batch_size= 32, num_random= 30000, root="./data"):
         cifar_10_train = datasets.CIFAR10(root=root, train=True, transform=transforms.Compose([
             transforms.RandomHorizontalFlip(),
             transforms.RandomCrop(32, 4),
