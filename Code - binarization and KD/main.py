@@ -46,11 +46,11 @@ def load_data():
     # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [800, len(train_set)-800])
     # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=32,
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=64,
                                                shuffle=True, num_workers=2)
-    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=32,
+    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=64,
                                                     shuffle=False, num_workers=2)
-    test_loader = torch.utils.data.DataLoader(test_set, batch_size=4,
+    test_loader = torch.utils.data.DataLoader(test_set, batch_size=256,
                                               shuffle=False, num_workers=2)
 
     return train_loader, validation_loader, test_loader
@@ -73,9 +73,6 @@ def calculate_accuracy(data_loader, net):
     with torch.no_grad():
         for i, data in enumerate(data_loader):
             images, targets = data
-
-
-
             outputs = net(images)
             prec1 = accuracy(outputs, targets)
             accuracy1.update(prec1[0], images.size(0))
@@ -193,9 +190,10 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             # print statistics
             running_loss += loss.item()
             running_loss_minibatch += loss.item()
-            if i % 100 == 99:  # print every 100 mini-batches
+            if i % 200 == 199:  # print every 200 mini-batches
                 print('[%d, %5d] loss: %.3f' %
                       (epoch + 1, i + 1, running_loss_minibatch / 100))
+                      (epoch, i + 1, running_loss / 200))
                 running_loss_minibatch = 0.0
 
         loss_for_epoch = running_loss / len(train_loader)
@@ -260,7 +258,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
     net_type = 'Xnor'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
-    max_epochs = 150
+    max_epochs = 200
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
     temperature_kd_loss = 6.0       # LIT: 6.0
@@ -330,7 +328,7 @@ def main():
     #train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
     #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
 
-    n_layers = 2
+    n_layers = 3
 
     train_first_layers(n_layers, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
 
