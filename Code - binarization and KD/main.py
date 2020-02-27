@@ -198,6 +198,8 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
                       (epoch + 1, i + 1, running_loss / 100))
                 running_loss_minibatch = 0.0
 
+        loss_for_epoch = running_loss / len(train_loader)
+
         binarize_weights(student_net)
 
         if accuracy_calc:
@@ -215,12 +217,12 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
                 best_validation_accuracy = accuracy_validation
                 best_epoch = epoch
         else:
-            train_results[epoch] = running_loss
-            if lowest_loss > running_loss:
+            train_results[epoch] = loss_for_epoch
+            if lowest_loss > loss_for_epoch:
                 # save network
                 PATH = './Trained Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
-                lowest_loss = running_loss
+                lowest_loss = loss_for_epoch
                 best_epoch = epoch
 
         make_weights_real(student_net)

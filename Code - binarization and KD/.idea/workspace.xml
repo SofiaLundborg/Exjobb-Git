@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Trained models/2layers_bin_Xnor_20200227.pth" beforeDir="false" afterPath="$PROJECT_DIR$/Trained Models/2layers_bin_Xnor_20200227.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -73,31 +73,31 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3038" />
+          <entry key="py" value="3072" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="3038" />
+          <entry key="Python" value="3072" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3">
-              <caret line="264" selection-start-line="264" selection-end-line="264" />
+            <state relative-caret-position="379">
+              <caret line="229" column="37" lean-forward="true" selection-start-line="229" selection-start-column="37" selection-end-line="229" selection-end-column="37" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#2370#2427#0" />
                 <element signature="e#3129#3512#0" />
                 <element signature="e#3547#3904#0" />
-                <marker date="1582800127528" expanded="true" signature="367:372" ph="..." />
-                <marker date="1582800127528" expanded="true" signature="2584:2649" ph="..." />
-                <marker date="1582800127528" expanded="true" signature="4373:5082" ph="..." />
+                <marker date="1582804278753" expanded="true" signature="367:372" ph="..." />
+                <marker date="1582804278753" expanded="true" signature="2584:2649" ph="..." />
+                <marker date="1582804278753" expanded="true" signature="4373:5082" ph="..." />
               </folding>
             </state>
           </provider>
@@ -112,11 +112,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/binaryUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="168" column="55" selection-start-line="168" selection-start-column="55" selection-end-line="168" selection-end-column="55" />
+            <state relative-caret-position="1380">
+              <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
             </state>
           </provider>
         </entry>
@@ -214,8 +214,8 @@
         <option value="$PROJECT_DIR$/extraUtils.py" />
         <option value="$PROJECT_DIR$/models/resNet.py" />
         <option value="$PROJECT_DIR$/distillation_loss.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/binaryUtils.py" />
+        <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
   </component>
@@ -314,6 +314,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26145172" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -626,26 +627,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1380">
+          <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3">
-          <caret line="264" selection-start-line="264" selection-end-line="264" />
+        <state relative-caret-position="379">
+          <caret line="229" column="37" lean-forward="true" selection-start-line="229" selection-start-column="37" selection-end-line="229" selection-end-column="37" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#2370#2427#0" />
             <element signature="e#3129#3512#0" />
             <element signature="e#3547#3904#0" />
-            <marker date="1582800127528" expanded="true" signature="367:372" ph="..." />
-            <marker date="1582800127528" expanded="true" signature="2584:2649" ph="..." />
-            <marker date="1582800127528" expanded="true" signature="4373:5082" ph="..." />
+            <marker date="1582804278753" expanded="true" signature="367:372" ph="..." />
+            <marker date="1582804278753" expanded="true" signature="2584:2649" ph="..." />
+            <marker date="1582804278753" expanded="true" signature="4373:5082" ph="..." />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="168" column="55" selection-start-line="168" selection-start-column="55" selection-end-line="168" selection-end-column="55" />
         </state>
       </provider>
     </entry>
