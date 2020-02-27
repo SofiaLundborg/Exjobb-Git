@@ -14,6 +14,10 @@ class Loss(nn.Module):
         self.ir_loss = torch.nn.MSELoss()
         self.ce_loss = nn.CrossEntropyLoss()
 
+        if torch.cuda.is_available():
+            self.ir_loss = self.ir_loss.cuda()
+            self.ce_loss = self.ce_loss.cuda()
+
     def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, cut_network=None):
 
         if torch.cuda.is_available():
@@ -67,6 +71,11 @@ class KdLoss(nn.Module):
         self._hard_loss = nn.CrossEntropyLoss(weight=weight, size_average=False)
         self.softmax = nn.Softmax(dim=1)
         self.log_softmax = nn.LogSoftmax(dim=1)
+
+        if torch.cuda.is_available():
+            self._hard_loss = self._hard_loss.cuda()
+            self.softmax = self.softmax.cuda()
+            self.log_softmax = self.log_softmax.cuda()
 
     def forward(self, inputs, soft_targets, hard_targets):
         # Figure soft target predictions
