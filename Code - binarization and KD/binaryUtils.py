@@ -158,6 +158,10 @@ class myConv2d(nn.Module):
                 kConv2d.bias.data = kConv2d.bias.data.zero_()
                 kConv2d.weight.requires_grad = False
                 kConv2d.bias.requires_grad = False
+
+                if torch.cuda.is_available():
+                    kConv2d = kConv2d.cuda()
+
                 k = kConv2d(mean_across_channels)
 
                 alpha_values = torch.mean(w.abs(), [1, 2, 3], keepdim=True).flatten()
