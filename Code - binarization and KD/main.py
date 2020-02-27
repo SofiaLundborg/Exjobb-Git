@@ -195,7 +195,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             running_loss_minibatch += loss.item()
             if i % 100 == 99:  # print every 100 mini-batches
                 print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 100))
+                      (epoch + 1, i + 1, running_loss_minibatch / 100))
                 running_loss_minibatch = 0.0
 
         loss_for_epoch = running_loss / len(train_loader)
