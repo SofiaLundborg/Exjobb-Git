@@ -107,6 +107,10 @@ class myConv2d(nn.Module):
 
         self.conv2d = nn.Conv2d(input_channels, output_channels,
                                 kernel_size=kernel_size, stride=stride, padding=padding, bias=bias)
+
+        if torch.cuda.is_available():
+            self.conv2d = self.conv2d.cuda()
+
         # self.relu = nn.ReLU(inplace=True)
 
         # if not (self.net_type == 'full_precision'):
