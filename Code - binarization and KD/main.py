@@ -192,7 +192,6 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             running_loss_minibatch += loss.item()
             if i % 200 == 199:  # print every 200 mini-batches
                 print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss_minibatch / 100))
                       (epoch, i + 1, running_loss / 200))
                 running_loss_minibatch = 0.0
 
@@ -257,7 +256,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor++'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 200
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
@@ -282,16 +281,19 @@ def main():
     teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
     teacher_net_org.load_state_dict(teacher_checkpoint)
     teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
+    student_net = resNet.resnet_models["cifar"][net_name](net_type)
 
-    new_teacher_checkpoint = change_loaded_checkpoint(teacher_checkpoint)
 
-    teacher_net.load_state_dict(new_teacher_checkpoint)
+    new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_net)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+
+
+    teacher_net.load_state_dict(new_checkpoint_teacher)
     #teacher_net = originalResnet.resnet_models["cifar"][net_name]()
 
     # initialize student network as the teacher network
     # student_net = originalResnet.resnet_models["cifar"][net_name]()
-    student_net = resNet.resnet_models["cifar"][net_name](net_type)
-    student_net.load_state_dict(new_teacher_checkpoint)
+    student_net.load_state_dict(new_checkpoint_student)
     #copy_parameters(student_net, teacher_net)
 
     sample_batch = get_one_sample(test_loader)
@@ -309,8 +311,6 @@ def main():
     out_org = teacher_net_org(sample_batch)
     out_teach = teacher_net(sample_batch)
     out_stud = student_net(sample_batch)
-
-
 
     #set_layers_to_binarize(student_net, [1, 1])
     #set_layers_to_update(student_net, [1, 1])

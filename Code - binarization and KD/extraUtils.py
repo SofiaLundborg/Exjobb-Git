@@ -23,15 +23,20 @@ def calculate_output_size(input_size, kernel_size, stride, padding):
     return output_size
 
 
-def change_loaded_checkpoint(checkpoint):
-    new_checkpoint = OrderedDict()
+def change_loaded_checkpoint(checkpoint, student_net):
+    student_dict = student_net.state_dict()
 
+    new_checkpoint = OrderedDict()
     for key in checkpoint:
         str_key = key
         str_key = str_key.replace('conv1.', 'conv1.conv2d.')
         str_key = str_key.replace('conv2.', 'conv2.conv2d.')
 
         new_checkpoint[str_key] = checkpoint[key]
+
+    for key_student in student_dict:
+        if key_student not in new_checkpoint:
+            new_checkpoint[key_student] = student_dict[key_student]
 
     return new_checkpoint
 
