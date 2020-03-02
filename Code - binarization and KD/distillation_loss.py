@@ -45,7 +45,7 @@ class Loss(nn.Module):
             loss_intermediate_results = 0
             if intermediate_layers:
                 for (key, value) in features_student.items():
-                    loss_intermediate_results += self.ir_loss(features_student[key], features_teacher[key])
+                    loss_intermediate_results += self.mse_loss(features_student[key], features_teacher[key])
 
             loss_knowledge_distillation = self.kd_loss(output_student, output_teacher, targets)
             total_loss = self.beta*loss_knowledge_distillation + (1-self.beta)*loss_intermediate_results
