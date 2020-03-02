@@ -11,7 +11,7 @@ class Loss(nn.Module):
 
         self.beta = scaling_factor_total
         self.kd_loss = KdLoss(temperature_kd, scale=True, weight=None, alpha=scaling_factor_kd, size_average=True)
-        self.ir_loss = torch.nn.MSELoss()
+        self.mse_loss = torch.nn.MSELoss()
         self.ce_loss = nn.CrossEntropyLoss()
 
         if torch.cuda.is_available():
@@ -27,7 +27,7 @@ class Loss(nn.Module):
             output_student = student_net(inputs, intermediate_layers, cut_network)
             output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
 
-            return self.ir_loss(output_student, output_teacher)
+            return self.mse_loss(output_student, output_teacher)
 
         if (self.beta != 1) and not (intermediate_layers or cut_network):
             print('need intermediate layers')
