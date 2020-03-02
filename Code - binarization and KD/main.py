@@ -19,10 +19,6 @@ def load_data():
     #normalizing_mean = [0.4914, 0.4822, 0.4465]
     #normalizing_std = [0.2470, 0.2435, 0.2616]
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-
     transform_train = transforms.Compose([
             transforms.RandomHorizontalFlip(),
             transforms.RandomCrop(32, 4),
@@ -122,15 +118,15 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def train_first_layers(n_layers, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type):
-    set_layers_to_binarize(student_net, [1, n_layers])
-    set_layers_to_update(student_net, [1, n_layers])
-    cut_network = n_layers
+def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type):
+    set_layers_to_binarize(student_net, [start_layer, end_layer])
+    set_layers_to_update(student_net, [start_layer, end_layer])
+    cut_network = end_layer
 
     criterion = distillation_loss.Loss(0, 0, 0)
 
-    filename = str(n_layers) + 'layers_bin_' + str(net_type)
-    title = 'loss, ' + str(n_layers) + ' layers binarized, ' + str(net_type)
+    filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type)
+    title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type)
     train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs,
                                                         criterion, teacher_net, cut_network=cut_network,
                                                         filename=filename, title=title, accuracy_calc=False)
@@ -256,7 +252,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor++'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 200
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
@@ -328,9 +324,9 @@ def main():
     #train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
     #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
 
-    n_layers = 3
-
-    train_first_layers(n_layers, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
+    start_layer = 1
+    end_layer = 7
+    train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
 
 
 if __name__ == '__main__':

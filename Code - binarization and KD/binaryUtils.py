@@ -155,6 +155,10 @@ class myConv2d(nn.Module):
 
                 kConv2d = nn.Conv2d(1, self.output_channels,
                                          kernel_size=self.kernel_size, stride=self.stride, padding=self.padding)
+
+                if torch.cuda.is_available():
+                    kConv2d.to('cuda')
+
                 kConv2d.weight.data = kConv2d.weight.data.zero_().add(1 / (self.kernel_size * self.kernel_size))
                 kConv2d.bias.data = kConv2d.bias.data.zero_()
                 kConv2d.weight.requires_grad = False
