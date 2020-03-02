@@ -42,7 +42,7 @@ def load_data():
     # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [800, len(train_set)-800])
     # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=64,
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=4,
                                                shuffle=True, num_workers=2)
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=64,
                                                     shuffle=False, num_workers=2)
@@ -153,6 +153,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
 
     for epoch in range(max_epochs):  # loop over the data set multiple times
         student_net.train()
+        teacher_net.eval()
         running_loss = 0.0
         running_loss_minibatch = 0.0
         for i, data in enumerate(train_loader, 0):
@@ -218,7 +219,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
 
         print('Epoch: ' + str(epoch))
         print('Best epoch: ' + str(best_epoch))
-        print('Epoch loss: ' + str(running_loss))
+        print('Epoch loss: ' + str(loss_for_epoch))
         print('Best loss: ' + str(lowest_loss))
         if accuracy_calc:
             print('Best validation accuracy: ' + str(best_validation_accuracy))

@@ -19,7 +19,6 @@ class Loss(nn.Module):
             self.ce_loss = self.ce_loss.cuda()
 
     def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, cut_network=None):
-
         if torch.cuda.is_available():
             student_net = student_net.cuda()
             teacher_net = teacher_net.cuda()
@@ -27,6 +26,8 @@ class Loss(nn.Module):
         if cut_network:
             output_student = student_net(inputs, intermediate_layers, cut_network)
             output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
+
+            print(output_student.grad_fn)
 
             return self.ir_loss(output_student, output_teacher)
 
