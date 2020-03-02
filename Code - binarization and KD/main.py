@@ -42,7 +42,7 @@ def load_data():
     # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [800, len(train_set)-800])
     # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=4,
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=64,
                                                shuffle=True, num_workers=2)
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=64,
                                                     shuffle=False, num_workers=2)

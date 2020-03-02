@@ -27,8 +27,6 @@ class Loss(nn.Module):
             output_student = student_net(inputs, intermediate_layers, cut_network)
             output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
 
-            print(output_student.grad_fn)
-
             return self.ir_loss(output_student, output_teacher)
 
         if (self.beta != 1) and not (intermediate_layers or cut_network):
