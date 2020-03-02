@@ -138,9 +138,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None,
                     intermediate_layers=None, cut_network=None, filename=None, title=None, accuracy_calc=True):
 
-    # criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.9)
-
 
     train_results = np.empty(max_epochs)
     if accuracy_calc:
@@ -186,10 +184,10 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             # print statistics
             running_loss += loss.item()
             running_loss_minibatch += loss.item()
-            if i % 200 == 199:  # print every 200 mini-batches
-                print('[%d, %5d] loss: %.3f' %
-                      (epoch, i + 1, running_loss / 200))
-                running_loss_minibatch = 0.0
+            #if i % 200 == 199:  # print every 200 mini-batches
+            #    print('[%d, %5d] loss: %.3f' %
+            #          (epoch, i + 1, running_loss_minibatch / 200))
+            #    running_loss_minibatch = 0.0
 
         loss_for_epoch = running_loss / len(train_loader)
 
@@ -253,7 +251,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
     net_type = 'Xnor'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
-    max_epochs = 200
+    max_epochs = 2000
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
     temperature_kd_loss = 6.0       # LIT: 6.0
@@ -264,7 +262,6 @@ def main():
         device = 'cuda'
     else:
         device = 'cpu'
-
 
     train_loader, validation_loader, test_loader = load_data()
     # train_loader, validation_loader = get_data_loaders()
