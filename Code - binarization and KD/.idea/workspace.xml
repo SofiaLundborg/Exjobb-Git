@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Figures/1_to_7layers_bin_Xnor++_20200302.eps" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/distillation_loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/distillation_loss.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,26 +77,26 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="4103" />
+          <entry key="py" value="4110" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="4103" />
+          <entry key="Python" value="4110" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2921">
-              <caret line="44" column="70" selection-start-line="44" selection-start-column="70" selection-end-line="44" selection-end-column="70" />
+            <state relative-caret-position="452">
+              <caret line="288" lean-forward="true" selection-start-line="288" selection-end-line="288" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1583151792238" expanded="true" signature="367:372" ph="..." />
+                <marker date="1583152859636" expanded="true" signature="367:372" ph="..." />
               </folding>
             </state>
           </provider>
@@ -103,7 +105,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/binaryUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
+            <state relative-caret-position="2165">
               <caret line="207" selection-start-line="207" selection-end-line="207" />
             </state>
           </provider>
@@ -112,7 +114,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/resNet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
+            <state relative-caret-position="481">
               <caret line="214" selection-start-line="214" selection-end-line="214" />
               <folding>
                 <element signature="e#89#110#0" expanded="true" />
@@ -122,11 +124,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/distillation_loss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
+            <state relative-caret-position="411">
+              <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+              <folding>
+                <element signature="e#2463#5531#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -182,8 +187,8 @@
         <option value="$PROJECT_DIR$/extraUtils.py" />
         <option value="$PROJECT_DIR$/binaryUtils.py" />
         <option value="$PROJECT_DIR$/models/resNet.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/distillation_loss.py" />
+        <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
   </component>
@@ -318,11 +323,6 @@
           <url>file://$PROJECT_DIR$/main.py</url>
           <line>92</line>
           <option name="timeStamp" value="171" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/distillation_loss.py</url>
-          <line>29</line>
-          <option name="timeStamp" value="219" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/distillation_loss.py</url>
@@ -620,16 +620,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="207" selection-start-line="207" selection-end-line="207" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/resNet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
+        <state relative-caret-position="481">
           <caret line="214" selection-start-line="214" selection-end-line="214" />
           <folding>
             <element signature="e#89#110#0" expanded="true" />
@@ -638,21 +631,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
+    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2921">
-          <caret line="44" column="70" selection-start-line="44" selection-start-column="70" selection-end-line="44" selection-end-column="70" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1583151792238" expanded="true" signature="367:372" ph="..." />
-          </folding>
+        <state relative-caret-position="2165">
+          <caret line="207" selection-start-line="207" selection-end-line="207" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/distillation_loss.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
+        <state relative-caret-position="411">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+          <folding>
+            <element signature="e#2463#5531#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="452">
+          <caret line="288" lean-forward="true" selection-start-line="288" selection-end-line="288" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1583152859636" expanded="true" signature="367:372" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

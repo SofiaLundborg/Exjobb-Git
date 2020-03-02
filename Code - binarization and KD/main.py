@@ -280,7 +280,7 @@ def main():
     #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
 
     start_layer = 1
-    end_layer = 7
+    end_layer = 3
     train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
 
 
