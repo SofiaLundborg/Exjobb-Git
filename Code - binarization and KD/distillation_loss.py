@@ -15,7 +15,7 @@ class Loss(nn.Module):
         self.ce_loss = nn.CrossEntropyLoss()
 
         if torch.cuda.is_available():
-            self.ir_loss = self.ir_loss.cuda()
+            self.mse_loss = self.mse_loss.cuda()
             self.ce_loss = self.ce_loss.cuda()
 
     def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, cut_network=None):
