@@ -16,6 +16,13 @@ def load_data():
     normalizing_mean = [0.485, 0.456, 0.406]
     normalizing_std = [0.229, 0.224, 0.225]
 
+    if torch.cuda.is_available():
+        batch_size_training = 64
+        batch_size_validation = 256
+    else:
+        batch_size_training = 4
+        batch_size_validation = 16
+
     #normalizing_mean = [0.4914, 0.4822, 0.4465]
     #normalizing_std = [0.2470, 0.2435, 0.2616]
 
@@ -42,11 +49,11 @@ def load_data():
     # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [800, len(train_set)-800])
     # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=64,
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
-    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=64,
+    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
                                                     shuffle=False, num_workers=2)
-    test_loader = torch.utils.data.DataLoader(test_set, batch_size=256,
+    test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size_validation,
                                               shuffle=False, num_workers=2)
 
     return train_loader, validation_loader, test_loader
@@ -119,8 +126,8 @@ class AverageMeter(object):
 
 
 def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type):
-    set_layers_to_binarize(student_net, [start_layer, end_layer])
-    set_layers_to_update(student_net, [start_layer, end_layer])
+    set_layers_to_binarize(student_net, start_layer, end_layer)
+    set_layers_to_update(student_net, start_layer, end_layer)
     cut_network = end_layer
 
     criterion = distillation_loss.Loss(0, 0, 0)
@@ -153,7 +160,8 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
 
     for epoch in range(max_epochs):  # loop over the data set multiple times
         student_net.train()
-        teacher_net.eval()
+        if teacher_net:
+            teacher_net.eval()
         running_loss = 0.0
         running_loss_minibatch = 0.0
         for i, data in enumerate(train_loader, 0):
@@ -202,7 +210,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             print('Accuracy of the network on the validation images: %d %%' % accuracy_validation)
             if accuracy_validation > best_validation_accuracy:
                 # save network
-                PATH = './Trained Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+                PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
                 best_validation_accuracy = accuracy_validation
                 best_epoch = epoch
@@ -210,7 +218,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             train_results[epoch] = loss_for_epoch
             if lowest_loss > loss_for_epoch:
                 # save network
-                PATH = './Trained Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+                PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
                 lowest_loss = loss_for_epoch
                 best_epoch = epoch
@@ -273,6 +281,10 @@ def main():
     if torch.cuda.is_available():
         teacher_net = teacher_net.cuda()
         student_net = student_net.cuda()
+
+    trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
+    trained_student_net = resNet.resnet_models["cifar"][net_name]('Xnor++')
+    trained_student_net.load_state_dict(trained_student_checkpoint)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
 

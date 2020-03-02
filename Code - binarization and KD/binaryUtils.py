@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from extraUtils import calculate_output_size
+import numpy as np
 
 
 def binarize_weights(net):
@@ -12,10 +13,9 @@ def binarize_weights(net):
                 p.data.sign_()
 
 
-def set_layers_to_binarize(net, bin_layers):
+def set_layers_to_binarize(net, bin_layer_start, bin_layer_end):
     """ set layers which convolutional layers to binarize """
-    bin_layer_start = bin_layers[0]
-    bin_layer_end = bin_layers[1]
+
 
     i_parameter = 0
     for p in list(net.parameters()):
@@ -25,21 +25,29 @@ def set_layers_to_binarize(net, bin_layers):
             i_parameter += 1
 
 
-def set_layers_to_update(net, update_layers):
+def set_layers_to_update(net, start_conv_layer, end_conv_layer):
     """ set which layers to apply weight update """
-    update_layer_start = update_layers[0]
-    update_layer_end = update_layers[1] + 1
 
-    update = False
-    i_layer = 0
-    for p in list(net.parameters()):
+    # find the real start layer and end layer
+    i_layer_conv = 0
+    start_param_layer = np.inf
+    end_param_layer = np.inf
+
+    for j, p in enumerate(list(net.parameters())):
         if hasattr(p, 'do_binarize'):
-            if (i_layer >= update_layer_start) and (i_layer < update_layer_end):
-                update = True
-            else:
-                update = False
-            i_layer += 1
-        if update:
+            if i_layer_conv == start_conv_layer:
+                start_param_layer = j
+            if i_layer_conv == end_conv_layer + 1:
+                end_param_layer = j - 1
+            i_layer_conv += 1
+
+    if net.net_type == 'Xnor++':
+        start_param_layer += -1
+        end_param_layer += -1
+
+    # set which parameters to update
+    for j, p in enumerate(list(net.parameters())):
+        if (j >= start_param_layer) and (j <= end_param_layer):
             p.requires_grad = True
         else:
             p.requires_grad = False
@@ -140,21 +148,13 @@ class myConv2d(nn.Module):
         if self.dropout_ratio != 0:
             x = self.dropout(x)
 
-        if not (self.net_type == 'full_precision' or self.net_type =='Xnor'):
-            if self.conv2d.weight.do_binarize:
-                x = binarize(x)
-
         if self.net_type == 'Xnor':
             if self.conv2d.weight.do_binarize:
-                w = self.conv2d.weight.real_weights
+                w = self.conv2d.weight.real_weights.copy()
                 mean_across_channels = torch.mean(x.abs(), 1, keepdim=True)
 
                 kConv2d = nn.Conv2d(1, self.output_channels,
                                          kernel_size=self.kernel_size, stride=self.stride, padding=self.padding)
-
-                if torch.cuda.is_available():
-                    kConv2d.to('cuda')
-
                 kConv2d.weight.data = kConv2d.weight.data.zero_().add(1 / (self.kernel_size * self.kernel_size))
                 kConv2d.bias.data = kConv2d.bias.data.zero_()
                 kConv2d.weight.requires_grad = False
@@ -171,24 +171,30 @@ class myConv2d(nn.Module):
 
                 x = binarize(x)
                 x = self.conv2d(x)
-
                 x = x*k
-
             else:
                 x = self.conv2d(x)
 
         if self.net_type == 'binary_with_alpha':
-            x = self.conv2d(x)
-            w = self.conv2d.weight.real_weights
-            alpha_values = torch.mean(w.abs(), [1, 2, 3], keepdim=True).flatten()
-            alpha_matrix = torch.ones(size=x.size())
-            for i in range(self.output_channels):
-                alpha_matrix[:, i, :, :] = alpha_matrix[:, i, :, :]*alpha_values[i]
-            x = x * alpha_matrix
+            if self.conv2d.weight.do_binarize:
+                x = binarize(x)
+                x = self.conv2d(x)
+                w = self.conv2d.weight.real_weights
+                alpha_values = torch.mean(w.abs(), [1, 2, 3], keepdim=True).flatten()
+                alpha_matrix = torch.ones(size=x.size())
+                for i in range(self.output_channels):
+                    alpha_matrix[:, i, :, :] = alpha_matrix[:, i, :, :]*alpha_values[i]
+                x = x * alpha_matrix
+            else:
+                x = self.conv2d(x)
 
         if self.net_type == 'Xnor++':
-            x = self.conv2d(x)
-            x = torch.mul(x, self.gamma_large)
+            if self.conv2d.weight.do_binarize:
+                x = binarize(x)
+                x = self.conv2d(x)
+                x = torch.mul(x, self.gamma_large)
+            else:
+                x = self.conv2d(x)
 
         if self.net_type == 'full_precision':
             x = self.conv2d(x)
@@ -197,6 +203,7 @@ class myConv2d(nn.Module):
 
 
 class myMaxPool2d(nn.Module):
+    """ Same as regular maxPool2d but updates the variable input_size """
     def __init__(self, kernel_size, stride, padding=0, input_size=None):
         super(myMaxPool2d, self).__init__(),
 
@@ -212,6 +219,7 @@ class myMaxPool2d(nn.Module):
 
 
 class myAvgPool2d(nn.Module):
+    """ Same as regular avgPool2d but updates the variable input_size """
     def __init__(self, kernel_size, stride, padding=0, input_size=None):
         super(myAvgPool2d, self).__init__(),
 
