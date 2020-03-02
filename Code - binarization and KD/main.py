@@ -156,7 +156,6 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
         running_loss = 0.0
         running_loss_minibatch = 0.0
         for i, data in enumerate(train_loader, 0):
-            # get the inputs; data is a list of [inputs, labels]
             inputs, targets = data
 
             # Cuda
@@ -165,7 +164,6 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
                 criterion = criterion.cuda()
             else:
                 device = 'cpu'
-
             inputs = inputs.to(device)
             targets = targets.to(device)
 
@@ -220,6 +218,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
 
         print('Epoch: ' + str(epoch))
         print('Best epoch: ' + str(best_epoch))
+        print('Epoch loss: ' + str(running_loss))
         print('Best loss: ' + str(lowest_loss))
         if accuracy_calc:
             print('Best validation accuracy: ' + str(best_validation_accuracy))
@@ -250,75 +249,33 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor'               # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor++'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 2000
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
     temperature_kd_loss = 6.0       # LIT: 6.0
 
-    # train_loader, validation_loader = get_data_loaders()
-
-    if torch.cuda.is_available():
-        device = 'cuda'
-    else:
-        device = 'cpu'
-
     train_loader, validation_loader, test_loader = load_data()
-    # train_loader, validation_loader = get_data_loaders()
-    # test_loader = validation_loader
 
-    # load pre trained teacher network
-    teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
-
-    teacher_net_org = originalResnet.resnet_models["cifar"][net_name]()
-    teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
-    teacher_net_org.load_state_dict(teacher_checkpoint)
+    # initailize_networks
     teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
     student_net = resNet.resnet_models["cifar"][net_name](net_type)
 
-
+    # load pretrained network into student and techer network
+    teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
+    teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
     new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_net)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-
-
     teacher_net.load_state_dict(new_checkpoint_teacher)
-    #teacher_net = originalResnet.resnet_models["cifar"][net_name]()
-
-    # initialize student network as the teacher network
-    # student_net = originalResnet.resnet_models["cifar"][net_name]()
     student_net.load_state_dict(new_checkpoint_student)
-    #copy_parameters(student_net, teacher_net)
-
-    sample_batch = get_one_sample(test_loader)
-    sample_batch = sample_batch.to(device)
 
     if torch.cuda.is_available():
-        teacher_net_org = teacher_net_org.cuda()
         teacher_net = teacher_net.cuda()
         student_net = student_net.cuda()
 
-    teacher_net_org.eval()
-    teacher_net.eval()
-    student_net.eval()
-
-    out_org = teacher_net_org(sample_batch)
-    out_teach = teacher_net(sample_batch)
-    out_stud = student_net(sample_batch)
-
-    #set_layers_to_binarize(student_net, [1, 1])
-    #set_layers_to_update(student_net, [1, 1])
-    intermediate_layers = [1]
-    cut_network = 2
-    out = student_net(sample_batch, feature_layers_to_extract=None, cut_network=cut_network)
-    # out = student_net(sample_batch, feature_layers_to_extract=None)
-
-    teacher_net_org
-    teacher_net
-    student_net
-
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
 
-    #train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
+    # train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
     #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
 
     start_layer = 1

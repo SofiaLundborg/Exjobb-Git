@@ -86,8 +86,11 @@ binarize = BinaryActivation.apply
 
 
 class myConv2d(nn.Module):
-    def __init__(self, input_channels, output_channels, input_size=None,
-                 kernel_size=-1, stride=-1, padding=-1, net_type='full_precision', dropout=0, bias=False):
+    """ Depending on which net-type, the 2d-conv calculation is done differently. For all net types, the layer updates
+    the input size to the output size after every call of myConv2d. """
+
+    def __init__(self, input_channels, output_channels, input_size=None, kernel_size=-1, stride=-1, padding=-1,
+                 net_type='full_precision', dropout=0, bias=False, factorized_gamma=False):
         super(myConv2d, self).__init__(),
 
         self.net_type = net_type
@@ -100,8 +103,6 @@ class myConv2d(nn.Module):
         self.dropout_ratio = dropout
         self.output_channels = output_channels
 
-        #self.bn = nn.BatchNorm2d(input_channels, eps=1e-4, momentum=0.1, affine=True)  # These are trainable
-        #self.bn.weight.data = self.bn.weight.data.zero_().add(1.0)
         if dropout != 0:
             self.dropout = nn.Dropout(dropout)
 
@@ -111,12 +112,9 @@ class myConv2d(nn.Module):
         if torch.cuda.is_available():
             self.conv2d = self.conv2d.cuda()
 
-        # self.relu = nn.ReLU(inplace=True)
-
-        # if not (self.net_type == 'full_precision'):
         self.conv2d.weight.do_binarize = False
 
-        if (input_size is not None):
+        if input_size is not None:
             new_input_size = calculate_output_size(input_size[0], kernel_size, stride, padding)
             input_size[0] = new_input_size
 
@@ -124,22 +122,20 @@ class myConv2d(nn.Module):
             if input_size is not None:
                 scaling_factor = 1
                 output_size = input_size[0]
-                # self.alpha = torch.nn.Parameter(scaling_factor * torch.ones(output_channels, 1, 1), requires_grad=True)
-                # self.beta = torch.nn.Parameter(scaling_factor * torch.ones(1, output_size, 1), requires_grad=True)
-                # self.gamma = torch.nn.Parameter(scaling_factor * torch.ones(1, 1, output_size), requires_grad=True)
 
-                # self.alpha = scaling_factor * torch.ones(output_channels, 1, 1)
-                # self.beta = scaling_factor * torch.ones(1, output_size, 1)
-                # self.gamma = scaling_factor * torch.ones(1, 1, output_size)
-
-                self.gamma_large = torch.nn.Parameter(
-                    scaling_factor * torch.ones(output_channels, output_size, output_size), requires_grad=True)
-
+                if factorized_gamma:
+                    self.alpha = torch.nn.Parameter(scaling_factor * torch.ones(output_channels, 1, 1), requires_grad=True)
+                    self.beta = torch.nn.Parameter(scaling_factor * torch.ones(1, output_size, 1), requires_grad=True)
+                    self.gamma = torch.nn.Parameter(scaling_factor * torch.ones(1, 1, output_size), requires_grad=True)
+                    self.gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
+                    # gamma_large = torch.einsum('i, j, k -> ijk', self.alpha, self.beta, self.gamma)
+                else:
+                    self.gamma_large = torch.nn.Parameter(
+                        scaling_factor * torch.ones(output_channels, output_size, output_size), requires_grad=True)
             else:
                 print('Add input size for layer')
 
     def forward(self, x):
-        # x = self.bn(x)
 
         if self.dropout_ratio != 0:
             x = self.dropout(x)
@@ -183,9 +179,6 @@ class myConv2d(nn.Module):
 
         if self.net_type == 'binary_with_alpha':
             x = self.conv2d(x)
-            # l1_norm_weights = torch.sum(torch.norm(self.conv2d.weight.real_weights, p=1, dim=1))
-            # n_weights = self.conv2d.weight.real_weights.nelement()
-            # alpha = l1_norm_weights / n_weights
             w = self.conv2d.weight.real_weights
             alpha_values = torch.mean(w.abs(), [1, 2, 3], keepdim=True).flatten()
             alpha_matrix = torch.ones(size=x.size())
@@ -195,14 +188,10 @@ class myConv2d(nn.Module):
 
         if self.net_type == 'Xnor++':
             x = self.conv2d(x)
-            # gamma_large = torch.einsum('i, j, k -> ijk', self.alpha, self.beta, self.gamma)
-            # gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
             x = torch.mul(x, self.gamma_large)
 
         if self.net_type == 'full_precision':
             x = self.conv2d(x)
-
-        #x = self.relu(x)
 
         return x
 
