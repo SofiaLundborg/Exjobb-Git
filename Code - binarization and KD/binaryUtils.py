@@ -54,7 +54,7 @@ def set_layers_to_update(net, start_conv_layer, end_conv_layer):
 
 
 def make_weights_real(net):
-    """ Set all the weigths that have been binarized to their real value vaersion """
+    """ Set all the weigths that have been binarized to their real value version """
     for p in list(net.parameters()):
         if hasattr(p, 'real_weights'):
             p.data.copy_(p.real_weights.clamp_(-1, 1))  # Also clip them

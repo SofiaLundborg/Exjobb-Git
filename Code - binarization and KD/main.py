@@ -147,7 +147,8 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None,
                     intermediate_layers=None, cut_network=None, filename=None, title=None, accuracy_calc=True):
 
-    optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)
+    optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)     # Original momentum = 0.9
+    optimizer = optim.Adam(student_net.parameters(), lr=0.001)
 
     train_results = np.empty(max_epochs)
     if accuracy_calc:
