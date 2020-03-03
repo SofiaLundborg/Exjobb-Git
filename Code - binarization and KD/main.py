@@ -1,17 +1,16 @@
 import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
-import numpy as np
 import torch.optim as optim
 from binaryUtils import *
-from extraUtils import copy_parameters, change_loaded_checkpoint
-from models import originalResnet, resNet
+from extraUtils import change_loaded_checkpoint
+from models import resNet
 import distillation_loss
 from datetime import datetime
 from matplotlib.lines import Line2D
 
-
 import dataloaders
+
 
 def load_data():
     # Load data
@@ -48,8 +47,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [800, len(train_set)-800])
-    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
+    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [200, len(train_set)-200])
+    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -131,14 +130,15 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     set_layers_to_binarize(student_net, start_layer, end_layer)
     set_layers_to_update(student_net, start_layer, end_layer)
     cut_network = end_layer
+    cut_network = None
 
-    criterion = distillation_loss.Loss(0, 0, 0)
+    criterion = distillation_loss.Loss(1, 0.95, 6.0)
 
-    filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type)
-    title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type)
+    filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type) + '_KDloss'
+    title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type) + ' KD loss'
     train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs,
                                                         criterion, teacher_net, cut_network=cut_network,
-                                                        filename=filename, title=title, accuracy_calc=False)
+                                                        filename=filename, title=title, accuracy_calc=True)
     min_loss = min(train_results)
 
     return min_loss
@@ -148,9 +148,10 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
                     intermediate_layers=None, cut_network=None, filename=None, title=None, accuracy_calc=True):
 
     lr = 0.001
+    weight_decay = 0.00001
 
     #optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)     # Original momentum = 0.9
-    optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=0.00001)
+    optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
 
     train_results = np.empty(max_epochs)
     if accuracy_calc:
@@ -211,9 +212,8 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
 
         loss_for_epoch = running_loss / len(train_loader)
 
-        binarize_weights(student_net)
-
         if accuracy_calc:
+            binarize_weights(student_net)
             student_net.eval()
             accuracy_train = calculate_accuracy(train_loader, student_net)
             accuracy_validation = calculate_accuracy(validation_loader, student_net)
@@ -227,16 +227,18 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
                 torch.save(student_net.state_dict(), PATH)
                 best_validation_accuracy = accuracy_validation
                 best_epoch = epoch
+            make_weights_real(student_net)
+
         else:
             train_results[epoch] = loss_for_epoch
             if lowest_loss > loss_for_epoch:
                 # save network
                 PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
-                lowest_loss = loss_for_epoch
-                best_epoch = epoch
 
-        make_weights_real(student_net)
+        if lowest_loss > loss_for_epoch:
+            lowest_loss = loss_for_epoch
+
 
         print('Epoch: ' + str(epoch))
         print('Best epoch: ' + str(best_epoch))
@@ -284,8 +286,8 @@ def plot_grad_flow(named_parameters):
 def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None):
     # ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs], label='train')
     ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs])
-    if validation_results:
-        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs], label='validation')
+    if validation_results is not None:
+        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs])
     # ax.legend()
 
     if title:
@@ -300,7 +302,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor++'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 2000
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
