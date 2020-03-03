@@ -251,7 +251,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
         print('Epoch loss: ' + str(loss_for_epoch))
         print('Best loss: ' + str(lowest_loss))
         if accuracy_calc:
-            print('Training accuracy: ') + str(accuracy_train)
+            print('Training accuracy: ' + str(accuracy_train))
             print('Best validation accuracy: ' + str(best_validation_accuracy))
 
         plot_results(ax, fig, train_results, validation_results, epoch+1, filename, title)
