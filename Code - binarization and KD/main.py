@@ -153,7 +153,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
                     intermediate_layers=None, cut_network=None, filename=None, title=None, accuracy_calc=True):
 
     lr = 0.001
-    weight_decay = 0.00001
+    weight_decay = 0     # 0.00001
 
     #optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)     # Original momentum = 0.9
     optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
@@ -175,6 +175,9 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             lr = lr*0.1
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
+
+        # for param_group in optimizer.param_groups:
+        #    param_group['lr'] = lr
 
         student_net.train()
         if teacher_net:
@@ -245,7 +248,6 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
         if lowest_loss > loss_for_epoch:
             lowest_loss = loss_for_epoch
 
-
         print('Epoch: ' + str(epoch))
         print('Best epoch: ' + str(best_epoch))
         print('Epoch loss: ' + str(loss_for_epoch))
@@ -309,7 +311,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor++'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 2000
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
