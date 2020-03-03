@@ -150,7 +150,7 @@ class myConv2d(nn.Module):
 
         if self.net_type == 'Xnor':
             if self.conv2d.weight.do_binarize:
-                w = self.conv2d.weight.real_weights.copy()
+                w = self.conv2d.weight.real_weights.detach()
                 mean_across_channels = torch.mean(x.abs(), 1, keepdim=True)
 
                 kConv2d = nn.Conv2d(1, self.output_channels,
