@@ -192,7 +192,8 @@ class myConv2d(nn.Module):
             if self.conv2d.weight.do_binarize:
                 x = binarize(x)
                 x = self.conv2d(x)
-                x = torch.mul(x, self.gamma_large)
+                # x = torch.mul(x, self.gamma_large)
+                x = x*self.gamma_large
             else:
                 x = self.conv2d(x)
 

@@ -61,7 +61,7 @@ class BasicBlock(nn.Module):
 
         if cut_network:
             if i_layer > cut_network:
-                return [x, i_layer, feature_layers_to_extract, features, cut_network]
+                return inp
 
         out = F.relu(self.bn1(self.conv1(x)))
         i_layer += 1
@@ -197,12 +197,7 @@ class ResNet1layer(nn.Module):
         out = self.relu(self.bn1(self.conv1(x)))
         i_layer = 1
 
-        if cut_network == i_layer:
-            return out
-
-        inp = [out, i_layer, feature_layers_to_extract, features, cut_network]
         output = self.layer1([out, i_layer, feature_layers_to_extract, features, cut_network])
-        i_layer = output[1]
         return output[0]
 
 
@@ -326,7 +321,7 @@ class ResNet(nn.Module):
 class CifarModel():
     @staticmethod
     def resnet20(net_type, **kwargs):
-        return ResNet1layer(BasicBlock, [3, 3, 3], net_type, **kwargs)
+        return ResNet(BasicBlock, [3, 3, 3], net_type, **kwargs)
     @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)

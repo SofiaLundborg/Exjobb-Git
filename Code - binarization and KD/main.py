@@ -19,7 +19,7 @@ def load_data():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 64
+        batch_size_training = 256
         batch_size_validation = 256
     else:
         batch_size_training = 4
@@ -147,8 +147,10 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None,
                     intermediate_layers=None, cut_network=None, filename=None, title=None, accuracy_calc=True):
 
-    optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)     # Original momentum = 0.9
-    optimizer = optim.Adam(student_net.parameters(), lr=0.001)
+    lr = 0.001
+
+    #optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)     # Original momentum = 0.9
+    optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=0.00001)
 
     train_results = np.empty(max_epochs)
     if accuracy_calc:
@@ -162,6 +164,12 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
     fig, ax = plt.subplots()
 
     for epoch in range(max_epochs):  # loop over the data set multiple times
+
+        if epoch % 25 == 24:
+            lr = lr*0.1
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
+
         student_net.train()
         if teacher_net:
             teacher_net.eval()
@@ -188,7 +196,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             loss = criterion(inputs, targets, student_net, teacher_net, intermediate_layers, cut_network)
             loss.backward(retain_graph=True)  # calculate loss
 
-            #plot_grad_flow(student_net.named_parameters())
+            # plot_grad_flow(student_net.named_parameters())
 
             make_weights_real(student_net)
             optimizer.step()
@@ -196,7 +204,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             # print statistics
             running_loss += loss.item()
             running_loss_minibatch += loss.item()
-            #if i % 200 == 199:  # print every 200 mini-batches
+            # if i % 200 == 199:  # print every 200 mini-batches
             #    print('[%d, %5d] loss: %.3f' %
             #          (epoch, i + 1, running_loss_minibatch / 200))
             #    running_loss_minibatch = 0.0
@@ -319,6 +327,12 @@ def main():
     trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
     trained_student_net = resNet.resnet_models["cifar"][net_name]('Xnor++')
     trained_student_net.load_state_dict(trained_student_checkpoint)
+
+    sample = get_one_sample(train_loader)
+
+    set_layers_to_binarize(trained_student_net, 1, 7)
+    out = trained_student_net(sample)
+
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
 
