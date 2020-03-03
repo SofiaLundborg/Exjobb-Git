@@ -328,10 +328,10 @@ def main():
     trained_student_net = resNet.resnet_models["cifar"][net_name]('Xnor++')
     trained_student_net.load_state_dict(trained_student_checkpoint)
 
-    sample = get_one_sample(train_loader)
+    # sample = get_one_sample(train_loader)
 
-    set_layers_to_binarize(trained_student_net, 1, 7)
-    out = trained_student_net(sample)
+    # set_layers_to_binarize(trained_student_net, 1, 7)
+    # out = trained_student_net(sample)
 
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
