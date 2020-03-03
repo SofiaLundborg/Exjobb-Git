@@ -77,6 +77,11 @@ def calculate_accuracy(data_loader, net):
     with torch.no_grad():
         for i, data in enumerate(data_loader):
             images, targets = data
+
+            if torch.cuda.is_available():
+                images = images.to('cuda')
+                targets = targets.to('cuda')
+
             outputs = net(images)
             prec1 = accuracy(outputs, targets)
             accuracy1.update(prec1[0], images.size(0))
@@ -335,8 +340,7 @@ def main():
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)
 
-
-    criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
+    # criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
 
     # train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
     #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
