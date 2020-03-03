@@ -176,8 +176,8 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        # for param_group in optimizer.param_groups:
-        #    param_group['lr'] = lr
+        for param_group in optimizer.param_groups:
+           param_group['lr'] = lr
 
         student_net.train()
         if teacher_net:
