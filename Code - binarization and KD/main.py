@@ -47,7 +47,7 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [batch_size_training, len(train_set)-batch_size_training])
+    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [batch_size_training, len(train_set)-batch_size_training])
     # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
@@ -171,7 +171,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
 
     for epoch in range(max_epochs):  # loop over the data set multiple times
 
-        if epoch % 250 == 249:
+        if epoch % 25 == 24:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
