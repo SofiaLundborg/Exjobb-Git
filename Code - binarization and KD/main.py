@@ -18,7 +18,7 @@ def load_data():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 2048
+        batch_size_training = 1024
         batch_size_validation = 256
     else:
         batch_size_training = 4
@@ -139,8 +139,8 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 
     criterion = distillation_loss.Loss(1, 0.95, 6.0)
 
-    filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type) + '_KDloss'
-    title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type) + ' KD loss'
+    filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type)
+    title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type)
     train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs,
                                                         criterion, teacher_net, cut_network=cut_network,
                                                         filename=filename, title=title, accuracy_calc=False)
