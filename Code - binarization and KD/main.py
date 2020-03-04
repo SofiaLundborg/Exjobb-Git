@@ -18,7 +18,7 @@ def load_data():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 256
+        batch_size_training = 2048
         batch_size_validation = 256
     else:
         batch_size_training = 4
@@ -47,7 +47,7 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [200, len(train_set)-200])
+    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [batch_size_training, len(train_set)-batch_size_training])
     # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
@@ -135,7 +135,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     set_layers_to_binarize(student_net, start_layer, end_layer)
     set_layers_to_update(student_net, start_layer, end_layer)
     cut_network = end_layer
-    cut_network = None
+    # cut_network = None
 
     criterion = distillation_loss.Loss(1, 0.95, 6.0)
 
@@ -143,7 +143,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type) + ' KD loss'
     train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs,
                                                         criterion, teacher_net, cut_network=cut_network,
-                                                        filename=filename, title=title, accuracy_calc=True)
+                                                        filename=filename, title=title, accuracy_calc=False)
     min_loss = min(train_results)
 
     return min_loss
@@ -171,7 +171,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
 
     for epoch in range(max_epochs):  # loop over the data set multiple times
 
-        if epoch % 25 == 24:
+        if epoch % 250 == 249:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
@@ -244,6 +244,7 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
                 # save network
                 PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
+                best_epoch = epoch
 
         if lowest_loss > loss_for_epoch:
             lowest_loss = loss_for_epoch
