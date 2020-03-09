@@ -18,8 +18,8 @@ def load_data():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 256
-        batch_size_validation = 256
+        batch_size_training = 128
+        batch_size_validation = 128
     else:
         batch_size_training = 4
         batch_size_validation = 16
@@ -332,12 +332,12 @@ def main():
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
     teacher_net.load_state_dict(new_checkpoint_teacher)
     student_net.load_state_dict(new_checkpoint_student)
-    #student_net_relu_first.load_state_dict(new_checkpoint_student)
+    # student_net_relu_first.load_state_dict(new_checkpoint_student)
 
     if torch.cuda.is_available():
         teacher_net = teacher_net.cuda()
         student_net = student_net.cuda()
-        #student_net_relu_first = student_net_relu_first.cuda()
+        # student_net_relu_first = student_net_relu_first.cuda()
 
     trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
     trained_student_net = resNet.resnet_models["cifar"][net_name]('Xnor++')
