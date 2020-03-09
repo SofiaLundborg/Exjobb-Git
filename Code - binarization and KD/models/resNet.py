@@ -116,10 +116,10 @@ class BasicBlockReluFirst(nn.Module):
             if i_layer > cut_network:
                 return inp
 
-        if not self.conv1.conv2d.weights.do_binarize:
+        if not self.conv1.conv2d.weight.do_binarize:
             F.relu(x)
         out = self.bn1(self.conv1(x))
-        if not self.conv1.conv2d.weights.do_binarize:
+        if not self.conv1.conv2d.weight.do_binarize:
             F.relu(x)
 
         i_layer += 1
