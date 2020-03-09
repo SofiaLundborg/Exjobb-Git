@@ -16,7 +16,6 @@ def binarize_weights(net):
 def set_layers_to_binarize(net, bin_layer_start, bin_layer_end):
     """ set layers which convolutional layers to binarize """
 
-
     i_parameter = 0
     for p in list(net.parameters()):
         if hasattr(p, 'do_binarize'):
