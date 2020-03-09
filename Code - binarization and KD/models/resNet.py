@@ -503,7 +503,7 @@ class CifarModel():
         return ResNet(BasicBlock, [3, 3, 3], net_type, **kwargs)
     @staticmethod
     def resnet20relufirst(net_type, **kwargs):
-        return ResNet(BasicBlock, [3, 3, 3], net_type, **kwargs)
+        return ResNet(BasicBlockReluFirst, [3, 3, 3], net_type, **kwargs)
     @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)
