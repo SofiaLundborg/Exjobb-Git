@@ -293,6 +293,13 @@ def plot_grad_flow(named_parameters):
                 Line2D([0], [0], color="k", lw=4)], ['max-gradient', 'mean-gradient', 'zero-gradient'])
 
 
+def get_device():
+    if torch.cuda.is_available():
+        return 'cuda'
+    else:
+        return 'cpu'
+
+
 def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None):
     # ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs], label='train')
     ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs])
@@ -322,7 +329,7 @@ def main():
 
     # initailize_networks
     teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
-    student_net = resNet.resnet_models["cifar"][net_name](net_type)
+    student_net = resNet.resnet_models["cifar"][net_name + 'relufirst'](net_type)
     #student_net_relu_first = resNet.resnet_models["cifar"]['resnet20relufirst'](net_type)
 
     # load pretrained network into student and techer network
@@ -343,10 +350,11 @@ def main():
     trained_student_net = resNet.resnet_models["cifar"][net_name]('Xnor++')
     trained_student_net.load_state_dict(trained_student_checkpoint)
 
-    sample = get_one_sample(train_loader)
+    device = get_device()
+    sample = get_one_sample(train_loader).to(device)
 
-    #out_stud = student_net(sample)
-    #out_stud_relu_first = student_net(sample)
+    out_teach = student_net(sample)
+    out_stud_relu_first = student_net(sample)
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)

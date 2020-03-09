@@ -118,10 +118,10 @@ class BasicBlockReluFirst(nn.Module):
 
         if not self.conv1.conv2d.weight.do_binarize:
             F.relu(x)
-        out = self.bn1(self.conv1(x))
-        if not self.conv1.conv2d.weight.do_binarize:
-            F.relu(x)
 
+        out = self.bn1(self.conv1(x))
+        if not self.conv2.conv2d.weight.do_binarize:
+            F.relu(x)
         i_layer += 1
         if cut_network:
             if cut_network == i_layer:
@@ -523,8 +523,8 @@ class CifarModel():
 
 resnet_models = {
     "cifar": {
-        # "resnet20": CifarModel.resnet20,
-        "resnet20": CifarModel.resnet20relufirst,
+        "resnet20": CifarModel.resnet20,
+        "resnet20relufirst": CifarModel.resnet20relufirst,
         "resnet32": CifarModel.resnet32,
         "resnet44": CifarModel.resnet44,
         "resnet56": CifarModel.resnet56,
