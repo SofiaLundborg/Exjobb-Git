@@ -47,8 +47,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [batch_size_training, len(train_set)-batch_size_training])
-    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
+    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [500, len(train_set) - 500])
+    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -328,7 +328,9 @@ def main():
     train_loader, validation_loader, test_loader = load_data()
 
     # initailize_networks
+    # teacher_net = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
     teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
+
     student_net = resNet.resnet_models["cifar"][net_name + 'relufirst'](net_type)
     #student_net_relu_first = resNet.resnet_models["cifar"]['resnet20relufirst'](net_type)
 

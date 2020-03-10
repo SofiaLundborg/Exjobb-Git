@@ -151,7 +151,6 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-
     def forward(self, x, get_features = False):
         if get_features: features = OrderedDict()
 

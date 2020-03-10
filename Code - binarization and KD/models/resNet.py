@@ -262,7 +262,7 @@ class ResNet1layer(nn.Module):
 
 class ResNetReluFirst(nn.Module):
     def __init__(self, block, layers, net_type='full_precision', dataset="cifar10", num_classes=10, in_planes=None):
-        super(ResNet, self).__init__()
+        super(ResNetReluFirst, self).__init__()
         self.dataset = dataset
         self.net_type = net_type
 
@@ -503,7 +503,7 @@ class CifarModel():
         return ResNet(BasicBlock, [3, 3, 3], net_type, **kwargs)
     @staticmethod
     def resnet20relufirst(net_type, **kwargs):
-        return ResNet(BasicBlockReluFirst, [3, 3, 3], net_type, **kwargs)
+        return ResNetReluFirst(BasicBlockReluFirst, [3, 3, 3], net_type, **kwargs)
     @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)
