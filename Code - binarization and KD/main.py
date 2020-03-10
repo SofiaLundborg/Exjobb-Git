@@ -18,8 +18,8 @@ def load_data():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 64
-        batch_size_validation = 64
+        batch_size_training = 128
+        batch_size_validation = 128
     else:
         batch_size_training = 4
         batch_size_validation = 16
@@ -47,8 +47,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [500, len(train_set) - 500])
-    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
+    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [500, len(train_set) - 500])
+    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -137,6 +137,8 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     cut_network = end_layer
     # cut_network = None
 
+
+
     criterion = distillation_loss.Loss(1, 0.95, 6.0)
 
     filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type)
@@ -179,7 +181,8 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
         for param_group in optimizer.param_groups:
            param_group['lr'] = lr
 
-        student_net.train()
+        student_net.eval()
+        student_net.layer1.train()
         if teacher_net:
             teacher_net.eval()
         running_loss = 0.0
