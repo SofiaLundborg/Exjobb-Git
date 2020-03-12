@@ -10,6 +10,7 @@ from datetime import datetime
 from matplotlib.lines import Line2D
 
 import dataloaders
+import warnings
 
 
 def load_data():
@@ -18,11 +19,11 @@ def load_data():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 128
-        batch_size_validation = 128
+        batch_size_training = 256
+        batch_size_validation = 512
     else:
         batch_size_training = 4
-        batch_size_validation = 16
+        batch_size_validation = 4
 
     #normalizing_mean = [0.4914, 0.4822, 0.4465]
     #normalizing_std = [0.2470, 0.2435, 0.2616]
@@ -47,8 +48,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [500, len(train_set) - 500])
-    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [500, len(validation_set)-500])
+    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
+    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -86,7 +87,7 @@ def calculate_accuracy(data_loader, net):
             prec1 = accuracy(outputs, targets)
             accuracy1.update(prec1[0], images.size(0))
 
-            #if i % 10 == 9:
+            # if i % 10 == 9:
             #    print('mean accuarcy: ' + str(accuracy1.avg))
 
             # _, predicted = torch.max(outputs.data, 1)
@@ -132,32 +133,135 @@ class AverageMeter(object):
 
 
 def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type):
-    set_layers_to_binarize(student_net, start_layer, end_layer)
-    set_layers_to_update(student_net, start_layer, end_layer)
+    #set_layers_to_binarize(student_net, start_layer, end_layer)
+    #set_layers_to_update(student_net, start_layer, end_layer)
+
+    layers = ['layer1']
+
+    set_layers_to_binarize(student_net, layers)
+
     cut_network = end_layer
     # cut_network = None
-
-
 
     criterion = distillation_loss.Loss(1, 0.95, 6.0)
 
     filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type)
     title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type)
     train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs,
-                                                        criterion, teacher_net, cut_network=cut_network,
+                                                        criterion, teacher_net, layers_to_train=layers, cut_network=cut_network,
                                                         filename=filename, title=title, accuracy_calc=False)
     min_loss = min(train_results)
 
     return min_loss
 
 
-def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None,
+def lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net=None):
+
+    temperature_kd = 6
+    scaling_factor_kd = 0.95
+    scaling_factor_total = 0.75
+
+    criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
+
+    layers_to_train = ['layer1', 'layer2', 'layer3']
+    intermediate_layers = [1, 7, 13, 19]
+    set_layers_to_binarize(teacher_net, layers_to_train)
+    set_layers_to_update(student_net, layers_to_train)
+
+    if teacher_net:
+        teacher_net.eval()
+
+    lr = 0.01
+    weight_decay = 0  # 0.00001
+    optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
+
+    fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
+
+    train_loss = np.empty(max_epochs)
+    validation_loss = np.empty(max_epochs)
+    train_accuracy = np.empty(max_epochs)
+    validation_accuracy = np.empty(max_epochs)
+    best_validation_loss = np.inf
+    best_epoch = 0
+
+    for epoch in range(max_epochs):
+        running_loss = 0
+
+        if epoch % 25 == 24:
+            lr = lr*0.1
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
+
+        for i, data in enumerate(train_loader, 0):
+            inputs, targets = data
+
+            # cpu / gpu
+            if torch.cuda.is_available():
+                criterion = criterion.cuda()
+            device = get_device()
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+
+            optimizer.zero_grad()
+            binarize_weights(student_net)
+
+            total_loss = criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True)
+            total_loss.backward(retain_graph=True)  # calculate loss
+            running_loss += total_loss.item()
+
+            make_weights_real(student_net)
+            optimizer.step()
+        training_loss_for_epoch = running_loss / len(train_loader)
+        train_loss[epoch] = training_loss_for_epoch
+
+        running_validation_loss = 0
+        binarize_weights(student_net)
+        for i, data in enumerate(validation_loader, 0):
+            inputs, targets = data
+            if torch.cuda.is_available():
+                criterion = criterion.cuda()
+            device = get_device()
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+
+            running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True, training=False).item()
+        validation_loss_for_epoch = running_validation_loss / len(validation_loader)
+        validation_loss[epoch] = validation_loss_for_epoch
+
+        accuracy_train_epoch = calculate_accuracy(train_loader, student_net)
+        accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net)
+        train_accuracy[epoch] = accuracy_train_epoch
+        validation_accuracy[epoch] = accuracy_validation_epoch
+        make_weights_real(student_net)
+
+        title_loss = 'Loss Lit, ' + str(student_net.net_type)
+        filename = 'lit_' + str(student_net.net_type)
+        title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
+        plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=filename, title=title_loss)
+        plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename, title=title_accuracy)
+
+        if validation_loss_for_epoch < best_validation_loss:
+            # save network
+            PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+            torch.save(student_net.state_dict(), PATH)
+            best_validation_loss = validation_loss_for_epoch
+            best_epoch = epoch
+
+        print('Epoch: ' + str(epoch))
+        print('Best epoch: ' + str(best_epoch))
+        print('Loss on train images: ' + str(training_loss_for_epoch))
+        print('Loss on validation images: ' + str(validation_loss_for_epoch))
+        print('Accuracy on train images: %d %%' % accuracy_train_epoch)
+        print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
+
+
+def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None, layers_to_train=None,
                     intermediate_layers=None, cut_network=None, filename=None, title=None, accuracy_calc=True):
 
     lr = 0.001
     weight_decay = 0     # 0.00001
 
-    #optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)     # Original momentum = 0.9
+    # optimizer = optim.SGD(student_net.parameters(), lr=0.001, momentum=0.1)     # Original momentum = 0.9
     optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
 
     train_results = np.empty(max_epochs)
@@ -178,24 +282,19 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        for param_group in optimizer.param_groups:
-           param_group['lr'] = lr
-
-        student_net.eval()
-        student_net.layer1.train()
+        set_layers_to_update(student_net, layers_to_train)
         if teacher_net:
             teacher_net.eval()
+
         running_loss = 0.0
         running_loss_minibatch = 0.0
         for i, data in enumerate(train_loader, 0):
             inputs, targets = data
 
-            # Cuda
+            # cpu / gpu
             if torch.cuda.is_available():
-                device = 'cuda'
                 criterion = criterion.cuda()
-            else:
-                device = 'cpu'
+            device = get_device()
             inputs = inputs.to(device)
             targets = targets.to(device)
 
@@ -267,35 +366,6 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
     return train_results, validation_results
 
 
-def plot_grad_flow(named_parameters):
-    '''Plots the gradients flowing through different layers in the net during training.
-    Can be used for checking for possible gradient vanishing / exploding problems.
-
-    Usage: Plug this function in Trainer class after loss.backwards() as
-    "plot_grad_flow(self.model.named_parameters())" to visualize the gradient flow'''
-    ave_grads = []
-    max_grads = []
-    layers = []
-    for n, p in named_parameters:
-        if (p.requires_grad) and ("bias" not in n):
-            layers.append(n)
-            ave_grads.append(p.grad.abs().mean())
-            max_grads.append(p.grad.abs().max())
-    plt.bar(np.arange(len(max_grads)), max_grads, alpha=0.1, lw=1, color="c")
-    plt.bar(np.arange(len(max_grads)), ave_grads, alpha=0.1, lw=1, color="b")
-    plt.hlines(0, 0, len(ave_grads) + 1, lw=2, color="k")
-    plt.xticks(range(0, len(ave_grads), 1), layers, rotation="vertical")
-    plt.xlim(left=0, right=len(ave_grads))
-    plt.ylim(bottom=-0.001, top=0.02)  # zoom in on the lower gradient regions
-    plt.xlabel("Layers")
-    plt.ylabel("average gradient")
-    plt.title("Gradient flow")
-    plt.grid(True)
-    plt.legend([Line2D([0], [0], color="c", lw=4),
-                Line2D([0], [0], color="b", lw=4),
-                Line2D([0], [0], color="k", lw=4)], ['max-gradient', 'mean-gradient', 'zero-gradient'])
-
-
 def get_device():
     if torch.cuda.is_available():
         return 'cuda'
@@ -303,21 +373,28 @@ def get_device():
         return 'cpu'
 
 
-def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None):
-    # ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs], label='train')
-    ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs])
+def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None, eps=False):
+    ax.clear()
+    ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs], label='train')
     if validation_results is not None:
-        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs])
-    # ax.legend()
+        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs], label='validation')
+    ax.legend()
 
     if title:
         ax.set_title(title)
 
-    if not filename:
-        f_name = 'latest_plot.eps'
+    if eps:
+        if not filename:
+            f_name = 'latest_plot.eps'
+        else:
+            f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.eps'
+        fig.savefig(f_name, format='eps')
     else:
-        f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.eps'
-    fig.savefig(f_name, format='eps')
+        if not filename:
+            f_name = 'latest_plot.png'
+        else:
+            f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.png'
+        fig.savefig(f_name)
 
 
 def main():
@@ -335,7 +412,7 @@ def main():
     teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
 
     student_net = resNet.resnet_models["cifar"][net_name + 'relufirst'](net_type)
-    #student_net_relu_first = resNet.resnet_models["cifar"]['resnet20relufirst'](net_type)
+    # student_net_relu_first = resNet.resnet_models["cifar"]['resnet20relufirst'](net_type)
 
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
@@ -369,10 +446,11 @@ def main():
     # train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
     #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
 
-    start_layer = 1
-    end_layer = 7
-    train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
+    # train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
+    lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net)
 
 
 if __name__ == '__main__':
+    warnings.filterwarnings("ignore", message="The PostScript backend does not support transparency; partially "
+                                              "transparent artists will be rendered opaque.")
     main()

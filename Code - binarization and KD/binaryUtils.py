@@ -13,7 +13,21 @@ def binarize_weights(net):
                 p.data.sign_()
 
 
-def set_layers_to_binarize(net, bin_layer_start, bin_layer_end):
+def set_layers_to_binarize(net, layers):
+    """ set layers which convolutional layers to binarize """
+
+    for p in list(net.parameters()):
+        if hasattr(p, 'do_binarize'):
+            p.do_binarize = False
+
+    for layer_str in layers:
+        layer = getattr(net, layer_str)
+        for p in list(layer.parameters()):
+            if hasattr(p, 'do_binarize'):
+                p.do_binarize = True
+
+
+def set_layers_to_binarize_old(net, bin_layer_start, bin_layer_end):
     """ set layers which convolutional layers to binarize """
 
     i_parameter = 0
@@ -24,9 +38,21 @@ def set_layers_to_binarize(net, bin_layer_start, bin_layer_end):
             i_parameter += 1
 
 
-def set_layers_to_update(net, start_conv_layer, end_conv_layer):
+def set_layers_to_update(net, layers):
     """ set which layers to apply weight update """
 
+    net.eval()
+    for p in list(net.parameters()):
+        p.requires_grad = False
+
+    for layer_str in layers:
+        layer = getattr(net, layer_str)
+        layer.train()
+        for p in list(layer.parameters()):
+            p.requires_grad = True
+
+
+def set_layers_to_update_old(net, start_conv_layer, end_conv_layer):
     # find the real start layer and end layer
     i_layer_conv = 0
     start_param_layer = np.inf
