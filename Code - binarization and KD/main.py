@@ -19,8 +19,8 @@ def load_data():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 256
-        batch_size_validation = 512
+        batch_size_training = 512
+        batch_size_validation = 1024
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -375,9 +375,9 @@ def get_device():
 
 def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None, eps=False):
     ax.clear()
-    ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs], label='train')
+    ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs+1], label='train')
     if validation_results is not None:
-        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs], label='validation')
+        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs+1], label='validation')
     ax.legend()
 
     if title:
@@ -399,8 +399,8 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor++'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
-    max_epochs = 2000
+    net_type = 'Xnor'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    max_epochs = 200
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
     temperature_kd_loss = 6.0       # LIT: 6.0
