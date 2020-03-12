@@ -375,9 +375,9 @@ def get_device():
 
 def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None, eps=False):
     ax.clear()
-    ax.plot(np.arange(max_epochs) + 1, train_results[:max_epochs+1], label='train')
+    ax.plot(np.arange(max_epochs+1) + 1, train_results[:max_epochs+1], label='train')
     if validation_results is not None:
-        ax.plot(np.arange(max_epochs) + 1, validation_results[:max_epochs+1], label='validation')
+        ax.plot(np.arange(max_epochs+1) + 1, validation_results[:max_epochs+1], label='validation')
     ax.legend()
 
     if title:
