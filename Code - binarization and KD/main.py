@@ -158,8 +158,16 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 def lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net=None):
 
     temperature_kd = 6
-    scaling_factor_kd = 0.95
-    scaling_factor_total = 0.75
+    scaling_factor_kd = 1        # LIT 0.95
+    scaling_factor_total = 1     # LIT 0.75
+
+    title_loss = 'Loss Lit, ' + str(student_net.net_type)
+    filename = 'lit_' + str(student_net.net_type)
+    title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
+
+    title_loss = 'Cross entropy training - loss, ' + str(student_net.net_type)
+    filename = 'crossEntropy_' + str(student_net.net_type)
+    title_accuracy = 'Cross entropy training - accuracy, ' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
 
@@ -234,9 +242,6 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
         validation_accuracy[epoch] = accuracy_validation_epoch
         make_weights_real(student_net)
 
-        title_loss = 'Loss Lit, ' + str(student_net.net_type)
-        filename = 'lit_' + str(student_net.net_type)
-        title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
         plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=filename, title=title_loss)
         plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename, title=title_accuracy)
 
