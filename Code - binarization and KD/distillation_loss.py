@@ -71,7 +71,11 @@ class Loss(nn.Module):
             loss_knowledge_distillation = self.kd_loss(output_student, output_teacher, targets)
             total_loss = self.beta*loss_knowledge_distillation + (1-self.beta)*loss_intermediate_results
         else:
-            total_loss = self.ce_loss(output_student, targets)
+            if training:
+                total_loss = self.ce_loss(output_student, targets)
+            else:
+                with torch.no_grad():
+                    total_loss = self.ce_loss(output_student, targets)
             if cut_network:
                 print('Need teacher_network when cutting network')
 

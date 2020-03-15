@@ -214,6 +214,8 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             binarize_weights(student_net)
 
             total_loss = criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True)
+            total_loss = criterion(inputs, targets, student_net)
+
             total_loss.backward(retain_graph=True)  # calculate loss
             running_loss += total_loss.item()
 
