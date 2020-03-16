@@ -170,6 +170,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
     title_accuracy = 'Cross entropy training - accuracy, ' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
+    if torch.cuda.is_available():
+        criterion = criterion.cuda()
+    device = get_device()
 
     layers_to_train = ['layer1', 'layer2', 'layer3']
     intermediate_layers = [1, 7, 13, 19]
@@ -194,7 +197,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
 
     for epoch in range(max_epochs):
         running_loss = 0
-        set_layers_to_update(student_net, layers_to_train)
+        set_layers_to_train_mode(student_net, layers_to_train)
 
         if epoch % 25 == 24:
             lr = lr*0.1
@@ -205,9 +208,6 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             inputs, targets = data
 
             # cpu / gpu
-            if torch.cuda.is_available():
-                criterion = criterion.cuda()
-            device = get_device()
             inputs = inputs.to(device)
             targets = targets.to(device)
 
@@ -229,13 +229,12 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
         binarize_weights(student_net)
         for i, data in enumerate(validation_loader, 0):
             inputs, targets = data
-            if torch.cuda.is_available():
-                criterion = criterion.cuda()
-            device = get_device()
             inputs = inputs.to(device)
             targets = targets.to(device)
 
-            running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=False, training=False).item()
+            #running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True, training=False).item()
+            running_validation_loss += criterion(inputs, targets, student_net).item()
+
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
 

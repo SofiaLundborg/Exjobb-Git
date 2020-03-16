@@ -52,6 +52,12 @@ def set_layers_to_update(net, layers):
             p.requires_grad = True
 
 
+def set_layers_to_train_mode(net, layers):
+    for layer_str in layers:
+        layer = getattr(net, layer_str)
+        layer.train()
+
+
 def set_layers_to_update_old(net, start_conv_layer, end_conv_layer):
     # find the real start layer and end layer
     i_layer_conv = 0
