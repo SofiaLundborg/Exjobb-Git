@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d92fad33-c354-4e6d-b05a-f47a8cddf486" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../../Code - binarization and KD/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Code - binarization and KD/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Code - binarization and KD/binaryUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Code - binarization and KD/binaryUtils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Code - binarization and KD/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Code - binarization and KD/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Code - binarization and KD/models/resNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Code - binarization and KD/models/resNet.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -70,8 +70,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="241" lean-forward="true" selection-start-line="241" selection-end-line="241" />
+            <state relative-caret-position="21">
+              <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -278,8 +278,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="241" lean-forward="true" selection-start-line="241" selection-end-line="241" />
+        <state relative-caret-position="21">
+          <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>

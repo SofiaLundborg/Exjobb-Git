@@ -336,14 +336,12 @@ class ResNetReluFirst(nn.Module):
         if feature_layers_to_extract:
             if i_layer in feature_layers_to_extract:
                 features[i_layer] = out.detach()
-        # else:
-        #     features = 1
 
         if self.layer4:
             out = self.maxpool(out)
 
         inp = [out, i_layer, feature_layers_to_extract, features, cut_network]
-        output = self.layer1([out, i_layer, feature_layers_to_extract, features, cut_network])
+        output = self.layer1(inp)
         i_layer = output[1]
         if cut_network:
             if cut_network <= i_layer:

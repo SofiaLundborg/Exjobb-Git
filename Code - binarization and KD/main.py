@@ -165,9 +165,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'Cross entropy training - loss, ' + str(student_net.net_type)
-    filename = 'crossEntropy_' + str(student_net.net_type)
-    title_accuracy = 'Cross entropy training - accuracy, ' + str(student_net.net_type)
+    title_loss = 'LIT and finetuning training - loss, ' + str(student_net.net_type)
+    filename = 'lit_finetuning_' + str(student_net.net_type)
+    title_accuracy = 'LIT and finetuning training - accuracy, ' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -178,6 +178,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
     intermediate_layers = [1, 7, 13, 19]
     set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
+    lit = True
 
     if teacher_net:
         teacher_net.eval()
@@ -204,6 +205,13 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
+        if epoch % 80 == 79:
+            student_dict = torch.load('./Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth', map_location=device)
+            student_net.load_state_dict(student_dict)
+            teacher_net = None
+            intermediate_layers = None
+            lit = False
+
         for i, data in enumerate(train_loader, 0):
             inputs, targets = data
 
@@ -214,8 +222,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             optimizer.zero_grad()
             binarize_weights(student_net)
 
-            total_loss = criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True)
-            total_loss = criterion(inputs, targets, student_net)
+            if lit:
+                total_loss = criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=lit)
+            else:
+                total_loss = criterion(inputs, targets, student_net)
 
             total_loss.backward(retain_graph=True)  # calculate loss
             running_loss += total_loss.item()
@@ -232,8 +242,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             inputs = inputs.to(device)
             targets = targets.to(device)
 
-            #running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True, training=False).item()
-            running_validation_loss += criterion(inputs, targets, student_net).item()
+            if lit:
+                running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True, training=False).item()
+            else:
+                running_validation_loss += criterion(inputs, targets, student_net).item()
 
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
