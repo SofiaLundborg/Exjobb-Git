@@ -148,8 +148,8 @@ class myConv2d(nn.Module):
         self.conv2d = nn.Conv2d(input_channels, output_channels,
                                 kernel_size=kernel_size, stride=stride, padding=padding, bias=bias)
 
-        if torch.cuda.is_available():
-            self.conv2d = self.conv2d.cuda()
+        #if torch.cuda.is_available():
+        #    self.conv2d = self.conv2d.cuda()
 
         self.conv2d.weight.do_binarize = False
 
@@ -178,6 +178,10 @@ class myConv2d(nn.Module):
 
         if self.dropout_ratio != 0:
             x = self.dropout(x)
+
+        if self.net_type == 'binary':
+            x = binarize(x)
+            x = self.conv2d(x)
 
         if self.net_type == 'Xnor':
             if self.conv2d.weight.do_binarize:

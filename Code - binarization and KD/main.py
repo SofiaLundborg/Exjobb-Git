@@ -406,7 +406,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor++'             # 'full_precision', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'binary'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
     max_epochs = 200
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
