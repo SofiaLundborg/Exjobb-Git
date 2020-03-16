@@ -428,7 +428,7 @@ def main():
 
     # initailize_networks
     # teacher_net = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
-    teacher_net = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
+    teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
 
     student_net = resNet.resnet_models["cifar"][net_name + 'relufirst'](net_type)
     # student_net_relu_first = resNet.resnet_models["cifar"]['resnet20relufirst'](net_type)
