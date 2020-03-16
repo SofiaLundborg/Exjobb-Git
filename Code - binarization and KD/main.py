@@ -158,8 +158,8 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 def lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net=None):
 
     temperature_kd = 6
-    scaling_factor_kd = 1        # LIT 0.95
-    scaling_factor_total = 1     # LIT 0.75
+    scaling_factor_kd = 0.95        # LIT 0.95
+    scaling_factor_total = 0.75     # LIT 0.75
 
     title_loss = 'Loss Lit, ' + str(student_net.net_type)
     filename = 'lit_' + str(student_net.net_type)
