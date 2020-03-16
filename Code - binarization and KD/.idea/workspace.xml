@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/binaryUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/binaryUtils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -79,28 +79,27 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="9727" />
+          <entry key="py" value="9955" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="9727" />
+          <entry key="Python" value="9955" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="435" column="64" lean-forward="true" selection-start-line="435" selection-start-column="64" selection-end-line="435" selection-end-column="64" />
+            <state relative-caret-position="238">
+              <caret line="226" lean-forward="true" selection-start-line="226" selection-end-line="226" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#2673#2730#0" />
                 <element signature="e#4112#4469#0" />
-                <element signature="e#4611#5495#0" />
                 <element signature="e#7858#11913#0" />
                 <element signature="e#11138#11220#0" />
                 <marker date="1584355901747" expanded="true" signature="368:373" ph="..." />
@@ -114,24 +113,24 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/binaryUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="373">
-              <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
+            <state relative-caret-position="165">
+              <caret line="11" column="80" selection-start-line="11" selection-start-column="80" selection-end-line="11" selection-end-column="80" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#829#1131#0" />
                 <element signature="e#1151#1905#0" />
-                <marker date="1584355901739" expanded="true" signature="1561:1655" ph="..." />
-                <marker date="1584355901739" expanded="true" signature="2482:2485" ph="..." />
+                <marker date="1584374823293" expanded="true" signature="1734:1828" ph="..." />
+                <marker date="1584374823293" expanded="true" signature="2655:2658" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/models/resNet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3839">
-              <caret line="527" column="40" lean-forward="true" selection-start-line="527" selection-start-column="40" selection-end-line="527" selection-end-column="40" />
+            <state relative-caret-position="-1004">
+              <caret line="118" column="46" lean-forward="true" selection-start-line="118" selection-start-column="46" selection-end-line="118" selection-end-column="46" />
               <folding>
                 <element signature="e#89#110#0" expanded="true" />
                 <element signature="e#929#3033#0" />
@@ -145,8 +144,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/OriginalResNet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="876">
-              <caret line="186" selection-start-line="186" selection-end-line="186" />
+            <state relative-caret-position="1695">
+              <caret line="153" column="47" lean-forward="true" selection-start-line="153" selection-start-column="47" selection-end-line="153" selection-end-column="47" />
               <folding>
                 <element signature="e#89#101#0" expanded="true" />
                 <element signature="e#1932#3272#0" />
@@ -160,8 +159,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/distillation_loss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1014">
-              <caret line="81" column="25" lean-forward="true" selection-start-line="81" selection-start-column="25" selection-end-line="81" selection-end-column="25" />
+            <state relative-caret-position="181">
+              <caret line="81" selection-start-line="81" selection-end-line="81" />
             </state>
           </provider>
         </entry>
@@ -202,6 +201,7 @@
       <find>top</find>
       <find>clip_weights</find>
       <find>student_net.c</find>
+      <find>binarize</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -229,8 +229,8 @@
         <option value="$PROJECT_DIR$/models/resNet.py" />
         <option value="$PROJECT_DIR$/OriginalResNet.py" />
         <option value="$PROJECT_DIR$/distillation_loss.py" />
-        <option value="$PROJECT_DIR$/binaryUtils.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/binaryUtils.py" />
       </list>
     </option>
   </component>
@@ -341,8 +341,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2746988" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.28674698" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2746988" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -410,6 +410,11 @@
           <line>181</line>
           <option name="timeStamp" value="305" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>229</line>
+          <option name="timeStamp" value="309" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -471,47 +476,47 @@
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>list(student_net.named_parameters())</expression-string>
+        <expression-string>sum(sum(sum(sum(p.data == 1))))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(student_net.parameters())</expression-string>
+        <expression-string>sum(sum(sum(p.data == 1)))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>student_net.layer1</expression-string>
+        <expression-string>sum(p.data == 1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.mse_loss(output_student, output_teacher)</expression-string>
+        <expression-string>sum(p.data == 1, 1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>loss.item()</expression-string>
+        <expression-string>sum(p.data == 1, 0)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sum(sum(torch.mul(x, self.gamma_large)[1,:,:,:] != (x[1,:,:,:])*self.gamma_large).flatten())</expression-string>
+        <expression-string>sum(p.data == 1, [0,1])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sum(sum(torch.mul(x,self.gamma_large)[1,:,:,:] != (x[1,:,:,:])*self.gamma_large).flatten())</expression-string>
+        <expression-string>sum(p.data == 1).flatten().flatten()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sum(sum(torch.mul(x,self.gamma_large)[0,:,:,:] != (x[1,:,:,:])*self.gamma_large).flatten())</expression-string>
+        <expression-string>sum(p.data == 1, dim=[0,1])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sum(sum(torch.mul(x,self.gamma_large) != x*self.gamma_large).flatten())</expression-string>
+        <expression-string>sum(p.data == 1).flatten()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -674,23 +679,17 @@
     <entry file="file://$PROJECT_DIR$/Figures/lit_Xnor++_20200312.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/resNet.py">
+    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/nn/functional.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3839">
-          <caret line="527" column="40" lean-forward="true" selection-start-line="527" selection-start-column="40" selection-end-line="527" selection-end-column="40" />
-          <folding>
-            <element signature="e#89#110#0" expanded="true" />
-            <element signature="e#929#3033#0" />
-            <element signature="e#6725#9772#0" />
-            <marker date="1583769830877" expanded="true" signature="6690:14306" ph="..." />
-          </folding>
+        <state relative-caret-position="361">
+          <caret line="2190" selection-start-line="2190" selection-end-line="2190" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/OriginalResNet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="876">
-          <caret line="186" selection-start-line="186" selection-end-line="186" />
+        <state relative-caret-position="1695">
+          <caret line="153" column="47" lean-forward="true" selection-start-line="153" selection-start-column="47" selection-end-line="153" selection-end-column="47" />
           <folding>
             <element signature="e#89#101#0" expanded="true" />
             <element signature="e#1932#3272#0" />
@@ -700,48 +699,53 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/nn/functional.py">
+    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="2190" selection-start-line="2190" selection-end-line="2190" />
+        <state relative-caret-position="165">
+          <caret line="11" column="80" selection-start-line="11" selection-start-column="80" selection-end-line="11" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#829#1131#0" />
+            <element signature="e#1151#1905#0" />
+            <marker date="1584374823293" expanded="true" signature="1734:1828" ph="..." />
+            <marker date="1584374823293" expanded="true" signature="2655:2658" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/distillation_loss.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1014">
-          <caret line="81" column="25" lean-forward="true" selection-start-line="81" selection-start-column="25" selection-end-line="81" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-            <element signature="e#829#1131#0" />
-            <element signature="e#1151#1905#0" />
-            <marker date="1584355901739" expanded="true" signature="1561:1655" ph="..." />
-            <marker date="1584355901739" expanded="true" signature="2482:2485" ph="..." />
-          </folding>
+        <state relative-caret-position="181">
+          <caret line="81" selection-start-line="81" selection-end-line="81" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="435" column="64" lean-forward="true" selection-start-line="435" selection-start-column="64" selection-end-line="435" selection-end-column="64" />
+        <state relative-caret-position="238">
+          <caret line="226" lean-forward="true" selection-start-line="226" selection-end-line="226" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#2673#2730#0" />
             <element signature="e#4112#4469#0" />
-            <element signature="e#4611#5495#0" />
             <element signature="e#7858#11913#0" />
             <element signature="e#11138#11220#0" />
             <marker date="1584355901747" expanded="true" signature="368:373" ph="..." />
             <marker date="1584355901747" expanded="true" signature="5629:9963" ph="..." />
             <marker date="1584355901747" expanded="true" signature="14243:14333" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/resNet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1004">
+          <caret line="118" column="46" lean-forward="true" selection-start-line="118" selection-start-column="46" selection-end-line="118" selection-end-column="46" />
+          <folding>
+            <element signature="e#89#110#0" expanded="true" />
+            <element signature="e#929#3033#0" />
+            <element signature="e#6725#9772#0" />
+            <marker date="1583769830877" expanded="true" signature="6690:14306" ph="..." />
           </folding>
         </state>
       </provider>

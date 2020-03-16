@@ -9,8 +9,11 @@ def binarize_weights(net):
     for p in list(net.parameters()):
         if hasattr(p, 'do_binarize'):
             if 'do_binarize':
+                if sum(sum(sum(sum(p.data == 1)))) + sum(sum(sum(sum(p.data == -1)))) == len(p.data):
+                    print('Error: Binarizing already binary weights')
                 p.real_weights = p.data.clone()
                 p.data.sign_()
+
 
 
 def set_layers_to_binarize(net, layers):
@@ -109,6 +112,7 @@ class BinaryActivation(torch.autograd.Function):
     @staticmethod
     def forward(ctx, input):
         result = input.sign()
+        result[input == 0] = -1
         ctx.save_for_backward(input)
         return result
 
