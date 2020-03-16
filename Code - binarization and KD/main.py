@@ -173,7 +173,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
 
     layers_to_train = ['layer1', 'layer2', 'layer3']
     intermediate_layers = [1, 7, 13, 19]
-    set_layers_to_binarize(teacher_net, layers_to_train)
+    set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
 
     if teacher_net:
@@ -416,7 +416,7 @@ def main():
 
     # initailize_networks
     # teacher_net = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
-    teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
+    teacher_net = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
 
     student_net = resNet.resnet_models["cifar"][net_name + 'relufirst'](net_type)
     # student_net_relu_first = resNet.resnet_models["cifar"]['resnet20relufirst'](net_type)
