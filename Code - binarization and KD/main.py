@@ -194,6 +194,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
 
     for epoch in range(max_epochs):
         running_loss = 0
+        set_layers_to_update(student_net, layers_to_train)
 
         if epoch % 25 == 24:
             lr = lr*0.1
@@ -234,7 +235,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             inputs = inputs.to(device)
             targets = targets.to(device)
 
-            running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True, training=False).item()
+            running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=False, training=False).item()
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
 
