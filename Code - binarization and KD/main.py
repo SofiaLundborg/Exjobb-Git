@@ -49,8 +49,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
-    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
+    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
+    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -279,7 +279,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
         print('Accuracy on train images: %d %%' % accuracy_train_epoch)
         print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
 
-        time.sleep(0.5)
+        time.sleep(5)
 
 
 def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None, layers_to_train=None,

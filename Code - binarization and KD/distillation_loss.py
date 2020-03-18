@@ -26,9 +26,6 @@ class Loss(nn.Module):
 
             return self.mse_loss(output_student, output_teacher)
 
-        if (self.beta != 1) and not (intermediate_layers or cut_network):
-            print('need intermediate layers')
-
         if lit_training:
             ir_loss = 0
             with torch.no_grad():
