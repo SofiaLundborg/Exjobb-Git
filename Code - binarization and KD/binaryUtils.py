@@ -9,7 +9,7 @@ def binarize_weights(net):
     for p in list(net.parameters()):
         if hasattr(p, 'do_binarize'):
             if 'do_binarize':
-                if sum(sum(sum(sum(p.data == 1)))) + sum(sum(sum(sum(p.data == -1)))) == len(p.data):
+                if ((torch.sum(p.data == 1) + torch.sum(p.data == -1)).item() == len(p.data)):
                     print('Error: Binarizing already binary weights')
                 p.real_weights = p.data.clone()
                 p.data.sign_()
