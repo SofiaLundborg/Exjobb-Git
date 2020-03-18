@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figures/lit_finetuning_binary_20200316.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/resNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resNet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,12 +77,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="10628" />
+          <entry key="py" value="10651" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="10628" />
+          <entry key="Python" value="10651" />
         </counts>
       </usages-collector>
     </session>
@@ -96,17 +92,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="443">
-              <caret line="213" lean-forward="true" selection-start-line="213" selection-end-line="213" />
+            <state relative-caret-position="182">
+              <caret line="452" selection-start-line="452" selection-end-line="452" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#2673#2730#0" />
                 <element signature="e#4112#4469#0" />
                 <element signature="e#7858#11913#0" />
                 <element signature="e#11138#11220#0" />
-                <marker date="1584537788505" expanded="true" signature="368:373" ph="..." />
-                <marker date="1584537788505" expanded="true" signature="5631:10410" ph="..." />
-                <marker date="1584537788505" expanded="true" signature="14690:14780" ph="..." />
+                <marker date="1584538168666" expanded="true" signature="368:373" ph="..." />
+                <marker date="1584538168666" expanded="true" signature="5631:10410" ph="..." />
+                <marker date="1584538168666" expanded="true" signature="14690:14780" ph="..." />
               </folding>
             </state>
           </provider>
@@ -338,14 +334,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22551093" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22551093" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2746988" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2746988" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.28674698" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -723,17 +718,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="213" lean-forward="true" selection-start-line="213" selection-end-line="213" />
+        <state relative-caret-position="182">
+          <caret line="452" selection-start-line="452" selection-end-line="452" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#2673#2730#0" />
             <element signature="e#4112#4469#0" />
             <element signature="e#7858#11913#0" />
             <element signature="e#11138#11220#0" />
-            <marker date="1584537788505" expanded="true" signature="368:373" ph="..." />
-            <marker date="1584537788505" expanded="true" signature="5631:10410" ph="..." />
-            <marker date="1584537788505" expanded="true" signature="14690:14780" ph="..." />
+            <marker date="1584538168666" expanded="true" signature="368:373" ph="..." />
+            <marker date="1584538168666" expanded="true" signature="5631:10410" ph="..." />
+            <marker date="1584538168666" expanded="true" signature="14690:14780" ph="..." />
           </folding>
         </state>
       </provider>
