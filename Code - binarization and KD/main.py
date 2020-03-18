@@ -8,6 +8,7 @@ from models import resNet
 import distillation_loss
 from datetime import datetime
 from matplotlib.lines import Line2D
+import time
 
 import dataloaders
 import warnings
@@ -48,8 +49,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
-    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
+    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
+    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -198,14 +199,19 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
 
     for epoch in range(max_epochs):
         running_loss = 0
-        set_layers_to_train_mode(student_net, layers_to_train)
+        if lit:
+            set_layers_to_train_mode(student_net, layers_to_train)
+        else:
+            student_net.train()
+            for p in list(student_net.parameters()):
+                p.requires_grad = True
 
         if epoch % 25 == 24:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch % 80 == 79:
+        if epoch % 5 == 4:
             student_dict = torch.load('./Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth', map_location=device)
             student_net.load_state_dict(student_dict)
             teacher_net = None
@@ -272,6 +278,8 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
         print('Loss on validation images: ' + str(validation_loss_for_epoch))
         print('Accuracy on train images: %d %%' % accuracy_train_epoch)
         print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
+
+        time.sleep(0.5)
 
 
 def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None, layers_to_train=None,
