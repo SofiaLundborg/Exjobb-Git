@@ -117,11 +117,11 @@ class BasicBlockReluFirst(nn.Module):
                 return inp
 
         if not self.conv1.conv2d.weight.do_binarize:
-            F.relu(x)
+            x = F.relu(x)
 
         out = self.bn1(self.conv1(x))
         if not self.conv2.conv2d.weight.do_binarize:
-            F.relu(x)
+            out = F.relu(out)
         i_layer += 1
         if cut_network:
             if cut_network == i_layer:
@@ -363,9 +363,11 @@ class ResNetReluFirst(nn.Module):
         if self.layer4:
             out, i_layer, feature_layers_to_extract, features, cut_network = self.layer4([out, i_layer, feature_layers_to_extract, features, cut_network])
             out = self.relu(out)
+            #out = F.relu(out)
             out = self.avgpool(out)
         else:
             out = self.relu(out)
+            # out = F.relu(out)
             out = F.avg_pool2d(out, out.size()[3])
 
         out = out.view(out.size(0), -1)
@@ -446,6 +448,7 @@ class ResNet(nn.Module):
         features = OrderedDict()
 
         out = self.relu(self.bn1(self.conv1(x)))
+
         i_layer = 1
 
         if cut_network == i_layer:

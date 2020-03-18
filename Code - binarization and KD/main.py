@@ -48,7 +48,7 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
+    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [100, len(train_set) - 100])
     # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
@@ -427,7 +427,7 @@ def main():
     train_loader, validation_loader, test_loader = load_data()
 
     # initailize_networks
-    # teacher_net = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
+    teacher_net_relu_first = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
     teacher_net = resNet.resnet_models["cifar"][net_name]('full_precision')
 
     student_net = resNet.resnet_models["cifar"][net_name + 'relufirst'](net_type)
@@ -439,6 +439,7 @@ def main():
     new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_net)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
     teacher_net.load_state_dict(new_checkpoint_teacher)
+    teacher_net_relu_first.load_state_dict(new_checkpoint_teacher)
     student_net.load_state_dict(new_checkpoint_student)
     # student_net_relu_first.load_state_dict(new_checkpoint_student)
 
@@ -454,7 +455,17 @@ def main():
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
-    out_teach = student_net(sample)
+    teacher_net.eval()
+    teacher_net_relu_first.eval()
+    out_teach = teacher_net(sample)
+    out_teach_relu_first = teacher_net_relu_first(sample)
+
+    with torch.no_grad():
+        features, out_teach_ir_layers = teacher_net(sample, feature_layers_to_extract=[1, 7, 13, 19])
+
+
+    acc_teach = calculate_accuracy(train_loader, teacher_net_relu_first)
+
     out_stud_relu_first = student_net(sample)
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
