@@ -211,7 +211,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch % 5 == 4:
+        if epoch % 80 == 79:
             student_dict = torch.load('./Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth', map_location=device)
             student_net.load_state_dict(student_dict)
             teacher_net = None
