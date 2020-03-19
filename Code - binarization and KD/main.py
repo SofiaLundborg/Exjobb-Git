@@ -206,19 +206,21 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
             for p in list(student_net.parameters()):
                 p.requires_grad = True
 
-        learning_rate_change = [30, 40, 50, 60]
+        learning_rate_change = [30, 40, 50, 70, 80, 90]
         if epoch in learning_rate_change:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch == 79:
+        if epoch == 60:
             student_dict = torch.load('./Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth', map_location=device)
             student_net.load_state_dict(student_dict)
             teacher_net = None
             intermediate_layers = None
             lit = False
             lr = 0.001
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
 
         for i, data in enumerate(train_loader, 0):
             inputs, targets = data
