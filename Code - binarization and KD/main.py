@@ -156,7 +156,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     return min_loss
 
 
-def lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net=None):
+def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None):
 
     temperature_kd = 6
     scaling_factor_kd = 0.95        # LIT 0.95
@@ -206,17 +206,19 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
             for p in list(student_net.parameters()):
                 p.requires_grad = True
 
-        if epoch % 25 == 24:
+        learning_rate_change = [30, 40, 50, 60]
+        if epoch in learning_rate_change:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch % 80 == 79:
+        if epoch == 79:
             student_dict = torch.load('./Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth', map_location=device)
             student_net.load_state_dict(student_dict)
             teacher_net = None
             intermediate_layers = None
             lit = False
+            lr = 0.001
 
         for i, data in enumerate(train_loader, 0):
             inputs, targets = data
@@ -238,6 +240,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs, teach
 
             make_weights_real(student_net)
             optimizer.step()
+
+        time.sleep(5)
+
         training_loss_for_epoch = running_loss / len(train_loader)
         train_loss[epoch] = training_loss_for_epoch
 
@@ -446,6 +451,8 @@ def main():
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
     teacher_net.load_state_dict(new_checkpoint_teacher)
     student_net.load_state_dict(new_checkpoint_student)
+
+    checkpoint = torch.load('./Trained_Models/lit_finetuning_binary_20200316.pth', map_location='cpu')
 
     if torch.cuda.is_available():
         teacher_net = teacher_net.cuda()
