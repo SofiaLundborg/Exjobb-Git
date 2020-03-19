@@ -166,9 +166,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'LIT and finetuning training - loss, ' + str(student_net.net_type)
-    filename = 'lit_finetuning_' + str(student_net.net_type)
-    title_accuracy = 'LIT and finetuning training - accuracy, ' + str(student_net.net_type)
+    title_loss = 'LIT and finetuning training bireal - loss, ' + str(student_net.net_type)
+    filename = 'lit_finetuning_bireal_' + str(student_net.net_type)
+    title_accuracy = 'LIT and finetuning training bireal - accuracy, ' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():

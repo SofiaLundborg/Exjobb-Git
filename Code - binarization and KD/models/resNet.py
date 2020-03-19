@@ -120,6 +120,10 @@ class BasicBlockReluFirst(nn.Module):
             x = F.relu(x)
 
         out = self.bn1(self.conv1(x))
+
+        out += self.shortcut(x)
+        out_mid = out
+
         if not self.conv2.conv2d.weight.do_binarize:
             out = F.relu(out)
         i_layer += 1
@@ -128,7 +132,7 @@ class BasicBlockReluFirst(nn.Module):
                 return [out, i_layer, feature_layers_to_extract, features, cut_network]
 
         out = self.bn2(self.conv2(out))
-        out += self.shortcut(x)
+        out += out_mid
 
         i_layer += 1
         if cut_network:
