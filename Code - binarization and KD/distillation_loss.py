@@ -35,15 +35,11 @@ class Loss(nn.Module):
             for i_layer, layer in enumerate(['layer1', 'layer2', 'layer3']):
                 section_student = getattr(student_net, layer)
                 inp = features_teacher[intermediate_layers[i_layer]]
-                inp = [inp, i_layer, None, None, None]
                 if input_from_teacher:
                     inp = [inp, i_layer, None, None, None]
                 else:
                     inp = [out_student, i_layer, None, None, None]
                 if training:
-                    if not input_from_teacher:
-                        out_student = section_student(inp)[0]
-                    else:
                         out_student = section_student(inp)[0]
                 else:
                     with torch.no_grad(): out_student = section_student(inp)[0]
