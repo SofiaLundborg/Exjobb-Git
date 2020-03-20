@@ -184,7 +184,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     intermediate_layers = [1, 7, 13, 19]
     set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
-    lit = False
+    lit = True
 
     if teacher_net:
         teacher_net.eval()
