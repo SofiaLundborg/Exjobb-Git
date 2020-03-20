@@ -156,7 +156,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     return min_loss
 
 
-def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None):
+def lit_training(student_net, train_loader, validation_loader, max_epochs=59, teacher_net=None):
 
     temperature_kd = 6
     scaling_factor_kd = 0.95        # LIT 0.95
@@ -166,9 +166,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'LIT and finetuning (student input) training- loss, ' + str(student_net.net_type)
-    filename = 'lit_finetuning_student_input_' + str(student_net.net_type)
-    title_accuracy = 'LIT and finetuning (student input)training - accuracy, ' + str(student_net.net_type)
+    title_loss = 'LIT training- loss, ' + str(student_net.net_type)
+    filename = 'lit_' + str(student_net.net_type)
+    title_accuracy = 'LIT - accuracy, ' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():

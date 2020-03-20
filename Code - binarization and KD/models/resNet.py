@@ -121,8 +121,8 @@ class BasicBlockReluFirst(nn.Module):
 
         out = self.bn1(self.conv1(x))
 
-        out += self.shortcut(x)
-        out_mid = out
+        # out += self.shortcut(x)
+        #out_mid = out
 
         if not self.conv2.conv2d.weight.do_binarize:
             out = F.relu(out)
