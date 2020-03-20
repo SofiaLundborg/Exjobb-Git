@@ -36,9 +36,12 @@ class Loss(nn.Module):
                 section_student = getattr(student_net, layer)
                 inp = features_teacher[intermediate_layers[i_layer]]
                 inp = [inp, i_layer, None, None, None]
+                if input_from_teacher:
+                    inp = [inp, i_layer, None, None, None]
+                else:
+                    inp = [out_student, i_layer, None, None, None]
                 if training:
                     if not input_from_teacher:
-                        inp = [out_student, i_layer, None, None, None]
                         out_student = section_student(inp)[0]
                     else:
                         out_student = section_student(inp)[0]
