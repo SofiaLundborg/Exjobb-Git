@@ -132,7 +132,8 @@ class BasicBlockReluFirst(nn.Module):
                 return [out, i_layer, feature_layers_to_extract, features, cut_network]
 
         out = self.bn2(self.conv2(out))
-        out += out_mid
+        #out += out_mid
+        out += self.shortcut(x)
 
         i_layer += 1
         if cut_network:

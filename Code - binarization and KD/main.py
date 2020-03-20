@@ -166,9 +166,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'LIT and finetuning training bireal - loss, ' + str(student_net.net_type)
-    filename = 'lit_finetuning_bireal_' + str(student_net.net_type)
-    title_accuracy = 'LIT and finetuning training bireal - accuracy, ' + str(student_net.net_type)
+    title_loss = 'LIT and finetuning (student input) training- loss, ' + str(student_net.net_type)
+    filename = 'lit_finetuning_student_input_' + str(student_net.net_type)
+    title_accuracy = 'LIT and finetuning (student input)training - accuracy, ' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -197,16 +197,23 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
     best_validation_loss = np.inf
     best_epoch = 0
 
+    input_from_teacher = True
+
     for epoch in range(max_epochs):
         running_loss = 0
         if lit:
-            set_layers_to_train_mode(student_net, layers_to_train)
+            if epoch > 100:
+                student_net.train()
+            else:
+                for p in list(student_net.parameters()):
+                    p.requires_grad = True
+                set_layers_to_train_mode(student_net, layers_to_train)
         else:
             student_net.train()
             for p in list(student_net.parameters()):
                 p.requires_grad = True
 
-        learning_rate_change = [30, 40, 50, 70, 80, 90]
+        learning_rate_change = [30, 40, 50, 70, 80, 90, 110, 120]
         if epoch in learning_rate_change:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
@@ -217,8 +224,15 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
             student_net.load_state_dict(student_dict)
             teacher_net = None
             intermediate_layers = None
+            input_from_teacher = False
+            # lit = False
+            lr = 0.01
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
+
+        if epoch == 100:
             lit = False
-            lr = 0.001
+            lr = 0.01
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
@@ -233,7 +247,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
             binarize_weights(student_net)
 
             if lit:
-                total_loss = criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=lit)
+                total_loss = criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=lit, input_from_teacher=input_from_teacher)
             else:
                 total_loss = criterion(inputs, targets, student_net)
 
@@ -256,7 +270,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
             targets = targets.to(device)
 
             if lit:
-                running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True, training=False).item()
+                running_validation_loss += criterion(inputs, targets, student_net, teacher_net, intermediate_layers, lit_training=True, training=False, input_from_teacher=input_from_teacher).item()
             else:
                 running_validation_loss += criterion(inputs, targets, student_net).item()
 

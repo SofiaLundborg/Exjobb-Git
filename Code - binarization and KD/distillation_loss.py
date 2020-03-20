@@ -18,7 +18,7 @@ class Loss(nn.Module):
             self.mse_loss = self.mse_loss.cuda()
             self.ce_loss = self.ce_loss.cuda()
 
-    def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, lit_training=False, cut_network=None, training=True):
+    def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, lit_training=False, input_from_teacher=False, cut_network=None, training=True):
 
         if cut_network:
             output_student = student_net(inputs, intermediate_layers, cut_network)
@@ -31,12 +31,16 @@ class Loss(nn.Module):
             with torch.no_grad():
                 teacher_net.eval()
                 features_teacher, output_teacher = teacher_net(inputs, intermediate_layers)
+                out_student = features_teacher[intermediate_layers[0]]
             for i_layer, layer in enumerate(['layer1', 'layer2', 'layer3']):
                 section_student = getattr(student_net, layer)
                 inp = features_teacher[intermediate_layers[i_layer]]
                 inp = [inp, i_layer, None, None, None]
                 if training:
-                    out_student = section_student(inp)[0]
+                    if not input_from_teacher:
+                        out_student = section_student(out_student)[0]
+                    else:
+                        out_student = section_student(inp)[0]
                 else:
                     with torch.no_grad(): out_student = section_student(inp)[0]
                 out_teacher = features_teacher[intermediate_layers[i_layer + 1]]
