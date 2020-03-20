@@ -156,7 +156,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     return min_loss
 
 
-def lit_training(student_net, train_loader, validation_loader, max_epochs=100, teacher_net=None):
+def lit_training(student_net, train_loader, validation_loader, max_epochs=120, teacher_net=None):
 
     student_dict = torch.load('./Trained_Models/' + 'lit_Xnor++_20200320' + '.pth',
                               map_location=get_device())
@@ -170,9 +170,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=100, t
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'after LIT training, cross entropy - loss, ' + str(student_net.net_type)
-    filename = 'after_lit_CE' + str(student_net.net_type)
-    title_accuracy = 'after LIT, cross entropy - accuracy, ' + str(student_net.net_type)
+    title_loss = 'after LIT, lit student input - loss, ' + str(student_net.net_type)
+    title_accuracy = 'after LIT, lit student input - accuracy, ' + str(student_net.net_type)
+
+    filename = 'after_lit_student_input_lit_' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -201,7 +202,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=100, t
     best_validation_loss = np.inf
     best_epoch = 0
 
-    input_from_teacher = True
+    input_from_teacher = False
 
     for epoch in range(max_epochs):
         running_loss = 0
@@ -217,7 +218,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=100, t
             for p in list(student_net.parameters()):
                 p.requires_grad = True
 
-        learning_rate_change = [30, 40, 50, 60, 70, 80, 90, 110, 120]
+        learning_rate_change = [30, 50, 80, 90]
         if epoch in learning_rate_change:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
@@ -234,7 +235,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=100, t
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch == 100:
+        if epoch == 60:
             lit = False
             lr = 0.01
             for param_group in optimizer.param_groups:
