@@ -38,7 +38,8 @@ class Loss(nn.Module):
                 inp = [inp, i_layer, None, None, None]
                 if training:
                     if not input_from_teacher:
-                        out_student = section_student(out_student)[0]
+                        inp = [out_student, i_layer, None, None, None]
+                        out_student = section_student(inp)[0]
                     else:
                         out_student = section_student(inp)[0]
                 else:
