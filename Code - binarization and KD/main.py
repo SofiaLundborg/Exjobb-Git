@@ -158,7 +158,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 
 def lit_training(student_net, train_loader, validation_loader, max_epochs=120, teacher_net=None):
 
-    student_dict = torch.load('./Trained_Models/' + 'LIT_with_double_shortcut_Xnor + +_20200325.pth',
+    student_dict = torch.load('./Trained_Models/' + 'LIT_with_double_shortcut_Xnor++_20200325.pth',
                               map_location=get_device())
     student_net.load_state_dict(student_dict)
 
