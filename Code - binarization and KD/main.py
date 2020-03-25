@@ -171,9 +171,12 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
     title_loss = 'CE after LIT with double shortcut - loss, ' + str(student_net.net_type)
-    title_accuracy = 'CE after LIT with double shprtcut - accuracy, ' + str(student_net.net_type)
-
+    title_accuracy = 'CE after LIT with double shortcut - accuracy, ' + str(student_net.net_type)
     filename = 'CE_after_LIT_with_double_shortcut_' + str(student_net.net_type)
+
+    title_loss = 'LIT with double shortcut - loss, ' + str(student_net.net_type)
+    title_accuracy = 'LIT with double shortcut - accuracy, ' + str(student_net.net_type)
+    filename = 'LIT_with_double_shortcut__' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -184,8 +187,8 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     intermediate_layers = [1, 7, 13, 19]
     set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
-    lit = False
-    input_from_teacher = False
+    lit = True
+    input_from_teacher = True
 
     if teacher_net:
         teacher_net.eval()
@@ -206,7 +209,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     for epoch in range(max_epochs):
         running_loss = 0
         if lit:
-            if epoch > 60:
+            if epoch >= 0:
                 student_net.train()
             else:
                 for p in list(student_net.parameters()):
