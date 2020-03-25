@@ -170,10 +170,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'LIT with relu - loss, ' + str(student_net.net_type)
-    title_accuracy = 'LIT with relu - accuracy, ' + str(student_net.net_type)
+    title_loss = 'LIT with double shortcut - loss, ' + str(student_net.net_type)
+    title_accuracy = 'LIT with double shprtcut - accuracy, ' + str(student_net.net_type)
 
-    filename = 'LIT_with_relu_' + str(student_net.net_type)
+    filename = 'LIT_with_double_shortcut_' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
