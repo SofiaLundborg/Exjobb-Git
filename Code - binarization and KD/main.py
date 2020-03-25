@@ -158,9 +158,9 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 
 def lit_training(student_net, train_loader, validation_loader, max_epochs=120, teacher_net=None):
 
-    #student_dict = torch.load('./Trained_Models/' + 'after_lit_student_input_lit_Xnor++_20200320' + '.pth',
-    #                          map_location=get_device())
-    #student_net.load_state_dict(student_dict)
+    student_dict = torch.load('./Trained_Models/' + 'LIT_with_double_shortcut_Xnor + +_20200325.pth',
+                              map_location=get_device())
+    student_net.load_state_dict(student_dict)
 
     temperature_kd = 6
     scaling_factor_kd = 0.95        # LIT 0.95
@@ -170,10 +170,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'LIT with double shortcut - loss, ' + str(student_net.net_type)
-    title_accuracy = 'LIT with double shprtcut - accuracy, ' + str(student_net.net_type)
+    title_loss = 'CE after LIT with double shortcut - loss, ' + str(student_net.net_type)
+    title_accuracy = 'CE after LIT with double shprtcut - accuracy, ' + str(student_net.net_type)
 
-    filename = 'LIT_with_double_shortcut_' + str(student_net.net_type)
+    filename = 'CE_after_LIT_with_double_shortcut_' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -184,7 +184,8 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     intermediate_layers = [1, 7, 13, 19]
     set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
-    lit = True
+    lit = False
+    input_from_teacher = False
 
     if teacher_net:
         teacher_net.eval()
@@ -201,8 +202,6 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     validation_accuracy = np.empty(max_epochs)
     best_validation_loss = np.inf
     best_epoch = 0
-
-    input_from_teacher = True
 
     for epoch in range(max_epochs):
         running_loss = 0
@@ -235,9 +234,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch == 600:
+        if epoch == 60:
             lit = False
-            lr = 0.01
+            lr = 0.001
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
