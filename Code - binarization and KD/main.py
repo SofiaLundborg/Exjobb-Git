@@ -170,10 +170,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     filename = 'lit_' + str(student_net.net_type)
     title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
 
-    title_loss = 'CE after lit student input - loss, ' + str(student_net.net_type)
-    title_accuracy = 'CE after lit student input - accuracy, ' + str(student_net.net_type)
+    title_loss = 'LIT with relu - loss, ' + str(student_net.net_type)
+    title_accuracy = 'LIT with relu - accuracy, ' + str(student_net.net_type)
 
-    filename = 'CE_after_lit_student_input_' + str(student_net.net_type)
+    filename = 'LIT_with_relu_' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -184,7 +184,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     intermediate_layers = [1, 7, 13, 19]
     set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
-    lit = False
+    lit = True
 
     if teacher_net:
         teacher_net.eval()
@@ -202,7 +202,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     best_validation_loss = np.inf
     best_epoch = 0
 
-    input_from_teacher = False
+    input_from_teacher = True
 
     for epoch in range(max_epochs):
         running_loss = 0
@@ -235,7 +235,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch == 60:
+        if epoch == 600:
             lit = False
             lr = 0.01
             for param_group in optimizer.param_groups:
