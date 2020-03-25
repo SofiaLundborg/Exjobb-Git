@@ -160,7 +160,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
 
     student_dict = torch.load('./Trained_Models/' + 'LIT_with_double_shortcut_Xnor++_20200325.pth',
                               map_location=get_device())
-    student_net.load_state_dict(student_dict)
+    #student_net.load_state_dict(student_dict)
 
     temperature_kd = 6
     scaling_factor_kd = 0.95        # LIT 0.95
