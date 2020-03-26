@@ -208,13 +208,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
 
     for epoch in range(max_epochs):
         running_loss = 0
-        if lit:
-            if epoch >= 0:
-                student_net.train()
-            else:
-                for p in list(student_net.parameters()):
-                    p.requires_grad = True
-                set_layers_to_train_mode(student_net, layers_to_train)
+        if lit and (epoch <= 0):
+            for p in list(student_net.parameters()):
+                p.requires_grad = True
+            set_layers_to_train_mode(student_net, layers_to_train)
         else:
             student_net.train()
             for p in list(student_net.parameters()):
