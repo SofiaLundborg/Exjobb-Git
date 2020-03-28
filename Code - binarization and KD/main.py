@@ -290,6 +290,11 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
         plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=filename, title=title_loss)
         plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename, title=title_accuracy)
 
+        torch.save(validation_loss, './Results/validation_loss_' + filename + '.pt')
+        torch.save(train_loss, './Results/train_loss_' + filename + '.pt')
+        torch.save(validation_accuracy, './Results/validation_accuracy_' + filename + '.pt')
+        torch.save(train_accuracy, './Results/train_accuracy_' + filename + '.pt')
+
         if validation_loss_for_epoch < best_validation_loss:
             # save network
             PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
