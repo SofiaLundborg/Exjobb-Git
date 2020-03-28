@@ -485,6 +485,12 @@ def main():
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
+    layers_to_train = ['layer1', 'layer2', 'layer3']
+    set_layers_to_binarize(student_net, layers_to_train)
+    set_layers_to_update(student_net, layers_to_train)
+
+
+    teatcher_res = teacher_net(sample)
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)

@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
 from binaryUtils import myConv2d
+import matplotlib.pyplot as plt
 
 
 class LambdaLayer(nn.Module):
@@ -121,13 +122,13 @@ class BasicBlockReluFirst(nn.Module):
 
         out = self.bn1(self.conv1(x))
 
-        # out += self.shortcut(x)
-        #out_mid = out
-
         if not self.conv2.conv2d.weight.do_binarize:
             out = F.relu(out)
 
-        out_mid = out/2
+        if self.conv2.conv2d.weight.do_binarize:
+            out_mid = out/2
+        else:
+            out_mid = x/2
         #out = F.relu(out)
 
         i_layer += 1
@@ -136,8 +137,23 @@ class BasicBlockReluFirst(nn.Module):
                 return [out, i_layer, feature_layers_to_extract, features, cut_network]
 
         out = self.bn2(self.conv2(out))
-        #out += out_mid
-        out += self.shortcut(x/2) + out_mid
+
+        res_shortcut = x / 2 + out_mid
+
+        plot = False
+        if plot:
+            fig, (ax_shortcut, ax_out, ax_combined) = plt.subplots(1, 3, figsize=(12, 3))
+            ax_out.hist(out.view(-1), 50, color='grey')
+            ax_shortcut.hist(res_shortcut.view(-1), 50, color='grey')
+
+        out += self.shortcut(x/2 + out_mid)
+
+        if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
+            out[out < 0] = out[out < 0]*0.5
+
+        if plot:
+            ax_combined.hist(out.view(-1), 50, color='grey')
+            plt.show()
 
         i_layer += 1
         if cut_network:
