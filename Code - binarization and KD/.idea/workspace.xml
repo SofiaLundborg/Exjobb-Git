@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/train_accuracy_LIT_with_double_shortcut__Xnor++.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/train_loss_LIT_with_double_shortcut__Xnor++.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/validation_accuracy_LIT_with_double_shortcut__Xnor++.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/validation_loss_LIT_with_double_shortcut__Xnor++.pt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/resNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resNet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lit-code-master/cifar10/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -80,12 +83,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="14032" />
+          <entry key="py" value="14036" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="14032" />
+          <entry key="Python" value="14036" />
         </counts>
       </usages-collector>
     </session>
@@ -95,13 +98,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="510" selection-start-line="510" selection-end-line="510" />
+            <state relative-caret-position="228">
+              <caret line="52" column="6" selection-start-line="52" selection-start-column="6" selection-end-line="52" selection-end-column="6" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1585424397430" expanded="true" signature="380:385" ph="..." />
-                <marker date="1585424397430" expanded="true" signature="5642:12100" ph="..." />
-                <marker date="1585424397430" expanded="true" signature="16380:16470" ph="..." />
+                <marker date="1585424778445" expanded="true" signature="380:385" ph="..." />
+                <marker date="1585424778445" expanded="true" signature="5646:12104" ph="..." />
+                <marker date="1585424778445" expanded="true" signature="16384:16474" ph="..." />
               </folding>
             </state>
           </provider>
@@ -222,8 +225,8 @@
         <option value="$PROJECT_DIR$/OriginalResNet.py" />
         <option value="$PROJECT_DIR$/binaryUtils.py" />
         <option value="$PROJECT_DIR$/distillation_loss.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/models/resNet.py" />
+        <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
   </component>
@@ -329,13 +332,13 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22551093" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22551093" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.2746988" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -700,13 +703,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="510" selection-start-line="510" selection-end-line="510" />
+        <state relative-caret-position="228">
+          <caret line="52" column="6" selection-start-line="52" selection-start-column="6" selection-end-line="52" selection-end-column="6" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1585424397430" expanded="true" signature="380:385" ph="..." />
-            <marker date="1585424397430" expanded="true" signature="5642:12100" ph="..." />
-            <marker date="1585424397430" expanded="true" signature="16380:16470" ph="..." />
+            <marker date="1585424778445" expanded="true" signature="380:385" ph="..." />
+            <marker date="1585424778445" expanded="true" signature="5646:12104" ph="..." />
+            <marker date="1585424778445" expanded="true" signature="16384:16474" ph="..." />
           </folding>
         </state>
       </provider>
