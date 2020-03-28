@@ -128,7 +128,7 @@ class BasicBlockReluFirst(nn.Module):
         if self.conv2.conv2d.weight.do_binarize:
             out_mid = out/2
         else:
-            out_mid = x/2
+            out_mid = self.shortcut(x/2)
         #out = F.relu(out)
 
         i_layer += 1
@@ -138,7 +138,7 @@ class BasicBlockReluFirst(nn.Module):
 
         out = self.bn2(self.conv2(out))
 
-        res_shortcut = x / 2 + out_mid
+        res_shortcut = out_mid + self.shortcut(x / 2)
 
         plot = False
         if plot:
@@ -146,7 +146,7 @@ class BasicBlockReluFirst(nn.Module):
             ax_out.hist(out.view(-1), 50, color='grey')
             ax_shortcut.hist(res_shortcut.view(-1), 50, color='grey')
 
-        out += self.shortcut(x/2 + out_mid)
+        out += res_shortcut
 
         if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
             out[out < 0] = out[out < 0]*0.5
