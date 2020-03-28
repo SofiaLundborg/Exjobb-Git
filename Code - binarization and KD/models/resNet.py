@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from collections import OrderedDict
 from binaryUtils import myConv2d
 import matplotlib.pyplot as plt
+import torch
 
 
 class LambdaLayer(nn.Module):
@@ -100,6 +101,8 @@ class BasicBlockReluFirst(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
+        self.move_average_factor = torch.nn.Parameter(torch.tensor(0.6), requires_grad=True)
+
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
             if option == 'cifar10':
@@ -118,7 +121,12 @@ class BasicBlockReluFirst(nn.Module):
                 return inp
 
         if not self.conv1.conv2d.weight.do_binarize:
+            # x_abs = torch.abs(x)*self.move_average_factor
+            # x_no_relu = x
             x = F.relu(x)
+            x_to_shortcut = x
+        else:
+            x_to_shortcut = torch.abs(x)*self.move_average_factor
 
         out = self.bn1(self.conv1(x))
 
@@ -126,10 +134,10 @@ class BasicBlockReluFirst(nn.Module):
             out = F.relu(out)
 
         if self.conv2.conv2d.weight.do_binarize:
-            out_mid = out/2
+            out_mid = out
         else:
             out_mid = self.shortcut(x)/2
-        #out = F.relu(out)
+        # out = F.relu(out)
 
         i_layer += 1
         if cut_network:
@@ -138,24 +146,47 @@ class BasicBlockReluFirst(nn.Module):
 
         out = self.bn2(self.conv2(out))
 
-        res_shortcut = out_mid + self.shortcut(x)/2
+        res_shortcut = out_mid + self.shortcut(x_to_shortcut)/2
+        # res_shortcut_abs = out_mid_abs + self.shortcut(x_abs)/2
+        # res_shortcut_no_relu = out_mid + self.shortcut(x_no_relu)
+        i_layer += 1
 
-        plot = False
-        if plot:
-            fig, (ax_shortcut, ax_out, ax_combined) = plt.subplots(1, 3, figsize=(12, 3))
-            ax_out.hist(out.view(-1), 50, color='grey')
-            ax_shortcut.hist(res_shortcut.view(-1), 50, color='grey')
 
+        # if i_layer == 7:
+        #     plot = False
+        # else:
+        #     plot = False
+        # if plot:
+        #     fig, (ax_shortcut, ax_out, ax_combined) = plt.subplots(1, 3, figsize=(11, 3))
+        #     ax_shortcut.set_title('Shortcut')
+        #     ax_out.set_title('Output before addition')
+        #     ax_combined.set_title('Output after addition')
+        #
+        #     alpha = 0.25
+        #     color = 'black'
+        #     color_abs = 'green'
+        #     color_no_relu = 'blue'
+        #     ax_out.hist(out.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
+        #     ax_shortcut.hist(res_shortcut_abs.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_abs, label='abs*0.6')
+        #     ax_shortcut.hist(res_shortcut.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
+        #     ax_shortcut.hist(res_shortcut_no_relu.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_no_relu, label='none')
+        #     ax_shortcut.legend(frameon=False)
+
+        # out_abs = out + res_shortcut_abs
+        # out_no_relu = out + res_shortcut_no_relu
+        #out_abs[out_abs > 0] = out_abs[out_abs > 0]
         out += res_shortcut
 
-        if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
-            out[out < 0] = out[out < 0]*0.5
+        #if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
+        #    out[out < 0] = out[out < 0]*0.5
 
-        if plot:
-            ax_combined.hist(out.view(-1), 50, color='grey')
-            plt.show()
+        # if plot:
+        #     ax_combined.hist(out.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
+        #     ax_combined.hist(out_abs.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_abs, label='abs*0.6')
+        #     ax_combined.hist(out_no_relu.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_no_relu, label='none')
+        #     ax_combined.legend(frameon=False)
+        #     plt.show()
 
-        i_layer += 1
         if cut_network:
             if cut_network == i_layer:
                 return [out, i_layer, feature_layers_to_extract, features, cut_network]

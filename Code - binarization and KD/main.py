@@ -21,13 +21,13 @@ def load_data():
 
     if torch.cuda.is_available():
         batch_size_training = 512
-        batch_size_validation = 1024
+        batch_size_validation = 512
     else:
         batch_size_training = 4
         batch_size_validation = 4
 
-    #normalizing_mean = [0.4914, 0.4822, 0.4465]
-    #normalizing_std = [0.2470, 0.2435, 0.2616]
+    # normalizing_mean = [0.4914, 0.4822, 0.4465]
+    # normalizing_std = [0.2470, 0.2435, 0.2616]
 
     transform_train = transforms.Compose([
             transforms.RandomHorizontalFlip(),
@@ -49,8 +49,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
-    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
+    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
+    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -176,7 +176,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
 
     title_loss = 'LIT with double shortcut - loss, ' + str(student_net.net_type)
     title_accuracy = 'LIT with double shortcut - accuracy, ' + str(student_net.net_type)
-    filename = 'LIT_with_double_shortcut__' + str(student_net.net_type)
+    filename = 'LIT_with_double_shortcut_distribution_scaling' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -234,7 +234,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        if epoch == 60:
+        if epoch == 600:
             lit = False
             lr = 0.001
             for param_group in optimizer.param_groups:
@@ -496,6 +496,8 @@ def main():
 
 
     teatcher_res = teacher_net(sample)
+
+    acc_teacher = calculate_accuracy(train_loader, teacher_net)
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)
