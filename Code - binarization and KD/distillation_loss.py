@@ -18,7 +18,7 @@ class Loss(nn.Module):
             self.mse_loss = self.mse_loss.cuda()
             self.ce_loss = self.ce_loss.cuda()
 
-    def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, lit_training=False, input_from_teacher=False, cut_network=None, training=True):
+    def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, lit_training=False, input_from_teacher=False, cut_network=None, training=True, training_c = False):
 
         if cut_network:
             output_student = student_net(inputs, intermediate_layers, cut_network)
@@ -52,6 +52,8 @@ class Loss(nn.Module):
 
             return total_loss
 
+
+
         if intermediate_layers:
             features_student, output_student = student_net(inputs, intermediate_layers, cut_network)
         else:
@@ -59,7 +61,7 @@ class Loss(nn.Module):
         if teacher_net:
             if intermediate_layers:
                 teacher_net.eval()
-                while torch.no_grad():
+                with torch.no_grad():
                     features_teacher, output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
             else:
                 output_teacher = teacher_net(inputs, intermediate_layers, cut_network)
@@ -155,3 +157,38 @@ class KdLoss(nn.Module):
         # loss.extra['soft_kl_divergence_std'] = soft_kl_divergence.std().data[0]
 
         return loss
+
+
+class Loss_c(nn.Module):
+    def __init__(self, scaling_factor_total):
+        super(Loss_c, self).__init__()
+
+        self.beta = scaling_factor_total
+        self.mse_loss = torch.nn.MSELoss()
+        self.ce_loss = nn.CrossEntropyLoss()
+
+        if torch.cuda.is_available():
+            self.mse_loss = self.mse_loss.cuda()
+            self.ce_loss = self.ce_loss.cuda()
+
+    def forward(self, input, target, student_net, teacher_net, cut_network=None, training=True):
+
+        with torch.no_grad():
+            teacher_net.eval()
+            output_teacher_ir = teacher_net(input, cut_network=cut_network)
+
+        if training:
+            student_net.train()
+            output_student_ir = student_net(input, cut_network=cut_network)
+            output_student = student_net(input)
+        else:
+            with torch.no_grad():
+                output_student_ir = student_net(input, cut_network=cut_network)
+                output_student = student_net(input)
+
+        ir_loss = self.mse_loss(output_student_ir, output_teacher_ir)
+        hard_loss = self.ce_loss(output_student, target)
+
+        total_loss = ir_loss * self.beta + (1 - self.beta) * hard_loss
+
+        return total_loss
