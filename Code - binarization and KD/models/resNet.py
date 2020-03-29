@@ -127,6 +127,8 @@ class BasicBlockReluFirst(nn.Module):
             x_to_shortcut = x
         else:
             x_to_shortcut = torch.abs(x)
+            # x = F.relu(x)
+            # x_to_shortcut = x
 
         out = self.bn1(self.conv1(x))
 
@@ -134,10 +136,10 @@ class BasicBlockReluFirst(nn.Module):
             out = F.relu(out)
 
         if self.conv2.conv2d.weight.do_binarize:
-            out_mid = torch.abs(out/2)
+            # out_mid = torch.abs(out)/2
             out_mid = self.shortcut(x_to_shortcut)/2
         else:
-            out_mid = self.shortcut(x)/2
+            out_mid = self.shortcut(x_to_shortcut)/2
             #out_mid = torch.abs(out/2)
 
         i_layer += 1

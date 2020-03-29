@@ -164,7 +164,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
 
     temperature_kd = 6
     scaling_factor_kd = 0.95        # LIT 0.95
-    scaling_factor_total = 0.75     # LIT 0.75
+    scaling_factor_total = 0     # LIT 0.75
 
     title_loss = 'Loss Lit, ' + str(student_net.net_type)
     filename = 'lit_' + str(student_net.net_type)
@@ -208,10 +208,10 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
 
     for epoch in range(max_epochs):
         running_loss = 0
-        if lit and (epoch <= 0):
-            for p in list(student_net.parameters()):
-                p.requires_grad = True
-            set_layers_to_train_mode(student_net, layers_to_train)
+        if lit and (epoch <= 1000):
+            # for p in list(student_net.parameters()):
+            #     p.requires_grad = True
+            set_layers_to_update(student_net, layers_to_train)
         else:
             student_net.train()
             for p in list(student_net.parameters()):
@@ -494,8 +494,30 @@ def main():
     set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
 
+    binarize_weights(student_net)
 
-    teatcher_res = teacher_net(sample)
+    with torch.no_grad():
+        teacher_res = teacher_net(sample, cut_network=7)
+        student_res = student_net(sample, cut_network=7)
+
+        fig, ax = plt.subplots(1, 3)
+        ax[0].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+        ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+
+        teacher_res = teacher_net(sample, cut_network=13)
+        student_res = student_net(sample, cut_network=13)
+        ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+        ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+
+        teacher_res = teacher_net(sample, cut_network=19)
+        student_res = student_net(sample, cut_network=19)
+        ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+        ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+
+        plt.show()
+
+
+    print('student net')
 
     acc_teacher = calculate_accuracy(train_loader, teacher_net)
 
