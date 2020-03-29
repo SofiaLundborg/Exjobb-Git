@@ -176,7 +176,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
 def finetuning(net, train_loader, validation_loader, max_epochs):
 
-    student_dict = torch.load('./Trained_Models/method_c_one_shortcut_distribution_scalingXnor++20200329.pth',
+    student_dict = torch.load('./Trained_Models/method_c_one_shortcut_distribution_scalingXnor++_20200329.pth',
                               map_location=get_device())
     net.load_state_dict(student_dict)
 
