@@ -183,7 +183,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, max_ep
     scaling_factor_total = 0.5
 
     layers = ['layer1', 'layer2', 'layer3', 'all']
-    max_epoch_layer = 50
+    max_epoch_layer = 40
 
     criterion = distillation_loss.Loss_c(scaling_factor_total)
     if torch.cuda.is_available():
@@ -220,7 +220,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, max_ep
             else:
                 set_layers_to_update(student_net, layers[:layer_idx+1])
 
-            learning_rate_change = [20, 30, 40]
+            learning_rate_change = [20, 25, 30]
             if epoch in learning_rate_change:
                 lr = lr * 0.1
                 for param_group in optimizer.param_groups:
