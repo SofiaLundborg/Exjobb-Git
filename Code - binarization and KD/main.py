@@ -158,8 +158,8 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 
 def training_a(student_net, teacher_net, train_loader, validation_loader):
 
-    title_loss = 'method a) - loss, ' + str(student_net.net_type)
-    title_accuracy = 'method a) - accuracy, ' + str(student_net.net_type)
+    title_loss = 'method b) - loss, ' + str(student_net.net_type)
+    title_accuracy = 'method b) - accuracy, ' + str(student_net.net_type)
     filename = 'method_a_one_shortcut_distribution_scaling_finetuning' + str(student_net.net_type)
 
     layers = ['layer1', 'layer2', 'layer3']
@@ -176,13 +176,13 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
 def finetuning(net, train_loader, validation_loader, max_epochs):
 
-    student_dict = torch.load('./Trained_Models/method_c_one_shortcut_distribution_scalingXnor++_20200329.pth',
+    student_dict = torch.load('./Trained_Models/LIT_with_one_shortcut_distribution_scalingXnor++_20200329.pth',
                               map_location=get_device())
     net.load_state_dict(student_dict)
 
-    title_loss = 'method c) - loss, ' + str(net.net_type)
-    title_accuracy = 'method c) - accuracy, ' + str(net.net_type)
-    filename = 'method_c_one_shortcut_distribution_scaling' + str(net.net_type)
+    title_loss = 'method b) - loss, ' + str(net.net_type)
+    title_accuracy = 'method b) - accuracy, ' + str(net.net_type)
+    filename = 'method_b_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
 
     criterion = torch.nn.CrossEntropyLoss()
     if torch.cuda.is_available():
