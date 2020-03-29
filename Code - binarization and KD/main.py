@@ -174,9 +174,9 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=120, t
     title_accuracy = 'CE after LIT with double shortcut - accuracy, ' + str(student_net.net_type)
     filename = 'CE_after_LIT_with_double_shortcut_' + str(student_net.net_type)
 
-    title_loss = 'LIT with one shortcut - loss, ' + str(student_net.net_type)
-    title_accuracy = 'LIT with one shortcut - accuracy, ' + str(student_net.net_type)
-    filename = 'LIT_with_one_shortcut_distribution_scaling' + str(student_net.net_type)
+    title_loss = 'LIT with two shortcut - loss, ' + str(student_net.net_type)
+    title_accuracy = 'LIT with two shortcut - accuracy, ' + str(student_net.net_type)
+    filename = 'beta0_LIT_with_two_shortcut_distribution_scaling' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
