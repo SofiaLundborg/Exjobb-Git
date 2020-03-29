@@ -135,7 +135,7 @@ class BasicBlockReluFirst(nn.Module):
 
         if self.conv2.conv2d.weight.do_binarize:
             out_mid = torch.abs(out/2)
-            out_mid = self.shortcut(x)/2
+            out_mid = self.shortcut(x_to_shortcut)/2
         else:
             out_mid = self.shortcut(x)/2
             #out_mid = torch.abs(out/2)
