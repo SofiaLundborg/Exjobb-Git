@@ -160,7 +160,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
     title_loss = 'method a) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method a) - accuracy, ' + str(student_net.net_type)
-    filename = 'method_a_one_shortcut_distribution_scaling' + str(student_net.net_type)
+    filename = 'method_a_one_shortcut_distribution_scaling_finetuning' + str(student_net.net_type)
 
     layers = ['layer1', 'layer2', 'layer3']
 
@@ -173,6 +173,111 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
         set_layers_to_binarize(student_net, layer)
         set_layers_to_update(student_net, layer)
 
+
+def finetuning(net, train_loader, validation_loader, max_epochs):
+
+    student_dict = torch.load('./Trained_Models/method_c_one_shortcut_distribution_scalingXnor++20200329.pth',
+                              map_location=get_device())
+    net.load_state_dict(student_dict)
+
+    title_loss = 'method c) - loss, ' + str(net.net_type)
+    title_accuracy = 'method c) - accuracy, ' + str(net.net_type)
+    filename = 'method_c_one_shortcut_distribution_scaling' + str(net.net_type)
+
+    criterion = torch.nn.CrossEntropyLoss()
+    if torch.cuda.is_available():
+        criterion = criterion.cuda()
+    device = get_device()
+
+    lr = 0.01
+    weight_decay = 0  # 0.00001
+    optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
+
+    fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
+
+    train_loss = np.empty(max_epochs)
+    validation_loss = np.empty(max_epochs)
+    train_accuracy = np.empty(max_epochs)
+    validation_accuracy = np.empty(max_epochs)
+    best_validation_loss = np.inf
+    best_epoch = 0
+
+    for epoch in range(max_epochs):
+
+        net.train()
+        for p in list(net.parameters()):
+            p.requires_grad = True
+
+        learning_rate_change = [20, 30, 40]
+        if epoch in learning_rate_change:
+            lr = lr * 0.1
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
+
+        running_loss = 0
+        for i, data in enumerate(train_loader, 0):
+            inputs, targets = data
+
+            # cpu / gpu
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+
+            optimizer.zero_grad()
+            binarize_weights(net)
+
+            total_loss = criterion(net(inputs), targets)
+
+            total_loss.backward(retain_graph=True)  # calculate loss
+            running_loss += total_loss.item()
+
+            make_weights_real(net)
+            optimizer.step()
+
+        time.sleep(5)
+
+        training_loss_for_epoch = running_loss / len(train_loader)
+        train_loss[epoch] = training_loss_for_epoch
+
+        running_validation_loss = 0
+        binarize_weights(net)
+        for i, data in enumerate(validation_loader, 0):
+            inputs, targets = data
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+            running_validation_loss += criterion(net(inputs), targets).item()
+
+        validation_loss_for_epoch = running_validation_loss / len(validation_loader)
+        validation_loss[epoch] = validation_loss_for_epoch
+
+        accuracy_train_epoch = calculate_accuracy(train_loader, net)
+        accuracy_validation_epoch = calculate_accuracy(validation_loader, net)
+        train_accuracy[epoch] = accuracy_train_epoch
+        validation_accuracy[epoch] = accuracy_validation_epoch
+        make_weights_real(net)
+
+        plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=filename, title=title_loss)
+        plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename, title=title_accuracy)
+
+        torch.save(validation_loss[:epoch + 1], './Results/validation_loss_' + filename + '.pt')
+        torch.save(train_loss[:epoch + 1], './Results/train_loss_' + filename + '.pt')
+        torch.save(validation_accuracy[:epoch + 1], './Results/validation_accuracy_' + filename + '.pt')
+        torch.save(train_accuracy[:epoch + 1], './Results/train_accuracy_' + filename + '.pt')
+
+        if validation_loss_for_epoch < best_validation_loss:
+            # save network
+            PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+            torch.save(net.state_dict(), PATH)
+            best_validation_loss = validation_loss_for_epoch
+            best_epoch = epoch
+
+        print('Epoch: ' + str(epoch))
+        print('Best epoch: ' + str(best_epoch))
+        print('Loss on train images: ' + str(training_loss_for_epoch))
+        print('Loss on validation images: ' + str(validation_loss_for_epoch))
+        print('Accuracy on train images: %d %%' % accuracy_train_epoch)
+        print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
+
+        time.sleep(5)
 
 
 def training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200):
@@ -670,7 +775,9 @@ def main():
     # train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
     # lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net)
 
-    training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
+    finetuning(student_net, train_loader, validation_loader, 60)
+
+    #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore", message="The PostScript backend does not support transparency; partially "
