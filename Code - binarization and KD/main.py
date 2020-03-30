@@ -180,6 +180,9 @@ def finetuning(net, train_loader, validation_loader, max_epochs):
     #                          map_location=get_device())
     #net.load_state_dict(student_dict)
 
+    layers_to_train = ['layer1', 'layer2', 'layer3']
+    set_layers_to_binarize(net, layers_to_train)
+
     title_loss = 'no method - loss, ' + str(net.net_type)
     title_accuracy = 'no method - accuracy, ' + str(net.net_type)
     filename = 'no_method_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
@@ -735,9 +738,8 @@ def main():
 
     layers_to_train = ['layer1', 'layer2', 'layer3']
     #set_layers_to_binarize(student_net, layers_to_train)
-    #set_layers_to_update(student_net, layers_to_train)
-
-    #binarize_weights(student_net)
+    set_layers_to_update(student_net, layers_to_train)
+    # binarize_weights(student_net)
 
     # with torch.no_grad():
     #     teacher_res = teacher_net(sample, cut_network=7)
