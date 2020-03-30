@@ -183,9 +183,9 @@ def finetuning(net, train_loader, validation_loader, max_epochs):
     layers_to_train = ['layer1', 'layer2', 'layer3']
     set_layers_to_binarize(net, layers_to_train)
 
-    title_loss = 'no method - loss, ' + str(net.net_type)
-    title_accuracy = 'no method - accuracy, ' + str(net.net_type)
-    filename = 'no_method_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
+    title_loss = 'method b - loss, ' + str(net.net_type)
+    title_accuracy = 'method b - accuracy, ' + str(net.net_type)
+    filename = 'method_b_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
 
     criterion = torch.nn.CrossEntropyLoss()
     if torch.cuda.is_available():
