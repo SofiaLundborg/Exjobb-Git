@@ -168,12 +168,17 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
     device = get_device()
 
     layers = ['layer1', 'layer2', 'layer3', 'all']
-    max_epoch_layer = 40
-    max_epochs = max_epoch_layer * 4
+    max_epoch_layer = 30
+    max_epochs = max_epoch_layer * 5
 
     if torch.cuda.is_available():
         criterion = criterion.cuda()
     device = get_device()
+
+    train_loss = np.empty(max_epochs)
+    validation_loss = np.empty(max_epochs)
+    train_accuracy = np.empty(max_epoch_layer)
+    validation_accuracy = np.empty(max_epoch_layer)
 
     for layer_idx, layer in enumerate(layers):
         if layer == 'all':
@@ -188,10 +193,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
         fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
-        train_loss = np.empty(max_epochs)
-        validation_loss = np.empty(max_epochs)
-        train_accuracy = np.empty(max_epoch_layer)
-        validation_accuracy = np.empty(max_epoch_layer)
         best_validation_loss = np.inf
         best_epoch = 0
 
@@ -207,7 +208,10 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
             else:
                 set_layers_to_update(student_net, layers[:layer_idx+1])
 
-            learning_rate_change = [25, 30, 35]
+            learning_rate_change = [15, 20, 25]
+            if layer == 'all':
+                learning_rate_change = [30, 40, 50]
+
             if epoch in learning_rate_change:
                 lr = lr * 0.1
                 for param_group in optimizer.param_groups:

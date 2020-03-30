@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -78,33 +79,33 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="16150" />
+          <entry key="py" value="16257" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="16150" />
+          <entry key="Python" value="16257" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
-              <caret line="896" lean-forward="true" selection-start-line="896" selection-end-line="896" />
+            <state relative-caret-position="280">
+              <caret line="211" column="30" lean-forward="true" selection-start-line="211" selection-start-column="30" selection-end-line="211" selection-end-column="30" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#16365#16447#0" />
                 <element signature="e#16882#17091#0" />
                 <element signature="e#17110#17305#0" />
-                <marker date="1585556343822" expanded="true" signature="380:385" ph="..." />
-                <marker date="1585556343822" expanded="true" signature="11681:15582" ph="..." />
-                <marker date="1585556343822" expanded="true" signature="15672:20619" ph="..." />
-                <marker date="1585556343822" expanded="true" signature="20716:27171" ph="..." />
-                <marker date="1585556343822" expanded="true" signature="31451:31541" ph="..." />
+                <marker date="1585557838556" expanded="true" signature="380:385" ph="..." />
+                <marker date="1585557838556" expanded="true" signature="11961:15862" ph="..." />
+                <marker date="1585557838556" expanded="true" signature="15952:20899" ph="..." />
+                <marker date="1585557838556" expanded="true" signature="20996:27451" ph="..." />
+                <marker date="1585557838556" expanded="true" signature="31731:31821" ph="..." />
               </folding>
             </state>
           </provider>
@@ -124,10 +125,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/resNet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
+            <state relative-caret-position="2390">
               <caret line="180" selection-start-line="180" selection-end-line="180" />
               <folding>
                 <element signature="e#89#110#0" expanded="true" />
@@ -261,11 +262,6 @@
             <path>
               <item name="Code - binarization and KD" type="b2602c69:ProjectViewProjectNode" />
               <item name="Code - binarization and KD" type="462c0819:PsiDirectoryNode" />
-              <item name="Results" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Code - binarization and KD" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Code - binarization and KD" type="462c0819:PsiDirectoryNode" />
               <item name="Trained_Models" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -344,14 +340,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22551093" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22551093" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.2746988" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -391,7 +388,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>768</line>
+          <line>779</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -729,30 +726,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/models/resNet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2390">
+          <caret line="180" selection-start-line="180" selection-end-line="180" />
+          <folding>
+            <element signature="e#89#110#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="896" lean-forward="true" selection-start-line="896" selection-end-line="896" />
+        <state relative-caret-position="280">
+          <caret line="211" column="30" lean-forward="true" selection-start-line="211" selection-start-column="30" selection-end-line="211" selection-end-column="30" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#16365#16447#0" />
             <element signature="e#16882#17091#0" />
             <element signature="e#17110#17305#0" />
-            <marker date="1585556343822" expanded="true" signature="380:385" ph="..." />
-            <marker date="1585556343822" expanded="true" signature="11681:15582" ph="..." />
-            <marker date="1585556343822" expanded="true" signature="15672:20619" ph="..." />
-            <marker date="1585556343822" expanded="true" signature="20716:27171" ph="..." />
-            <marker date="1585556343822" expanded="true" signature="31451:31541" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/resNet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="180" selection-start-line="180" selection-end-line="180" />
-          <folding>
-            <element signature="e#89#110#0" expanded="true" />
+            <marker date="1585557838556" expanded="true" signature="380:385" ph="..." />
+            <marker date="1585557838556" expanded="true" signature="11961:15862" ph="..." />
+            <marker date="1585557838556" expanded="true" signature="15952:20899" ph="..." />
+            <marker date="1585557838556" expanded="true" signature="20996:27451" ph="..." />
+            <marker date="1585557838556" expanded="true" signature="31731:31821" ph="..." />
           </folding>
         </state>
       </provider>
