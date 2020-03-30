@@ -300,16 +300,16 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
 def finetuning(net, train_loader, validation_loader, max_epochs):
 
-    student_dict = torch.load('./Trained_Models/method_a_one_shortcut_distribution_scalingXnor++_20200329.pth',
+    student_dict = torch.load('./Trained_Models/method_a_one_shortcut_distribution_scaling_Xnor++_20200330.pth',
                               map_location=get_device())
     net.load_state_dict(student_dict)
 
     layers_to_train = ['layer1', 'layer2', 'layer3']
     set_layers_to_binarize(net, layers_to_train)
 
-    title_loss = 'method c - loss, ' + str(net.net_type)
-    title_accuracy = 'method c - accuracy, ' + str(net.net_type)
-    filename = 'method_c_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
+    title_loss = 'method a - loss, ' + str(net.net_type)
+    title_accuracy = 'method a - accuracy, ' + str(net.net_type)
+    filename = 'method_a_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
 
     criterion = torch.nn.CrossEntropyLoss()
     if torch.cuda.is_available():
