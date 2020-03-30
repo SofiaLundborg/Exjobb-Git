@@ -300,7 +300,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
 def finetuning(net, train_loader, validation_loader, max_epochs):
 
-    student_dict = torch.load('./Trained_Models/method_c_one_shortcut_distribution_scalingXnor++_20200329.pth',
+    student_dict = torch.load('./Trained_Models/method_a_one_shortcut_distribution_scalingXnor++_20200329.pth',
                               map_location=get_device())
     net.load_state_dict(student_dict)
 
@@ -901,11 +901,11 @@ def main():
     # train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
     # lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net)
 
-    #finetuning(student_net, train_loader, validation_loader, 60)
+    finetuning(student_net, train_loader, validation_loader, 60)
 
     #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
-    training_a(student_net, teacher_net, train_loader, validation_loader)
+    # training_a(student_net, teacher_net, train_loader, validation_loader)
 
 
 if __name__ == '__main__':
