@@ -183,6 +183,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
     for layer_idx, layer in enumerate(layers):
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
+            max_epoch_layer = 60
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         cut_network = 1 + 6 * (layer_idx+1)
