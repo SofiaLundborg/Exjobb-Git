@@ -176,13 +176,13 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
 def finetuning(net, train_loader, validation_loader, max_epochs):
 
-    student_dict = torch.load('./Trained_Models/LIT_with_one_shortcut_distribution_scalingXnor++_20200329.pth',
-                              map_location=get_device())
-    net.load_state_dict(student_dict)
+    #student_dict = torch.load('./Trained_Models/LIT_with_one_shortcut_distribution_scalingXnor++_20200329.pth',
+    #                          map_location=get_device())
+    #net.load_state_dict(student_dict)
 
-    title_loss = 'method b) - loss, ' + str(net.net_type)
-    title_accuracy = 'method b) - accuracy, ' + str(net.net_type)
-    filename = 'method_b_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
+    title_loss = 'no method - loss, ' + str(net.net_type)
+    title_accuracy = 'no method - accuracy, ' + str(net.net_type)
+    filename = 'no_method_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
 
     criterion = torch.nn.CrossEntropyLoss()
     if torch.cuda.is_available():
@@ -208,7 +208,7 @@ def finetuning(net, train_loader, validation_loader, max_epochs):
         for p in list(net.parameters()):
             p.requires_grad = True
 
-        learning_rate_change = [20, 30, 40]
+        learning_rate_change = [30, 40, 50, 60]
         if epoch in learning_rate_change:
             lr = lr * 0.1
             for param_group in optimizer.param_groups:
