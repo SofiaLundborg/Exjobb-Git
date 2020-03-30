@@ -176,9 +176,9 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
 def finetuning(net, train_loader, validation_loader, max_epochs):
 
-    #student_dict = torch.load('./Trained_Models/LIT_with_one_shortcut_distribution_scalingXnor++_20200329.pth',
-    #                          map_location=get_device())
-    #net.load_state_dict(student_dict)
+    student_dict = torch.load('./Trained_Models/LIT_with_one_shortcut_distribution_scalingXnor++_20200329.pth',
+                              map_location=get_device())
+    net.load_state_dict(student_dict)
 
     layers_to_train = ['layer1', 'layer2', 'layer3']
     set_layers_to_binarize(net, layers_to_train)
