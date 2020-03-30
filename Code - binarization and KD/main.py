@@ -158,9 +158,9 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
 
 def training_a(student_net, teacher_net, train_loader, validation_loader):
 
-    title_loss = 'method b) - loss, ' + str(student_net.net_type)
-    title_accuracy = 'method b) - accuracy, ' + str(student_net.net_type)
-    filename = 'method_a_one_shortcut_distribution_scaling_finetuning' + str(student_net.net_type)
+    title_loss = 'method a) - loss, ' + str(student_net.net_type)
+    title_accuracy = 'method a) - accuracy, ' + str(student_net.net_type)
+    filename = 'method_a_one_shortcut_distribution_scaling_' + str(student_net.net_type)
 
     criterion = torch.nn.MSELoss()
     if torch.cuda.is_available():
@@ -241,7 +241,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
                 make_weights_real(student_net)
                 optimizer.step()
 
-            time.sleep(5)
+            # time.sleep(5)
 
             training_loss_for_epoch = running_loss / len(train_loader)
             train_loss[total_epoch] = training_loss_for_epoch
