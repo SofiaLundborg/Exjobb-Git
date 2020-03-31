@@ -920,28 +920,28 @@ def main():
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
-    layers_to_train = ['layer1', 'layer2', 'layer3']
-    set_layers_to_binarize(student_net, layers_to_train)
-    set_layers_to_update(student_net, layers_to_train)
-    binarize_weights(student_net)
-
-    with torch.no_grad():
-        teacher_res = teacher_net(sample, cut_network=7)
-        student_res = student_net(sample, cut_network=7)
-
-        fig, ax = plt.subplots(1, 3)
-        ax[0].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-        ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
-
-        teacher_res = teacher_net(sample, cut_network=13)
-        student_res = student_net(sample, cut_network=13)
-        ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-        ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
-
-        teacher_res = teacher_net(sample, cut_network=19)
-        student_res = student_net(sample, cut_network=19)
-        ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-        ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+    # layers_to_train = ['layer1', 'layer2', 'layer3']
+    # set_layers_to_binarize(student_net, layers_to_train)
+    # set_layers_to_update(student_net, layers_to_train)
+    # binarize_weights(student_net)
+    #
+    # with torch.no_grad():
+    #     teacher_res = teacher_net(sample, cut_network=7)
+    #     student_res = student_net(sample, cut_network=7)
+    #
+    #     fig, ax = plt.subplots(1, 3)
+    #     ax[0].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+    #     ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+    #
+    #     teacher_res = teacher_net(sample, cut_network=13)
+    #     student_res = student_net(sample, cut_network=13)
+    #     ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+    #     ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+    #
+    #     teacher_res = teacher_net(sample, cut_network=19)
+    #     student_res = student_net(sample, cut_network=19)
+    #     ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+    #     ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
 
         #plt.show()
 
