@@ -943,7 +943,7 @@ def main():
         ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
         ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
 
-        plt.show()
+        #plt.show()
 
     acc_teacher = calculate_accuracy(train_loader, teacher_net)
     print(acc_teacher)
