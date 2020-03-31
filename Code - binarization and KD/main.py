@@ -175,6 +175,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
         criterion = criterion.cuda()
     device = get_device()
 
+    teacher_net.eval()
+
     train_loss = np.empty(max_epochs)
     validation_loss = np.empty(max_epochs)
     train_accuracy = np.empty(max_epoch_layer)
