@@ -49,8 +49,8 @@ def load_data():
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
-    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
+    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
+    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -524,6 +524,66 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, max_ep
             time.sleep(5)
 
 
+def test_heatmap(student_net, teacher_net, train_loader):
+
+    student_dict = torch.load('./Trained_Models/' + 'method_a_one_shortcut_distribution_scaling_Xnor++_20200330.pth',
+                              map_location=get_device())
+    student_net.load_state_dict(student_dict)
+
+    cut_network = 19
+
+    student_net.eval()
+    teacher_net.eval()
+
+    layers_to_train = ['layer1', 'layer2', 'layer3']
+
+    set_layers_to_binarize(student_net, layers_to_train)
+    set_layers_to_update(student_net, layers_to_train)
+    binarize_weights(student_net)
+
+    loss_mse = torch.nn.MSELoss()
+
+    for i, data in enumerate(train_loader, 0):
+        inputs, targets = data
+
+        with torch.no_grad():
+            student_output = student_net(inputs, cut_network=cut_network)
+            teacher_output = teacher_net(inputs, cut_network=cut_network)
+
+        student_feature_map = student_output.numpy()
+        teacher_feature_map = teacher_output.numpy()
+
+        diff = student_feature_map - teacher_feature_map
+
+        fig, ax = plt.subplots(3, 4)
+
+        ax[0, 0].imshow(student_feature_map[0, 0, :, :])
+        ax[1, 0].imshow(teacher_feature_map[0, 0, :, :])
+        ax[2, 0].imshow(diff[0, 0, :, :])
+        ax[0, 1].imshow(student_feature_map[0, 1, :, :])
+        ax[1, 1].imshow(teacher_feature_map[0, 1, :, :])
+        ax[2, 1].imshow(diff[0, 1, :, :])
+        ax[0, 2].imshow(student_feature_map[0, 2, :, :])
+        ax[1, 2].imshow(teacher_feature_map[0, 2, :, :])
+        ax[2, 2].imshow(diff[0, 2, :, :])
+
+        im03 = ax[0, 3].imshow(student_feature_map[0, 3, :, :])
+        im13 = ax[1, 3].imshow(teacher_feature_map[0, 3, :, :])
+        im23 = ax[2, 3].imshow(diff[0, 3, :, :])
+
+
+        fig.colorbar(im03, ax=ax[0, :])
+        fig.colorbar(im13, ax=ax[1, :])
+        fig.colorbar(im23, ax=ax[2, :])
+
+
+
+        loss = loss_mse(student_output, teacher_output)
+        print(loss)
+
+        plt.show()
+
+
 
 
 def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None):
@@ -861,34 +921,32 @@ def main():
     sample = get_one_sample(train_loader).to(device)
 
     layers_to_train = ['layer1', 'layer2', 'layer3']
-    #set_layers_to_binarize(student_net, layers_to_train)
+    set_layers_to_binarize(student_net, layers_to_train)
     set_layers_to_update(student_net, layers_to_train)
-    # binarize_weights(student_net)
+    binarize_weights(student_net)
 
-    # with torch.no_grad():
-    #     teacher_res = teacher_net(sample, cut_network=7)
-    #     student_res = student_net(sample, cut_network=7)
-    #
-    #     fig, ax = plt.subplots(1, 3)
-    #     ax[0].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-    #     ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
-    #
-    #     teacher_res = teacher_net(sample, cut_network=13)
-    #     student_res = student_net(sample, cut_network=13)
-    #     ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-    #     ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
-    #
-    #     teacher_res = teacher_net(sample, cut_network=19)
-    #     student_res = student_net(sample, cut_network=19)
-    #     ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-    #     ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
-    #
-    #     #plt.show()
+    with torch.no_grad():
+        teacher_res = teacher_net(sample, cut_network=7)
+        student_res = student_net(sample, cut_network=7)
 
+        fig, ax = plt.subplots(1, 3)
+        ax[0].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+        ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
 
-    print('student net')
+        teacher_res = teacher_net(sample, cut_network=13)
+        student_res = student_net(sample, cut_network=13)
+        ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+        ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+
+        teacher_res = teacher_net(sample, cut_network=19)
+        student_res = student_net(sample, cut_network=19)
+        ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
+        ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+
+        plt.show()
 
     acc_teacher = calculate_accuracy(train_loader, teacher_net)
+    print(acc_teacher)
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)
@@ -901,12 +959,13 @@ def main():
     # train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
     # lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net)
 
-    finetuning(student_net, train_loader, validation_loader, 60)
+    #finetuning(student_net, train_loader, validation_loader, 60)
 
     #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
-    # training_a(student_net, teacher_net, train_loader, validation_loader)
+    training_a(student_net, teacher_net, train_loader, validation_loader)
 
+    # test_heatmap(student_net, teacher_net, train_loader)
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore", message="The PostScript backend does not support transparency; partially "

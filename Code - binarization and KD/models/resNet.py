@@ -101,7 +101,7 @@ class BasicBlockReluFirst(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
-        self.move_average_factor = torch.nn.Parameter(torch.tensor(0.6), requires_grad=True)
+        self.move_average_factor = torch.nn.Parameter(torch.tensor(0.8), requires_grad=True)
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
@@ -149,13 +149,20 @@ class BasicBlockReluFirst(nn.Module):
 
         out = self.bn2(self.conv2(out))
 
-        res_shortcut = (out_mid + self.shortcut(x_to_shortcut)/2) * self.move_average_factor
+        res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
+        res_shortcut = self.shortcut(x_to_shortcut)
+
+        if self.conv2.conv2d.weight.do_binarize:
+            res_shortcut = res_shortcut * self.move_average_factor
+
         # res_shortcut_abs = out_mid_abs + self.shortcut(x_abs)/2
         # res_shortcut_no_relu = out_mid + self.shortcut(x_no_relu)
         i_layer += 1
 
-
-        # if i_layer == 7:
+        #if i_layer == 19:
+        #    fig, ax = plt.subplots()
+        #    ax.hist(res_shortcut.view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='shortcut')
+        #    plt.show()
         #     plot = False
         # else:
         #     plot = False
