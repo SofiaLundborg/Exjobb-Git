@@ -186,6 +186,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
             max_epoch_layer = 60
+            criterion = torch.nn.CrossEntropyLoss()
+
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         cut_network = 1 + 6 * (layer_idx+1)
@@ -231,19 +233,19 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
                 optimizer.zero_grad()
                 binarize_weights(student_net)
 
-                output_student = student_net(inputs, cut_network=cut_network)
-                with torch.no_grad():
-                    output_teacher = teacher_net(inputs, cut_network=cut_network)
-
-                total_loss = criterion(output_student, output_teacher)
+                if layer == 'all':
+                    total_loss = criterion(student_net(inputs), targets)
+                else:
+                    output_student = student_net(inputs, cut_network=cut_network)
+                    with torch.no_grad():
+                        output_teacher = teacher_net(inputs, cut_network=cut_network)
+                    total_loss = criterion(output_student, output_teacher)
 
                 total_loss.backward(retain_graph=True)  # calculate loss
                 running_loss += total_loss.item()
 
                 make_weights_real(student_net)
                 optimizer.step()
-
-            # time.sleep(5)
 
             training_loss_for_epoch = running_loss / len(train_loader)
             train_loss[total_epoch] = training_loss_for_epoch
@@ -255,9 +257,12 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
                 inputs = inputs.to(device)
                 targets = targets.to(device)
                 with torch.no_grad():
-                    output_student = student_net(inputs, cut_network=cut_network)
-                    output_teacher = teacher_net(inputs, cut_network=cut_network)
-                    running_validation_loss += criterion(output_student, output_teacher).item()
+                    if layer == 'all':
+                        running_validation_loss += criterion(student_net(inputs), targets)
+                    else:
+                        output_student = student_net(inputs, cut_network=cut_network)
+                        output_teacher = teacher_net(inputs, cut_network=cut_network)
+                        running_validation_loss += criterion(output_student, output_teacher).item()
 
             validation_loss_for_epoch = running_validation_loss / len(validation_loader)
             validation_loss[total_epoch] = validation_loss_for_epoch
@@ -947,8 +952,8 @@ def main():
 
         #plt.show()
 
-    acc_teacher = calculate_accuracy(train_loader, teacher_net)
-    print(acc_teacher)
+    # acc_teacher = calculate_accuracy(train_loader, teacher_net)
+    # print(acc_teacher)
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)
@@ -965,7 +970,7 @@ def main():
 
     #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
-    # training_a(student_net, teacher_net, train_loader, validation_loader)
+    training_a(student_net, teacher_net, train_loader, validation_loader)
 
     # test_heatmap(student_net, teacher_net, train_loader)
 

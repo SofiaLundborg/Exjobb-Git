@@ -101,7 +101,7 @@ class BasicBlockReluFirst(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
-        self.move_average_factor = torch.nn.Parameter(torch.tensor(0.8), requires_grad=True)
+        self.move_average_factor = torch.nn.Parameter(torch.tensor(1.0), requires_grad=True)
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
