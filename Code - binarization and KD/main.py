@@ -160,7 +160,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
     title_loss = 'method a) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method a) - accuracy, ' + str(student_net.net_type)
-    filename = 'method_a_one_shortcut_distribution_scaling_' + str(student_net.net_type)
+    filename = 'method_a_one_shortcut_distribution_scaling__' + str(student_net.net_type)
 
     criterion = torch.nn.MSELoss()
     if torch.cuda.is_available():
@@ -169,7 +169,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
     layers = ['layer1', 'layer2', 'layer3', 'all']
     max_epoch_layer = 30
-    max_epochs = max_epoch_layer * 5
+    max_epochs = max_epoch_layer * 6
 
     if torch.cuda.is_available():
         criterion = criterion.cuda()
@@ -203,7 +203,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
         for epoch in range(max_epoch_layer):
 
-            total_epoch = epoch + max_epoch_layer*layer_idx
+            total_epoch = epoch + 30*layer_idx
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -533,7 +533,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, max_ep
 
 def test_heatmap(student_net, teacher_net, train_loader):
 
-    student_dict = torch.load('./Trained_Models/' + 'method_a_one_shortcut_distribution_scaling_Xnor++_20200330.pth',
+    student_dict = torch.load('./Trained_Models/' + 'method_a_one_shortcut_distribution_scaling_Xnor++_20200331.pth',
                               map_location=get_device())
     student_net.load_state_dict(student_dict)
 
@@ -573,6 +573,10 @@ def test_heatmap(student_net, teacher_net, train_loader):
         ax[0, 2].imshow(student_feature_map[0, 2, :, :])
         ax[1, 2].imshow(teacher_feature_map[0, 2, :, :])
         ax[2, 2].imshow(diff[0, 2, :, :])
+
+        ax[0, 0].set_ylabel('student')
+        ax[1, 0].set_ylabel('teacher')
+        ax[2, 0].set_ylabel('diff')
 
         im03 = ax[0, 3].imshow(student_feature_map[0, 3, :, :])
         im13 = ax[1, 3].imshow(teacher_feature_map[0, 3, :, :])
@@ -970,9 +974,9 @@ def main():
 
     #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
-    training_a(student_net, teacher_net, train_loader, validation_loader)
+    #training_a(student_net, teacher_net, train_loader, validation_loader)
 
-    # test_heatmap(student_net, teacher_net, train_loader)
+    test_heatmap(student_net, teacher_net, train_loader)
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore", message="The PostScript backend does not support transparency; partially "

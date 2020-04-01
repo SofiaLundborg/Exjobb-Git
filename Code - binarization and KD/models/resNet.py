@@ -149,8 +149,10 @@ class BasicBlockReluFirst(nn.Module):
 
         out = self.bn2(self.conv2(out))
 
-        res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
-        res_shortcut = self.shortcut(x_to_shortcut)
+        if self.conv2.conv2d.weight.do_binarize:
+            res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
+        else:
+            res_shortcut = self.shortcut(x_to_shortcut)
 
         if self.conv2.conv2d.weight.do_binarize:
             res_shortcut = res_shortcut * self.move_average_factor
