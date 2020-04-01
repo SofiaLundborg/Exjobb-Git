@@ -966,7 +966,7 @@ def main():
     # train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
     # lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net)
 
-    finetuning(student_net, train_loader, validation_loader, 60)
+    #finetuning(student_net, train_loader, validation_loader, 60)
 
     #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
