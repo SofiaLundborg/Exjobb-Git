@@ -974,9 +974,9 @@ def main():
 
     #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
-    #training_a(student_net, teacher_net, train_loader, validation_loader)
+    training_a(student_net, teacher_net, train_loader, validation_loader)
 
-    test_heatmap(student_net, teacher_net, train_loader)
+    # test_heatmap(student_net, teacher_net, train_loader)
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore", message="The PostScript backend does not support transparency; partially "
