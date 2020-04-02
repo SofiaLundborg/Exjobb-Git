@@ -167,7 +167,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
     title_loss = 'method a) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method a) - accuracy, ' + str(student_net.net_type)
-    filename = 'method_a_double_shortcut_distribution_scaling__' + str(student_net.net_type)
+    filename = 'method_a_double_shortcut_distribution_scaling_with_relu' + str(student_net.net_type)
 
     criterion = torch.nn.MSELoss()
     if torch.cuda.is_available():

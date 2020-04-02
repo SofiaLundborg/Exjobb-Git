@@ -126,9 +126,10 @@ class BasicBlockReluFirst(nn.Module):
             x = F.relu(x)
             x_to_shortcut = x
         else:
-            x_to_shortcut = torch.abs(x)
+            x = F.relu(x)
+            #x_to_shortcut = torch.abs(x)
             # x = F.relu(x)
-            # x_to_shortcut = x
+            x_to_shortcut = x
 
         out = self.bn1(self.conv1(x))
 
