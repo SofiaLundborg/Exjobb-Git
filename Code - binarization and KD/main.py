@@ -9,12 +9,13 @@ import distillation_loss
 from datetime import datetime
 from matplotlib.lines import Line2D
 import time
+import torchvision.models as models
 
 import dataloaders
 import warnings
 
 
-def load_data():
+def load_data(dataset):
     # Load data
     normalizing_mean = [0.485, 0.456, 0.406]
     normalizing_std = [0.229, 0.224, 0.225]
@@ -39,18 +40,24 @@ def load_data():
             transforms.ToTensor(),
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
 
-    train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                             download=True, transform=transform_train)
-    test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                            download=True, transform=transform_test)
+    if dataset == 'cifar10':
+        train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                                 download=True, transform=transform_train)
+        test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                                download=True, transform=transform_test)
+    elif dataset == 'ImageNet':
+        train_set = torchvision.datasets.ImageNet(root='./data', train=True,
+                                                  download=True, transform=transform_train)
+        test_set = torchvision.datasets.ImageNet(root='./data', train=False,
+                                                 download=True, transform=transform_test)
 
     # divide into train and validation data (80% train)
     train_size = int(0.8 * len(train_set))
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    # train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [50, len(train_set) - 50])
-    # validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
+    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [200, len(train_set) - 200])
+    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -160,7 +167,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
     title_loss = 'method a) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method a) - accuracy, ' + str(student_net.net_type)
-    filename = 'method_a_one_shortcut_distribution_scaling__' + str(student_net.net_type)
+    filename = 'method_a_double_shortcut_distribution_scaling__' + str(student_net.net_type)
 
     criterion = torch.nn.MSELoss()
     if torch.cuda.is_available():
@@ -562,7 +569,7 @@ def test_heatmap(student_net, teacher_net, train_loader):
 
         diff = student_feature_map - teacher_feature_map
 
-        fig, ax = plt.subplots(3, 4)
+        fig, ax = plt.subplots(3, 5)
 
         ax[0, 0].imshow(student_feature_map[0, 0, :, :])
         ax[1, 0].imshow(teacher_feature_map[0, 0, :, :])
@@ -582,12 +589,20 @@ def test_heatmap(student_net, teacher_net, train_loader):
         im13 = ax[1, 3].imshow(teacher_feature_map[0, 3, :, :])
         im23 = ax[2, 3].imshow(diff[0, 3, :, :])
 
-
         fig.colorbar(im03, ax=ax[0, :])
         fig.colorbar(im13, ax=ax[1, :])
         fig.colorbar(im23, ax=ax[2, :])
 
+        layers_to_train = ['layer1', 'layer2', 'layer3']
+        set_layers_to_binarize(student_net, layers_to_train)
+        set_layers_to_update(student_net, layers_to_train)
 
+        with torch.no_grad():
+            teacher_res = teacher_net(inputs, cut_network=19)
+            student_res = student_net(inputs, cut_network=19)
+            ax[0, 4].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher', color='blue')
+            ax[1, 4].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student', color='green')
+            ax[2, 4].hist((student_res - teacher_res).view(-1), bins=50, alpha=0.3, density=True, label='Student', color='red')
 
         loss = loss_mse(student_output, teacher_output)
         print(loss)
@@ -898,17 +913,18 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
     net_type = 'Xnor++'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    dataset = 'cifar10'
     max_epochs = 200
     scaling_factor_total = 0.75     # LIT: 0.75
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
     temperature_kd_loss = 6.0       # LIT: 6.0
 
-    train_loader, validation_loader, test_loader = load_data()
+    train_loader, validation_loader, test_loader = load_data(dataset)
 
     # initailize_networks
-    teacher_net = resNet.resnet_models["cifar"][net_name + 'relufirst']('full_precision')
+    teacher_net = resNet.resnet_models[net_name + 'relufirst']('full_precision', dataset)
 
-    student_net = resNet.resnet_models["cifar"][net_name + 'relufirst'](net_type)
+    student_net = resNet.resnet_models[net_name + 'relufirst'](net_type)
 
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
@@ -925,13 +941,21 @@ def main():
         student_net = student_net.cuda()
 
     trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
-    trained_student_net = resNet.resnet_models["cifar"][net_name]('Xnor++')
+    trained_student_net = resNet.resnet_models[net_name]('Xnor++')
     trained_student_net.load_state_dict(trained_student_checkpoint)
 
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
-    # layers_to_train = ['layer1', 'layer2', 'layer3']
+    #teacher_net_pretrained = models.resnet18(pretrained=True)
+
+    teacher_net.eval()
+
+    acc_teacher = calculate_accuracy(train_loader, teacher_net)
+    print(acc_teacher)
+
+
+    layers_to_train = ['layer1', 'layer2', 'layer3']
     # set_layers_to_binarize(student_net, layers_to_train)
     # set_layers_to_update(student_net, layers_to_train)
     # binarize_weights(student_net)
@@ -956,8 +980,7 @@ def main():
 
         #plt.show()
 
-    # acc_teacher = calculate_accuracy(train_loader, teacher_net)
-    # print(acc_teacher)
+
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)

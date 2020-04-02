@@ -137,10 +137,8 @@ class BasicBlockReluFirst(nn.Module):
 
         if self.conv2.conv2d.weight.do_binarize:
             # out_mid = torch.abs(out)/2
-            out_mid = self.shortcut(x_to_shortcut)/2
-        else:
-            out_mid = self.shortcut(x_to_shortcut)/2
-            #out_mid = torch.abs(out/2)
+            # out_mid = self.shortcut(x_to_shortcut)/2
+            out_mid = out
 
         i_layer += 1
         if cut_network:
@@ -150,9 +148,12 @@ class BasicBlockReluFirst(nn.Module):
         out = self.bn2(self.conv2(out))
 
         if self.conv2.conv2d.weight.do_binarize:
-            res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
+            # res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
+            res_shortcut = self.shortcut(x_to_shortcut)
         else:
             res_shortcut = self.shortcut(x_to_shortcut)
+            #res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
+
 
         if self.conv2.conv2d.weight.do_binarize:
             res_shortcut = res_shortcut * self.move_average_factor
@@ -187,7 +188,19 @@ class BasicBlockReluFirst(nn.Module):
         # out_abs = out + res_shortcut_abs
         # out_no_relu = out + res_shortcut_no_relu
         #out_abs[out_abs > 0] = out_abs[out_abs > 0]
-        out += res_shortcut
+
+        if self.conv2.conv2d.weight.do_binarize:
+            # plt.hist(out.view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='before', color='green')
+            # plt.hist(((out/2 + out_mid/2)*2).view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='before', color='blue')
+            # plt.hist(out_mid.view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='before', color='red')
+
+
+            out = res_shortcut + out + out_mid
+
+        else:
+            out += res_shortcut
+
+
 
         #if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
         #    out[out < 0] = out[out < 0]*0.5
@@ -344,7 +357,7 @@ class ResNetReluFirst(nn.Module):
         if dataset == "cifar10":
             num_classes = 10
             input_size = [32]
-        elif dataset == "imagenet":
+        elif dataset == "ImageNet":
             num_classes = 1000
             input_size = [224]
 
@@ -357,7 +370,7 @@ class ResNetReluFirst(nn.Module):
             self.layer4 = None
         else:
             self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
-            self.conv1 = nn.Conv2d(3, ip, kernel_size=7, stride=2, padding=3, bias=False)
+            self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, bias=False)
             self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
             self.layer4 = self._make_layer(block, ip * 8, layers[3], input_size, stride=2)
             self.avgpool = nn.AvgPool2d(7, stride=1)
@@ -476,11 +489,13 @@ class ResNet(nn.Module):
             self.conv1 = myConv2d(3, ip, input_size, kernel_size=3, stride=1, padding=1, net_type=net_type, bias=False)
             self.layer4 = None
         else:
+            input_size_at_start = input_size
             self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
             self.conv1 = nn.Conv2d(3, ip, kernel_size=7, stride=2, padding=3, bias=False)
             self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-            self.layer4 = self._make_layer(block, ip * 8, layers[3], input_size, stride=2)
+            self.layer4 = self._make_layer(block, ip * 8, 4, layers[3], stride=2, net_type=net_type)
             self.avgpool = nn.AvgPool2d(7, stride=1)
+            input_size = input_size_at_start
 
         self.layer1 = self._make_layer(block, ip, input_size, layers[0], stride=1, net_type=net_type)
         self.layer2 = self._make_layer(block, ip * 2, input_size, layers[1], stride=2, net_type=net_type)
@@ -568,10 +583,10 @@ class ResNet(nn.Module):
 
 class CifarModel():
     @staticmethod
-    def resnet20(net_type, **kwargs):
-        return ResNet(BasicBlock, [3, 3, 3], net_type, **kwargs)
+    def resnet20(net_type, dataset='cifar10', **kwargs):
+        return ResNet(BasicBlock, [3, 3, 3], net_type, dataset, **kwargs)
     @staticmethod
-    def resnet20relufirst(net_type, **kwargs):
+    def resnet20relufirst(net_type, dataset='cifar10', **kwargs):
         return ResNetReluFirst(BasicBlockReluFirst, [3, 3, 3], net_type, **kwargs)
     @staticmethod
     def resnet32(net_type, **kwargs):
@@ -591,7 +606,6 @@ class CifarModel():
 
 
 resnet_models = {
-    "cifar": {
         "resnet20": CifarModel.resnet20,
         "resnet20relufirst": CifarModel.resnet20relufirst,
         "resnet32": CifarModel.resnet32,
@@ -599,7 +613,6 @@ resnet_models = {
         "resnet56": CifarModel.resnet56,
         "resnet110": CifarModel.resnet110,
         "resnet1202": CifarModel.resnet1202
-    },
 }
 
 
