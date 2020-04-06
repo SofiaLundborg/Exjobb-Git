@@ -121,10 +121,10 @@ class BasicBlockReluFirst(nn.Module):
                 return inp
 
         if not self.conv1.conv2d.weight.do_binarize:
-            # x_abs = torch.abs(x)*self.move_average_factor
+            x_abs = torch.abs(x)*self.move_average_factor
             # x_no_relu = x
-            x = F.relu(x)
-            x_to_shortcut = x
+            #x = F.relu(x)
+            x_to_shortcut = x_abs
         else:
             x = F.relu(x)
             #x_to_shortcut = torch.abs(x)
