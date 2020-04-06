@@ -1016,6 +1016,8 @@ def main():
     filename = 'method_a_naive_block_' + str(net_type)
     student_net = resNet.resnet_models['resnet20Naive'](net_type)
     student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_naive_block_finetuning_' + str(net_type)
     finetuning(student_net, train_loader, validation_loader, 60, path, filename)
@@ -1023,6 +1025,8 @@ def main():
     filename = 'method_a_with_relu_block' + str(net_type)
     student_net = resNet.resnet_models['resnet20WithRelu'](net_type)
     student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_with_relu_block_finetuning_' + str(net_type)
     finetuning(student_net, train_loader, validation_loader, 60, path, filename)
@@ -1030,6 +1034,8 @@ def main():
     filename = 'method_a_with_abs_block' + str(net_type)
     student_net = resNet.resnet_models['resnet20Abs'](net_type)
     student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_with_abs_block_finetuning_' + str(net_type)
     finetuning(student_net, train_loader, validation_loader, 60, path, filename)
@@ -1037,6 +1043,8 @@ def main():
     filename = 'method_a_with_double_shortcut_block' + str(net_type)
     student_net = resNet.resnet_models['resnet20AbsDoubleShortcut'](net_type)
     student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_with_double_shortcut_block_finetuning_' + str(net_type)
     finetuning(student_net, train_loader, validation_loader, 60, path, filename)
