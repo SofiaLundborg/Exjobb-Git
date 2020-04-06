@@ -315,7 +315,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
             time.sleep(5)
 
-            return PATH
+    return PATH
 
 
 def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None):
