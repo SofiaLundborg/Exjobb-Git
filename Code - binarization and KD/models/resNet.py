@@ -8,7 +8,7 @@ from collections import OrderedDict
 from binaryUtils import myConv2d
 import matplotlib.pyplot as plt
 import torch
-
+import math
 
 class LambdaLayer(nn.Module):
     def __init__(self, lambd):
@@ -120,10 +120,11 @@ class BasicBlockReluFirst(nn.Module):
             if i_layer > cut_network:
                 return inp
 
-        if not self.conv1.conv2d.weight.do_binarize:
+        if self.conv1.conv2d.weight.do_binarize:
             x_abs = torch.abs(x)*self.move_average_factor
             # x_no_relu = x
-            #x = F.relu(x)
+            # x = F.relu(x)
+
             x_to_shortcut = x_abs
         else:
             x = F.relu(x)
@@ -196,7 +197,8 @@ class BasicBlockReluFirst(nn.Module):
             # plt.hist(out_mid.view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='before', color='red')
 
 
-            out = res_shortcut + out + out_mid
+            # out = res_shortcut + out + out_mid
+            out = res_shortcut + out
 
         else:
             out += res_shortcut
@@ -212,6 +214,293 @@ class BasicBlockReluFirst(nn.Module):
         #     ax_combined.hist(out_no_relu.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_no_relu, label='none')
         #     ax_combined.legend(frameon=False)
         #     plt.show()
+
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        if feature_layers_to_extract:
+            if i_layer in feature_layers_to_extract:
+                features[i_layer] = out.detach()
+
+        return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+
+class BasicBlockNaive(nn.Module):
+    """An implementation of a basic residual block
+       Args:
+           inplanes (int): input channels
+           planes (int): output channels
+           stride (int): filter stride (default is 1)
+    """
+    expansion = 1
+
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+        super(BasicBlockNaive, self).__init__()
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.out_size = planes
+
+        self.move_average_factor = torch.nn.Parameter(torch.tensor(1.0), requires_grad=True)
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != planes:
+            if option == 'cifar10':
+                self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     nn.BatchNorm2d(self.expansion * planes)
+                )
+
+    def forward(self, inp):
+        x, i_layer, feature_layers_to_extract, features, cut_network = inp
+
+        if cut_network:
+            if i_layer > cut_network:
+                return inp
+
+        if self.conv1.conv2d.weight.do_binarize:
+            x_to_shortcut = x
+        else:
+            x = F.relu(x)
+            x_to_shortcut = x
+
+        out = self.bn1(self.conv1(x))
+
+        if not self.conv2.conv2d.weight.do_binarize:
+            out = F.relu(out)
+
+        i_layer += 1
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        out = self.bn2(self.conv2(out))
+
+        res_shortcut = self.shortcut(x_to_shortcut)
+
+        i_layer += 1
+
+        out += res_shortcut
+
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        if feature_layers_to_extract:
+            if i_layer in feature_layers_to_extract:
+                features[i_layer] = out.detach()
+
+        return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+
+class BasicBlockWithRelu(nn.Module):
+    """An implementation of a basic residual block
+       Args:
+           inplanes (int): input channels
+           planes (int): output channels
+           stride (int): filter stride (default is 1)
+    """
+    expansion = 1
+
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+        super(BasicBlockWithRelu, self).__init__()
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.out_size = planes
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != planes:
+            if option == 'cifar10':
+                self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     nn.BatchNorm2d(self.expansion * planes)
+                )
+
+    def forward(self, inp):
+        x, i_layer, feature_layers_to_extract, features, cut_network = inp
+
+        if cut_network:
+            if i_layer > cut_network:
+                return inp
+
+        if self.conv1.conv2d.weight.do_binarize:
+            x_to_shortcut = F.relu(x)
+        else:
+            x = F.relu(x)
+            x_to_shortcut = x
+
+        out = self.bn1(self.conv1(x))
+
+        if not self.conv2.conv2d.weight.do_binarize:
+            out = F.relu(out)
+
+        i_layer += 1
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        out = self.bn2(self.conv2(out))
+
+        res_shortcut = self.shortcut(x_to_shortcut)
+
+        i_layer += 1
+
+        out += res_shortcut
+
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        if feature_layers_to_extract:
+            if i_layer in feature_layers_to_extract:
+                features[i_layer] = out.detach()
+
+        return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+
+class BasicBlockAbs(nn.Module):
+    """An implementation of a basic residual block
+       Args:
+           inplanes (int): input channels
+           planes (int): output channels
+           stride (int): filter stride (default is 1)
+    """
+    expansion = 1
+
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+        super(BasicBlockAbs, self).__init__()
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.out_size = planes
+
+        self.move_average_factor = torch.nn.Parameter(torch.tensor(1.0), requires_grad=True)
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != planes:
+            if option == 'cifar10':
+                self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     nn.BatchNorm2d(self.expansion * planes)
+                )
+
+    def forward(self, inp):
+        x, i_layer, feature_layers_to_extract, features, cut_network = inp
+
+        if cut_network:
+            if i_layer > cut_network:
+                return inp
+
+        if self.conv1.conv2d.weight.do_binarize:
+            x_to_shortcut = abs(x) * self.move_average_factor
+        else:
+            x = F.relu(x)
+            x_to_shortcut = x
+
+        out = self.bn1(self.conv1(x))
+
+        if not self.conv2.conv2d.weight.do_binarize:
+            out = F.relu(out)
+
+        i_layer += 1
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        out = self.bn2(self.conv2(out))
+
+        res_shortcut = self.shortcut(x_to_shortcut)
+
+        i_layer += 1
+
+        out += res_shortcut
+
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        if feature_layers_to_extract:
+            if i_layer in feature_layers_to_extract:
+                features[i_layer] = out.detach()
+
+        return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+
+class BasicBlockAbsDoubleShortcut(nn.Module):
+    """An implementation of a basic residual block
+       Args:
+           inplanes (int): input channels
+           planes (int): output channels
+           stride (int): filter stride (default is 1)
+    """
+    expansion = 1
+
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+        super(BasicBlockAbsDoubleShortcut, self).__init__()
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.out_size = planes
+
+        self.move_average_factor = torch.nn.Parameter(torch.tensor(1.0), requires_grad=True)
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != planes:
+            if option == 'cifar10':
+                self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     nn.BatchNorm2d(self.expansion * planes)
+                )
+
+    def forward(self, inp):
+        x, i_layer, feature_layers_to_extract, features, cut_network = inp
+
+        if cut_network:
+            if i_layer > cut_network:
+                return inp
+
+        if self.conv1.conv2d.weight.do_binarize:
+            x_to_shortcut = abs(x) * self.move_average_factor
+        else:
+            x = F.relu(x)
+            x_to_shortcut = x
+
+        out = self.bn1(self.conv1(x))
+
+        if not self.conv2.conv2d.weight.do_binarize:
+            out = F.relu(out)
+        else:
+            out_mid = out
+
+        i_layer += 1
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        out = self.bn2(self.conv2(out))
+
+        res_shortcut = self.shortcut(x_to_shortcut)
+
+        if self.conv1.conv2d.weight.do_binarize:
+            out = (out + out_mid)*(1/math.sqrt(2)) + res_shortcut
+        else:
+            out += res_shortcut
+
+        i_layer += 1
 
         if cut_network:
             if cut_network == i_layer:
@@ -590,6 +879,18 @@ class CifarModel():
     def resnet20relufirst(net_type, dataset='cifar10', **kwargs):
         return ResNetReluFirst(BasicBlockReluFirst, [3, 3, 3], net_type, **kwargs)
     @staticmethod
+    def resnet20Naive(net_type, dataset='cifar10', **kwargs):
+        return ResNetReluFirst(BasicBlockNaive, [3, 3, 3], net_type, **kwargs)
+    @staticmethod
+    def resnet20WithRelu(net_type, dataset='cifar10', **kwargs):
+        return ResNetReluFirst(BasicBlockWithRelu, [3, 3, 3], net_type, **kwargs)
+    @staticmethod
+    def resnet20Abs(net_type, dataset='cifar10', **kwargs):
+        return ResNetReluFirst(BasicBlockAbs, [3, 3, 3], net_type, **kwargs)
+    @staticmethod
+    def resnet20AbsDoubleShortcut(net_type, dataset='cifar10', **kwargs):
+        return ResNetReluFirst(BasicBlockAbsDoubleShortcut, [3, 3, 3], net_type, **kwargs)
+    @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)
     @staticmethod
@@ -609,6 +910,10 @@ class CifarModel():
 resnet_models = {
         "resnet20": CifarModel.resnet20,
         "resnet20relufirst": CifarModel.resnet20relufirst,
+        "resnet20Naive": CifarModel.resnet20Naive,
+        "resnet20WithRelu": CifarModel.resnet20WithRelu,
+        "resnet20Abs": CifarModel.resnet20Abs,
+        "resnet20AbsDoubleShortcut": CifarModel.resnet20AbsDoubleShortcut,
         "resnet32": CifarModel.resnet32,
         "resnet44": CifarModel.resnet44,
         "resnet56": CifarModel.resnet56,

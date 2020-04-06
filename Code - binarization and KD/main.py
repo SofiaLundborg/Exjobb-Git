@@ -163,11 +163,13 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     return min_loss
 
 
-def training_a(student_net, teacher_net, train_loader, validation_loader):
+def training_a(student_net, teacher_net, train_loader, validation_loader, filename=None):
+
+    if not filename:
+        filename = 'method_a_' + str(student_net.net_type)
 
     title_loss = 'method a) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method a) - accuracy, ' + str(student_net.net_type)
-    filename = 'method_a_double_shortcut_distribution_scaling_with_relu' + str(student_net.net_type)
 
     criterion = torch.nn.MSELoss()
     if torch.cuda.is_available():
@@ -188,6 +190,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
     validation_loss = np.empty(max_epochs)
     train_accuracy = np.empty(max_epoch_layer*2)
     validation_accuracy = np.empty(max_epoch_layer*2)
+
+    PATH = None
 
     for layer_idx, layer in enumerate(layers):
         if layer == 'all':
@@ -311,19 +315,23 @@ def training_a(student_net, teacher_net, train_loader, validation_loader):
 
             time.sleep(5)
 
+            return PATH
 
-def finetuning(net, train_loader, validation_loader, max_epochs):
 
-    student_dict = torch.load('./Trained_Models/method_a_one_shortcut_distribution_scaling_Xnor++_20200331.pth',
+def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None):
+
+    if not path:
+        student_dict = torch.load('./Trained_Models/method_a_one_shortcut_distribution_scaling_Xnor++_20200331.pth',
                               map_location=get_device())
-    net.load_state_dict(student_dict)
+        net.load_state_dict(student_dict)
 
     layers_to_train = ['layer1', 'layer2', 'layer3']
     set_layers_to_binarize(net, layers_to_train)
 
     title_loss = 'method a - loss, ' + str(net.net_type)
     title_accuracy = 'method a - accuracy, ' + str(net.net_type)
-    filename = 'method_a_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
+    if not filename:
+        filename = 'method_a_one_shortcut_distribution_scaling_finetuning' + str(net.net_type)
 
     criterion = torch.nn.CrossEntropyLoss()
     if torch.cuda.is_available():
@@ -449,14 +457,16 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, max_ep
 
         fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
-        train_loss = np.empty(max_epochs)
-        validation_loss = np.empty(max_epochs)
-        train_accuracy = np.empty(max_epochs)
-        validation_accuracy = np.empty(max_epochs)
+        train_loss = np.empty(max_epochs*4)
+        validation_loss = np.empty(max_epochs*4)
+        train_accuracy = np.empty(max_epochs*4)
+        validation_accuracy = np.empty(max_epochs*4)
         best_validation_loss = np.inf
         best_epoch = 0
 
         for epoch in range(max_epoch_layer):
+
+            total_epoch = epoch + (layer-1)*max_epoch_layer
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -509,17 +519,17 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, max_ep
 
             accuracy_train_epoch = calculate_accuracy(train_loader, student_net)
             accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net)
-            train_accuracy[epoch] = accuracy_train_epoch
-            validation_accuracy[epoch] = accuracy_validation_epoch
+            train_accuracy[total_epoch] = accuracy_train_epoch
+            validation_accuracy[total_epoch] = accuracy_validation_epoch
             make_weights_real(student_net)
 
             plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=filename, title=title_loss)
             plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename, title=title_accuracy)
 
-            torch.save(validation_loss[:epoch+1], './Results/validation_loss_' + filename + '.pt')
-            torch.save(train_loss[:epoch+1], './Results/train_loss_' + filename + '.pt')
-            torch.save(validation_accuracy[:epoch+1], './Results/validation_accuracy_' + filename + '.pt')
-            torch.save(train_accuracy[:epoch+1], './Results/train_accuracy_' + filename + '.pt')
+            torch.save(validation_loss[:total_epoch+1], './Results/validation_loss_' + filename + '.pt')
+            torch.save(train_loss[:total_epoch+1], './Results/train_loss_' + filename + '.pt')
+            torch.save(validation_accuracy[:total_epoch+1], './Results/validation_accuracy_' + filename + '.pt')
+            torch.save(train_accuracy[:total_epoch+1], './Results/train_accuracy_' + filename + '.pt')
 
             if validation_loss_for_epoch < best_validation_loss:
                 # save network
@@ -951,32 +961,35 @@ def main():
 
     teacher_net.eval()
 
-    # acc_teacher = calculate_accuracy(train_loader, teacher_net)
-    # print(acc_teacher)
+    acc_teacher = calculate_accuracy(train_loader, teacher_net)
+    print(acc_teacher)
 
 
-    #     layers_to_train = ['layer1', 'layer2', 'layer3']
+    # layers_to_train = ['layer1', 'layer2', 'layer3']
     # set_layers_to_binarize(student_net, layers_to_train)
     # set_layers_to_update(student_net, layers_to_train)
     # binarize_weights(student_net)
     #
     # with torch.no_grad():
+    #     fig, ax = plt.subplots(1, 3)
+    #     # fig, ax = plt.subplots()
+    #
+    #
     #     teacher_res = teacher_net(sample, cut_network=7)
     #     student_res = student_net(sample, cut_network=7)
-    #
-    #     fig, ax = plt.subplots(1, 3)
-    #     ax[0].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-    #     ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+    #     ax[0].hist(teacher_res.view(-1), bins=100, alpha=0.5, density=True, label='Teacher', color='grey')
+    #     ax[0].plot([0,0], [0, 0.30], linestyle='dashed', color='black')
+    #     ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student', color='green')
     #
     #     teacher_res = teacher_net(sample, cut_network=13)
     #     student_res = student_net(sample, cut_network=13)
-    #     ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-    #     ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+    #     ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher', color='grey')
+    #     ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student', color='green')
     #
     #     teacher_res = teacher_net(sample, cut_network=19)
     #     student_res = student_net(sample, cut_network=19)
-    #     ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
-    #     ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
+    #     ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher', color='grey')
+    #     ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student', color='green')
     #
     #     plt.show()
 
@@ -997,8 +1010,41 @@ def main():
 
     # training_a(student_net, teacher_net, train_loader, validation_loader)
 
-    training_c(student_net, teacher_net, train_loader, validation_loader)
+    # training_c(student_net, teacher_net, train_loader, validation_loader)
     # test_heatmap(student_net, teacher_net, train_loader)
+
+    filename = 'method_a_naive_block_' + str(net_type)
+    student_net = resNet.resnet_models['resnet20Naive'](net_type)
+    student_net.load_state_dict(new_checkpoint_student)
+    path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
+    filename = 'method_a_naive_block_finetuning_' + str(net_type)
+    finetuning(student_net, train_loader, validation_loader, 60, path, filename)
+
+    filename = 'method_a_with_relu_block' + str(net_type)
+    student_net = resNet.resnet_models['resnet20WithRelu'](net_type)
+    student_net.load_state_dict(new_checkpoint_student)
+    path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
+    filename = 'method_a_with_relu_block_finetuning_' + str(net_type)
+    finetuning(student_net, train_loader, validation_loader, 60, path, filename)
+
+    filename = 'method_a_with_abs_block' + str(net_type)
+    student_net = resNet.resnet_models['resnet20Abs'](net_type)
+    student_net.load_state_dict(new_checkpoint_student)
+    path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
+    filename = 'method_a_with_abs_block_finetuning_' + str(net_type)
+    finetuning(student_net, train_loader, validation_loader, 60, path, filename)
+
+    filename = 'method_a_with_double_shortcut_block' + str(net_type)
+    student_net = resNet.resnet_models['resnet20AbsDoubleShortcut'](net_type)
+    student_net.load_state_dict(new_checkpoint_student)
+    path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
+    filename = 'method_a_with_double_shortcut_block_finetuning_' + str(net_type)
+    finetuning(student_net, train_loader, validation_loader, 60, path, filename)
+
+
+
+
+
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore", message="The PostScript backend does not support transparency; partially "
