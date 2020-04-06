@@ -951,11 +951,11 @@ def main():
 
     teacher_net.eval()
 
-    acc_teacher = calculate_accuracy(train_loader, teacher_net)
-    print(acc_teacher)
+    # acc_teacher = calculate_accuracy(train_loader, teacher_net)
+    # print(acc_teacher)
 
 
-    layers_to_train = ['layer1', 'layer2', 'layer3']
+    #     layers_to_train = ['layer1', 'layer2', 'layer3']
     # set_layers_to_binarize(student_net, layers_to_train)
     # set_layers_to_update(student_net, layers_to_train)
     # binarize_weights(student_net)
@@ -977,10 +977,8 @@ def main():
     #     student_res = student_net(sample, cut_network=19)
     #     ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher')
     #     ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student')
-
-        #plt.show()
-
-
+    #
+    #     plt.show()
 
     # set_layers_to_binarize(trained_student_net, 1, 7)
     # out = trained_student_net(sample)
@@ -997,8 +995,9 @@ def main():
 
     #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
 
-    training_a(student_net, teacher_net, train_loader, validation_loader)
+    # training_a(student_net, teacher_net, train_loader, validation_loader)
 
+    training_c(student_net, teacher_net, train_loader, validation_loader)
     # test_heatmap(student_net, teacher_net, train_loader)
 
 if __name__ == '__main__':
