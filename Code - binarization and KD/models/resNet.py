@@ -84,6 +84,82 @@ class BasicBlock(nn.Module):
         return [out, i_layer, feature_layers_to_extract, features, cut_network]
 
 
+class BasicBlockForTeacher(nn.Module):
+    """An implementation of a basic residual block
+       Args:
+           inplanes (int): input channels
+           planes (int): output channels
+           stride (int): filter stride (default is 1)
+    """
+    expansion = 1
+
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+        super(BasicBlockForTeacher, self).__init__()
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.out_size = planes
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != planes:
+            if option == 'cifar10':
+                self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     nn.BatchNorm2d(self.expansion * planes)
+                )
+
+    def forward(self, inp):
+        x, i_layer, feature_layers_to_extract, features, cut_network = inp
+
+        if cut_network:
+            if i_layer > cut_network:
+                return inp
+
+
+        x = F.relu(x)
+        x_to_shortcut = x
+        out = self.bn1(self.conv1(x))
+        out = F.relu(out)
+
+        i_layer += 1
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        out = self.bn2(self.conv2(out))
+        res_shortcut = self.shortcut(x_to_shortcut)
+
+        i_layer += 1
+
+
+        out += res_shortcut
+
+
+
+        #if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
+        #    out[out < 0] = out[out < 0]*0.5
+
+        # if plot:
+        #     ax_combined.hist(out.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
+        #     ax_combined.hist(out_abs.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_abs, label='abs*0.6')
+        #     ax_combined.hist(out_no_relu.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_no_relu, label='none')
+        #     ax_combined.legend(frameon=False)
+        #     plt.show()
+
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        if feature_layers_to_extract:
+            if i_layer in feature_layers_to_extract:
+                features[i_layer] = out.detach()
+
+        return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+
 class BasicBlockReluFirst(nn.Module):
     """An implementation of a basic residual block
        Args:
@@ -891,6 +967,9 @@ class CifarModel():
     def resnet20AbsDoubleShortcut(net_type, dataset='cifar10', **kwargs):
         return ResNetReluFirst(BasicBlockAbsDoubleShortcut, [3, 3, 3], net_type, **kwargs)
     @staticmethod
+    def resnet20ForTeacher(net_type, dataset='cifar10', **kwargs):
+        return ResNetReluFirst(BasicBlockForTeacher, [3, 3, 3], net_type, **kwargs)
+    @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)
     @staticmethod
@@ -914,6 +993,7 @@ resnet_models = {
         "resnet20WithRelu": CifarModel.resnet20WithRelu,
         "resnet20Abs": CifarModel.resnet20Abs,
         "resnet20AbsDoubleShortcut": CifarModel.resnet20AbsDoubleShortcut,
+        "resnet20ForTeacher": CifarModel.resnet20ForTeacher,
         "resnet32": CifarModel.resnet32,
         "resnet44": CifarModel.resnet44,
         "resnet56": CifarModel.resnet56,
