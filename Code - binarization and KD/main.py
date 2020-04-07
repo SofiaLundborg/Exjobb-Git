@@ -973,8 +973,8 @@ def main():
     acc_teacher_org = calculate_accuracy(train_loader, teacher_net_org)
     print(acc_teacher_org)
 
-    res_teacher = teacher_net(sample)
-    res_org = teacher_net_org(sample)
+    # res_teacher = teacher_net(sample)
+    # res_org = teacher_net_org(sample)
 
     # print(str(res_teacher == res_org))
 
