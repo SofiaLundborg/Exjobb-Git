@@ -631,27 +631,21 @@ def test_heatmap(student_net, teacher_net, train_loader):
 
 
 
-def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None):
+def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None, filename=None):
 
     student_dict = torch.load('./Trained_Models/' + 'LIT_with_double_shortcut_Xnor++_20200325.pth',
                               map_location=get_device())
-    #student_net.load_state_dict(student_dict)
+    # student_net.load_state_dict(student_dict)
 
     temperature_kd = 6
     scaling_factor_kd = 0.95        # LIT 0.95
-    scaling_factor_total = 0     # LIT 0.75
+    scaling_factor_total = 0.75     # LIT 0.75
 
-    title_loss = 'Loss Lit, ' + str(student_net.net_type)
-    filename = 'lit_' + str(student_net.net_type)
-    title_accuracy = 'Accuracy Lit, ' + str(student_net.net_type)
+    title_loss = 'Loss method b), ' + str(student_net.net_type)
+    title_accuracy = 'Accuracy method b), ' + str(student_net.net_type)
 
-    title_loss = 'CE after LIT with double shortcut - loss, ' + str(student_net.net_type)
-    title_accuracy = 'CE after LIT with double shortcut - accuracy, ' + str(student_net.net_type)
-    filename = 'CE_after_LIT_with_double_shortcut_' + str(student_net.net_type)
-
-    title_loss = 'LIT with two shortcut - loss, ' + str(student_net.net_type)
-    title_accuracy = 'LIT with two shortcut - accuracy, ' + str(student_net.net_type)
-    filename = 'beta0_LIT_with_two_shortcut_distribution_scaling' + str(student_net.net_type)
+    if not filename:
+        filename = 'method_b_' + str(student_net.net_type)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -680,6 +674,8 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
     validation_accuracy = np.empty(max_epochs)
     best_validation_loss = np.inf
     best_epoch = 0
+
+    PATH = None
 
     for epoch in range(max_epochs):
         running_loss = 0
@@ -785,6 +781,8 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
         print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
 
         time.sleep(5)
+
+    return PATH
 
 
 def train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=None, layers_to_train=None,
@@ -1087,6 +1085,16 @@ def main():
         student_net = student_net.cuda()
     training_c(student_net, teacher_net, train_loader, validation_loader, filename)
 
+
+    filename = 'method_b_with_relu_block' + str(net_type)
+    student_net = resNet.resnet_models['resnet20WithRelu'](net_type)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+    student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
+    path = training_c(student_net, teacher_net, train_loader, validation_loader, filename)
+    filename = 'method_b_with_relu_block_finetuning_' + str(net_type)
+    finetuning(student_net, train_loader, validation_loader, 60, path, filename)
 
 
 if __name__ == '__main__':
