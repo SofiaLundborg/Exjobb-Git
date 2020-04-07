@@ -57,8 +57,8 @@ def load_data(dataset):
     validation_size = len(train_set) - train_size
     train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
 
-    train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [200, len(train_set) - 200])
-    validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
+    #train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [200, len(train_set) - 200])
+    #validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
