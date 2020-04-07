@@ -947,9 +947,15 @@ def main():
 
     checkpoint = torch.load('./Trained_Models/lit_finetuning_binary_20200316.pth', map_location='cpu')
 
+    teacher_net_org = originalResnet.resnet_models["cifar"][net_name]()
+    teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
+    teacher_checkpoint_org = torch.load(teacher_pth, map_location='cpu')
+    teacher_net_org.load_state_dict(teacher_checkpoint_org)
+
     if torch.cuda.is_available():
         teacher_net = teacher_net.cuda()
         student_net = student_net.cuda()
+        teacher_net_org = teacher_net_org.cuda()
 
     trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
     trained_student_net = resNet.resnet_models[net_name]('Xnor++')
@@ -964,11 +970,6 @@ def main():
 
     acc_teacher = calculate_accuracy(train_loader, teacher_net)
     print(acc_teacher)
-
-    teacher_net_org = originalResnet.resnet_models["cifar"][net_name]()
-    teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
-    teacher_checkpoint_org = torch.load(teacher_pth, map_location='cpu')
-    teacher_net_org.load_state_dict(teacher_checkpoint_org)
 
     acc_teacher_org = calculate_accuracy(train_loader, teacher_net_org)
     print(acc_teacher_org)
