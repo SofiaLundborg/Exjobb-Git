@@ -473,7 +473,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
 
         for epoch in range(max_epoch_layer):
 
-            total_epoch = epoch + (layer-1)*max_epoch_layer
+            total_epoch = epoch + max_epoch_layer*layer_idx
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
