@@ -1083,7 +1083,7 @@ def main():
     student_net.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
         student_net = student_net.cuda()
-    training_c(student_net, teacher_net, train_loader, validation_loader, filename)
+    training_c(student_net, teacher_net, train_loader, validation_loader, filename=filename)
 
 
     filename = 'method_b_with_relu_block' + str(net_type)
@@ -1092,7 +1092,7 @@ def main():
     student_net.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
         student_net = student_net.cuda()
-    path = training_c(student_net, teacher_net, train_loader, validation_loader, filename)
+    path = lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=teacher_net, filename=filename)
     filename = 'method_b_with_relu_block_finetuning_' + str(net_type)
     finetuning(student_net, train_loader, validation_loader, 60, path, filename)
 
