@@ -503,7 +503,10 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
                 optimizer.zero_grad()
                 binarize_weights(student_net)
 
-                total_loss = criterion(inputs, targets, student_net, teacher_net, cut_network=cut_network)
+                if layer == 'all':
+                    total_loss = criterion(student_net(inputs), targets)
+                else:
+                    total_loss = criterion(inputs, targets, student_net, teacher_net, cut_network=cut_network)
 
                 total_loss.backward(retain_graph=True)  # calculate loss
                 running_loss += total_loss.item()
@@ -533,8 +536,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
             validation_accuracy[total_epoch] = accuracy_validation_epoch
             make_weights_real(student_net)
 
-            plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=filename, title=title_loss)
-            plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename, title=title_accuracy)
+            plot_results(ax_loss, fig, train_loss, validation_loss, total_epoch, filename=filename, title=title_loss)
+            plot_results(ax_acc, fig, train_accuracy, validation_accuracy, total_epoch, filename=filename, title=title_accuracy)
 
             torch.save(validation_loss[:total_epoch+1], './Results/validation_loss_' + filename + '.pt')
             torch.save(train_loss[:total_epoch+1], './Results/train_loss_' + filename + '.pt')
@@ -546,9 +549,9 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
                 PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
                 best_validation_loss = validation_loss_for_epoch
-                best_epoch = epoch
+                best_epoch = total_epoch
 
-            print('Epoch: ' + str(epoch))
+            print('Epoch: ' + str(total_epoch))
             print('Best epoch: ' + str(best_epoch))
             print('Loss on train images: ' + str(training_loss_for_epoch))
             print('Loss on validation images: ' + str(validation_loss_for_epoch))
