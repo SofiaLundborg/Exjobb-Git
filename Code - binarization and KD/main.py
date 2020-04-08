@@ -456,7 +456,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
 
     for layer_idx, layer in enumerate(layers):
         if layer == 'all':
-            set_layers_to_binarize(student_net, layers)
+            set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
             max_epoch_layer = max_epoch_layer * 2
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
