@@ -1070,6 +1070,7 @@ resnet_models = {
         "resnet20WithRelu": CifarModel.resnet20WithRelu,
         "resnet20Abs": CifarModel.resnet20Abs,
         "resnet20AbsDoubleShortcut": CifarModel.resnet20AbsDoubleShortcut,
+        "resnet20ReluDoubleShortcut": CifarModel.resnet20ReluDoubleShortcut,
         "resnet20ForTeacher": CifarModel.resnet20ForTeacher,
         "resnet32": CifarModel.resnet32,
         "resnet44": CifarModel.resnet44,
