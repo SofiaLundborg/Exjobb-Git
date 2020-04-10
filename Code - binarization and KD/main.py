@@ -694,7 +694,7 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
             for p in list(student_net.parameters()):
                 p.requires_grad = True
 
-        learning_rate_change = [30, 50, 80, 90]
+        learning_rate_change = [30, 50, 70, 90]
         if epoch in learning_rate_change:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
