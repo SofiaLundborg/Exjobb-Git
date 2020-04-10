@@ -439,7 +439,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
     scaling_factor_total = 0.5
 
     layers = ['layer1', 'layer2', 'layer3', 'all']
-    max_epoch_layer = 30
+    max_epoch_layer = 40
     max_epochs = max_epoch_layer * 6
     train_loss = np.empty(max_epochs)
     validation_loss = np.empty(max_epochs)
@@ -457,7 +457,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
     for layer_idx, layer in enumerate(layers):
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
-            max_epoch_layer = max_epoch_layer * 2
+            max_epoch_layer = 60
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         cut_network = 1 + 6 * (layer_idx+1)
@@ -473,7 +473,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
 
         for epoch in range(max_epoch_layer):
 
-            total_epoch = epoch + 30*layer_idx
+            total_epoch = epoch + 40*layer_idx
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -483,7 +483,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
             else:
                 set_layers_to_update(student_net, layers[:layer_idx+1])
 
-            learning_rate_change = [20, 25, 30]
+            learning_rate_change = [20, 30, 35]
             if layer == 'all':
                 learning_rate_change = [30, 40, 50]
 
@@ -525,7 +525,11 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
                 inputs, targets = data
                 inputs = inputs.to(device)
                 targets = targets.to(device)
-                running_validation_loss += criterion(inputs, targets, student_net, teacher_net, cut_network=cut_network, training=False).item()
+                if layer == 'all':
+                    with torch.no_grad():
+                        running_validation_loss += criterion(student_net(inputs), targets)
+                else:
+                    running_validation_loss += criterion(inputs, targets, student_net, teacher_net, cut_network=cut_network, training=False).item()
 
             validation_loss_for_epoch = running_validation_loss / len(validation_loader)
             validation_loss[total_epoch] = validation_loss_for_epoch
