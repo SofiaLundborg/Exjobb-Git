@@ -473,7 +473,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, filena
 
         for epoch in range(max_epoch_layer):
 
-            total_epoch = epoch + max_epoch_layer*layer_idx
+            total_epoch = epoch + 30*layer_idx
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -631,7 +631,6 @@ def test_heatmap(student_net, teacher_net, train_loader):
         print(loss)
 
         plt.show()
-
 
 
 def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None, filename=None):

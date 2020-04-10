@@ -78,12 +78,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="19783" />
+          <entry key="py" value="19800" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="19783" />
+          <entry key="Python" value="19800" />
         </counts>
       </usages-collector>
     </session>
@@ -93,17 +93,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="552" lean-forward="true" selection-start-line="552" selection-end-line="552" />
+            <state relative-caret-position="409">
+              <caret line="966" lean-forward="true" selection-start-line="966" selection-end-line="966" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#12326#16340#0" />
                 <element signature="e#16365#16447#0" />
-                <marker date="1586334122637" expanded="true" signature="457:462" ph="..." />
-                <marker date="1586334122637" expanded="true" signature="12921:16847" ph="..." />
-                <marker date="1586334122637" expanded="true" signature="22645:25077" ph="..." />
-                <marker date="1586334122637" expanded="true" signature="25189:31197" ph="..." />
-                <marker date="1586334122637" expanded="true" signature="35477:35567" ph="..." />
+                <marker date="1586502752539" expanded="true" signature="457:462" ph="..." />
+                <marker date="1586502752539" expanded="true" signature="12921:16847" ph="..." />
+                <marker date="1586502752539" expanded="true" signature="22632:25063" ph="..." />
+                <marker date="1586502752539" expanded="true" signature="25175:31183" ph="..." />
+                <marker date="1586502752539" expanded="true" signature="35463:35553" ph="..." />
               </folding>
             </state>
           </provider>
@@ -429,7 +429,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>886</line>
+          <line>885</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -446,6 +446,16 @@
           <url>file://$PROJECT_DIR$/models/resNet.py</url>
           <line>927</line>
           <option name="timeStamp" value="421" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>1081</line>
+          <option name="timeStamp" value="429" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>934</line>
+          <option name="timeStamp" value="430" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -508,6 +518,21 @@
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
+        <expression-string>1309/61.3</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>369/61.3</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>220/61.3</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
         <expression-string>layers[:layer_idx+1]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
@@ -534,21 +559,6 @@
       </expression>
       <expression>
         <expression-string>x</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>out</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.bn1(self.conv1(x))</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.bn2(self.conv2(x))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -793,17 +803,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="552" lean-forward="true" selection-start-line="552" selection-end-line="552" />
+        <state relative-caret-position="409">
+          <caret line="966" lean-forward="true" selection-start-line="966" selection-end-line="966" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#12326#16340#0" />
             <element signature="e#16365#16447#0" />
-            <marker date="1586334122637" expanded="true" signature="457:462" ph="..." />
-            <marker date="1586334122637" expanded="true" signature="12921:16847" ph="..." />
-            <marker date="1586334122637" expanded="true" signature="22645:25077" ph="..." />
-            <marker date="1586334122637" expanded="true" signature="25189:31197" ph="..." />
-            <marker date="1586334122637" expanded="true" signature="35477:35567" ph="..." />
+            <marker date="1586502752539" expanded="true" signature="457:462" ph="..." />
+            <marker date="1586502752539" expanded="true" signature="12921:16847" ph="..." />
+            <marker date="1586502752539" expanded="true" signature="22632:25063" ph="..." />
+            <marker date="1586502752539" expanded="true" signature="25175:31183" ph="..." />
+            <marker date="1586502752539" expanded="true" signature="35463:35553" ph="..." />
           </folding>
         </state>
       </provider>
