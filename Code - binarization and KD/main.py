@@ -637,15 +637,15 @@ def test_heatmap(student_net, teacher_net, train_loader):
         plt.show()
 
 
-def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None, filename=None, scalingfactor_total=0.75, scaling_factor_kd=0.95):
+def lit_training(student_net, train_loader, validation_loader, max_epochs=200, teacher_net=None, filename=None, scaling_factor_total=0.75, scaling_factor_kd=0.95):
 
     student_dict = torch.load('./Trained_Models/' + 'LIT_with_double_shortcut_Xnor++_20200325.pth',
                               map_location=get_device())
     # student_net.load_state_dict(student_dict)
 
     temperature_kd = 6
-    scaling_factor_kd = 0.95        # LIT 0.95
-    scaling_factor_total = 0.75     # LIT 0.75
+    #scaling_factor_kd = 0.95        # LIT 0.95
+    #scaling_factor_total = 0.75     # LIT 0.75
 
     title_loss = 'Loss method b), ' + str(student_net.net_type)
     title_accuracy = 'Accuracy method b), ' + str(student_net.net_type)
@@ -1105,7 +1105,7 @@ def main():
         student_net.load_state_dict(new_checkpoint_student)
         if torch.cuda.is_available():
             student_net = student_net.cuda()
-        path = lit_training(student_net, train_loader, validation_loader, max_epochs=100, teacher_net=teacher_net, filename=filename, scalingfactor_total=scaling_factor)
+        path = lit_training(student_net, train_loader, validation_loader, max_epochs=100, teacher_net=teacher_net, filename=filename, scaling_factor_total=scaling_factor)
         filename = 'method_b_finetuning_double_shortcut_with_relu_tot_scaling_' + str(scaling_factor) + '_' + str(net_type)
         finetuning(student_net, train_loader, validation_loader, 60, path, filename)
 
