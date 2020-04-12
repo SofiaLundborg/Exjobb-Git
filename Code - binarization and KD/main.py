@@ -319,7 +319,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     return PATH
 
 
-def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None):
+def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None, learning_rate_change=None):
 
     if not path:
         student_dict = torch.load('./Trained_Models/method_a_one_shortcut_distribution_scaling_Xnor++_20200331.pth',
@@ -343,6 +343,9 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
+    if not learning_rate_change:
+        learning_rate_change = [30, 40, 50, 60]
+
     fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
     train_loss = np.empty(max_epochs)
@@ -358,7 +361,6 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         for p in list(net.parameters()):
             p.requires_grad = True
 
-        learning_rate_change = [30, 40, 50, 60]
         if epoch in learning_rate_change:
             lr = lr * 0.1
             for param_group in optimizer.param_groups:
@@ -1109,13 +1111,15 @@ def main():
     #     filename = 'method_b_finetuning_double_shortcut_with_relu_tot_scaling_' + str(scaling_factor) + '_' + str(net_type)
     #     finetuning(student_net, train_loader, validation_loader, 60, path, filename)
 
+
+    learning_rate_change = [50, 70, 90, 100]
     filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
     student_net.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
         student_net = student_net.cuda()
-    finetuning(student_net, train_loader, validation_loader, 60, filename=filename)
+    finetuning(student_net, train_loader, validation_loader, 110, filename=filename, learning_rate_change=learning_rate_change)
 
 
 if __name__ == '__main__':
