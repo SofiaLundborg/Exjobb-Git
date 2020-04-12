@@ -1083,7 +1083,7 @@ def main():
         student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
-    finetuning(student_net, train_loader, validation_loader, 60, path, filename,
+    finetuning(student_net, train_loader, validation_loader, 110, path, filename,
                learning_rate_change=learning_rate_change)
 
     net_type = 'Xnor'
@@ -1095,7 +1095,7 @@ def main():
         student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
-    finetuning(student_net, train_loader, validation_loader, 60, path, filename,
+    finetuning(student_net, train_loader, validation_loader, 110, path, filename,
                learning_rate_change=learning_rate_change)
 
     filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
@@ -1106,7 +1106,7 @@ def main():
         student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
-    finetuning(student_net, train_loader, validation_loader, 60, path, filename, learning_rate_change=learning_rate_change)
+    finetuning(student_net, train_loader, validation_loader, 110, path, filename, learning_rate_change=learning_rate_change)
 
 
     scaling_factors = [0, 0.2, 0.4, 0.6, 0.8, 1]
