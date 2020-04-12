@@ -1115,7 +1115,7 @@ def main():
     student_net.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
         student_net = student_net.cuda()
-    finetuning(student_net, teacher_net, train_loader, validation_loader, filename=filename)
+    finetuning(student_net, train_loader, validation_loader, 60, filename=filename)
 
 
 if __name__ == '__main__':
