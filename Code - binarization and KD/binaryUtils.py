@@ -147,6 +147,7 @@ class myConv2d(nn.Module):
         self.padding = padding
         self.dropout_ratio = dropout
         self.output_channels = output_channels
+        self.factorized_gamma = factorized_gamma
 
         if dropout != 0:
             self.dropout = nn.Dropout(dropout)
@@ -177,6 +178,7 @@ class myConv2d(nn.Module):
                     #     self.beta = self.beta.to('cuda')
                     #     self.gamma = self.gamma.to('cuda')
                     self.gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
+                    print('hej')
                     # gamma_large = torch.einsum('i, j, k -> ijk', self.alpha, self.beta, self.gamma)
 
                 else:
@@ -239,7 +241,11 @@ class myConv2d(nn.Module):
                 x = binarize(x)
                 x = self.conv2d(x)
                 # x = torch.mul(x, self.gamma_large)
-                x = x*self.gamma_large
+                if self.factorized_gamma:
+                    gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
+                    x = x*gamma_large
+                else:
+                    x = x*self.gamma_large
             else:
                 x = self.conv2d(x)
 
