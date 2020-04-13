@@ -172,14 +172,12 @@ class myConv2d(nn.Module):
                     self.alpha = torch.nn.Parameter(scaling_factor * torch.ones(output_channels, 1, 1), requires_grad=True)
                     self.beta = torch.nn.Parameter(scaling_factor * torch.ones(1, output_size, 1), requires_grad=True)
                     self.gamma = torch.nn.Parameter(scaling_factor * torch.ones(1, 1, output_size), requires_grad=True)
-                    if torch.cuda.is_available():
-                        self.alpha = self.alpha.to('cuda')
-                        self.beta = self.beta.to('cuda')
-                        self.gamma = self.gamma.to('cuda')
-
+                    # if torch.cuda.is_available():
+                    #     self.alpha = self.alpha.to('cuda')
+                    #     self.beta = self.beta.to('cuda')
+                    #     self.gamma = self.gamma.to('cuda')
                     self.gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
                     # gamma_large = torch.einsum('i, j, k -> ijk', self.alpha, self.beta, self.gamma)
-
 
                 else:
                     self.gamma_large = torch.nn.Parameter(
