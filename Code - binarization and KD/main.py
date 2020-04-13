@@ -189,8 +189,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     train_loss = np.empty(max_epochs)
     validation_loss = np.empty(max_epochs)
-    train_accuracy = np.empty(max_epoch_layer*2)
-    validation_accuracy = np.empty(max_epoch_layer*2)
+    train_accuracy = np.empty(110)
+    validation_accuracy = np.empty(110)
 
     PATH = None
 
@@ -979,11 +979,11 @@ def main():
 
     teacher_net.eval()
 
-    acc_teacher = calculate_accuracy(train_loader, teacher_net)
-    print(acc_teacher)
+    #acc_teacher = calculate_accuracy(train_loader, teacher_net)
+    #print(acc_teacher)
 
-    acc_teacher_org = calculate_accuracy(train_loader, teacher_net_org)
-    print(acc_teacher_org)
+    #acc_teacher_org = calculate_accuracy(train_loader, teacher_net_org)
+    #print(acc_teacher_org)
 
     # res_teacher = teacher_net(sample)
     # res_org = teacher_net_org(sample)
@@ -1074,6 +1074,25 @@ def main():
 
     learning_rate_change = [50, 70, 90, 100]
 
+    net_type = 'Xnor++'
+    factorized_gamma = True
+    filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
+    student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, factorized_gamma=factorized_gamma)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+    student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
+    finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
+               learning_rate_change=learning_rate_change)
+    filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
+    student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, factorized_gamma=factorized_gamma)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+    student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
+    path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
+
+
     net_type = 'binary'
     filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
@@ -1133,6 +1152,8 @@ def main():
     filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
     #finetuning(student_net, train_loader, validation_loader, 110, path, filename,
     #           learning_rate_change=learning_rate_change)
+
+
 
     scaling_factors = [0, 0.2, 0.4, 0.6, 0.8, 1]
 

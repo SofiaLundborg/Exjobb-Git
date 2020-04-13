@@ -25,10 +25,10 @@ def conv3x3(in_planes, out_planes, stride=1):
                      padding=1, bias=False)
 
 
-def my_conv3x3(in_planes, out_planes, input_size, stride=1, net_type='full_precision', bias=False):
+def my_conv3x3(in_planes, out_planes, input_size, stride=1, net_type='full_precision', bias=False, factorized_gamma=False):
     """3x3 convolution with padding"""
     return myConv2d(in_planes, out_planes, input_size, kernel_size=3, stride=stride,
-                    padding=1, net_type=net_type, bias=bias)
+                    padding=1, net_type=net_type, bias=bias, factorized_gamma=factorized_gamma)
 
 
 class BasicBlock(nn.Module):
@@ -93,7 +93,7 @@ class BasicBlockForTeacher(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockForTeacher, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -169,11 +169,11 @@ class BasicBlockReluFirst(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockReluFirst, self).__init__()
-        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
@@ -311,11 +311,11 @@ class BasicBlockNaive(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockNaive, self).__init__()
-        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
@@ -382,11 +382,11 @@ class BasicBlockWithRelu(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockWithRelu, self).__init__()
-        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
@@ -451,11 +451,11 @@ class BasicBlockAbs(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockAbs, self).__init__()
-        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
@@ -598,11 +598,11 @@ class BasicBlockReluDoubleShortcut(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision'):
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockReluDoubleShortcut, self).__init__()
-        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
@@ -782,10 +782,11 @@ class ResNet1layer(nn.Module):
 
 
 class ResNetReluFirst(nn.Module):
-    def __init__(self, block, layers, net_type='full_precision', dataset="cifar10", num_classes=10, in_planes=None):
+    def __init__(self, block, layers, net_type='full_precision', dataset="cifar10", num_classes=10, in_planes=None, factorized_gamma=False):
         super(ResNetReluFirst, self).__init__()
         self.dataset = dataset
         self.net_type = net_type
+        self.factorized_gamma = factorized_gamma
 
         if in_planes:
             self.in_planes = in_planes
@@ -806,11 +807,11 @@ class ResNetReluFirst(nn.Module):
         ip = self.in_planes
         if ("cifar" in dataset) or ("svhn" in dataset):
             self.linear = nn.Linear(ip * 4 * block.expansion, num_classes)
-            self.conv1 = myConv2d(3, ip, input_size, kernel_size=3, stride=1, padding=1, net_type=net_type, bias=False)
+            self.conv1 = myConv2d(3, ip, input_size, kernel_size=3, stride=1, padding=1, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
             self.layer4 = None
         else:
             self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
-            self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, bias=False)
+            self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, bias=False, factorized_gamma=factorized_gamma)
             self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
             self.layer4 = self._make_layer(block, ip * 8, layers[3], input_size, stride=2)
             self.avgpool = nn.AvgPool2d(7, stride=1)
@@ -839,7 +840,7 @@ class ResNetReluFirst(nn.Module):
         layers = []
         for i in range(len(strides)):
             stride = strides[i]
-            layers.append(block(self.in_planes, planes, input_size, stride, self.dataset, net_type))
+            layers.append(block(self.in_planes, planes, input_size, stride, self.dataset, net_type, factorized_gamma=self.factorized_gamma))
             if i == 0: self.in_planes = planes * block.expansion
 
         return nn.Sequential(*layers)
@@ -1026,23 +1027,23 @@ class CifarModel():
     def resnet20(net_type, dataset='cifar10', **kwargs):
         return ResNet(BasicBlock, [3, 3, 3], net_type, dataset, **kwargs)
     @staticmethod
-    def resnet20relufirst(net_type, dataset='cifar10', **kwargs):
-        return ResNetReluFirst(BasicBlockReluFirst, [3, 3, 3], net_type, **kwargs)
+    def resnet20relufirst(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockReluFirst, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
-    def resnet20Naive(net_type, dataset='cifar10', **kwargs):
-        return ResNetReluFirst(BasicBlockNaive, [3, 3, 3], net_type, **kwargs)
+    def resnet20Naive(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockNaive, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
-    def resnet20WithRelu(net_type, dataset='cifar10', **kwargs):
-        return ResNetReluFirst(BasicBlockWithRelu, [3, 3, 3], net_type, **kwargs)
+    def resnet20WithRelu(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockWithRelu, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
-    def resnet20Abs(net_type, dataset='cifar10', **kwargs):
-        return ResNetReluFirst(BasicBlockAbs, [3, 3, 3], net_type, **kwargs)
+    def resnet20Abs(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockAbs, [3, 3, 3], net_type,factorized_gamma=factorized_gamma,  **kwargs)
     @staticmethod
-    def resnet20AbsDoubleShortcut(net_type, dataset='cifar10', **kwargs):
-        return ResNetReluFirst(BasicBlockAbsDoubleShortcut, [3, 3, 3], net_type, **kwargs)
+    def resnet20AbsDoubleShortcut(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockAbsDoubleShortcut, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
-    def resnet20ReluDoubleShortcut(net_type, dataset='cifar10', **kwargs):
-        return ResNetReluFirst(BasicBlockReluDoubleShortcut, [3, 3, 3], net_type, **kwargs)
+    def resnet20ReluDoubleShortcut(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockReluDoubleShortcut, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
     def resnet20ForTeacher(net_type, dataset='cifar10', **kwargs):
         return ResNetReluFirst(BasicBlockForTeacher, [3, 3, 3], net_type, **kwargs)
