@@ -179,7 +179,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     layers = ['layer1', 'layer2', 'layer3', 'all']
     max_epoch_layer = 30
-    max_epochs = max_epoch_layer * 6
+    max_epochs = max_epoch_layer * 3 + 110
 
     if torch.cuda.is_available():
         criterion = criterion.cuda()
@@ -197,7 +197,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     for layer_idx, layer in enumerate(layers):
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
-            max_epoch_layer = 60
+            max_epoch_layer = 110
             criterion = torch.nn.CrossEntropyLoss()
 
         else:
@@ -227,7 +227,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
             learning_rate_change = [15, 20, 25]
             if layer == 'all':
-                learning_rate_change = [30, 40, 50]
+                learning_rate_change = [50, 70, 90, 100]
 
             if epoch in learning_rate_change:
                 lr = lr * 0.1
