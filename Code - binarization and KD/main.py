@@ -1075,6 +1075,14 @@ def main():
     learning_rate_change = [50, 70, 90, 100]
 
     net_type = 'binary'
+    filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
+    student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+    student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
+    finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
+               learning_rate_change=learning_rate_change)
     filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
@@ -1087,6 +1095,14 @@ def main():
                learning_rate_change=learning_rate_change)
 
     net_type = 'Xnor'
+    filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
+    student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+    student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
+    finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
+               learning_rate_change=learning_rate_change)
     filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
@@ -1098,6 +1114,15 @@ def main():
     finetuning(student_net, train_loader, validation_loader, 110, path, filename,
                learning_rate_change=learning_rate_change)
 
+    net_type = 'Xnor++'
+    filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
+    student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+    student_net.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_net = student_net.cuda()
+    finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
+               learning_rate_change=learning_rate_change)
     filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
@@ -1106,8 +1131,8 @@ def main():
         student_net = student_net.cuda()
     path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
     filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
-    finetuning(student_net, train_loader, validation_loader, 110, path, filename, learning_rate_change=learning_rate_change)
-
+    finetuning(student_net, train_loader, validation_loader, 110, path, filename,
+               learning_rate_change=learning_rate_change)
 
     scaling_factors = [0, 0.2, 0.4, 0.6, 0.8, 1]
 
