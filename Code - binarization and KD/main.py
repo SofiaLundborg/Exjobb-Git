@@ -1076,7 +1076,7 @@ def main():
 
     net_type = 'Xnor++'
     factorized_gamma = True
-    filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
+    filename = 'no_method_double_shortcut_with_relu_factorized_' + str(net_type)
     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, factorized_gamma=factorized_gamma)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
     student_net.load_state_dict(new_checkpoint_student)
@@ -1084,7 +1084,7 @@ def main():
         student_net = student_net.cuda()
     finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
                learning_rate_change=learning_rate_change)
-    filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
+    filename = 'method_a_double_shortcut_with_relu_factorized_' + str(net_type)
     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, factorized_gamma=factorized_gamma)
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
     student_net.load_state_dict(new_checkpoint_student)
