@@ -78,12 +78,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="21789" />
+          <entry key="py" value="21817" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="21789" />
+          <entry key="Python" value="21817" />
         </counts>
       </usages-collector>
     </session>
@@ -93,8 +93,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="106">
-              <caret line="974" column="4" selection-start-line="974" selection-start-column="4" selection-end-line="975" selection-end-column="52" />
+            <state relative-caret-position="-1534">
+              <caret line="909" lean-forward="true" selection-start-line="909" selection-end-line="909" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#12326#16340#0" />
@@ -125,24 +125,15 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/nn/modules/conv.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="355">
-              <caret line="341" selection-start-line="341" selection-end-line="341" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/binaryUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="177" column="68" selection-start-line="177" selection-start-column="68" selection-end-line="177" selection-end-column="68" />
+            <state relative-caret-position="382">
+              <caret line="178" lean-forward="true" selection-start-line="178" selection-end-line="178" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
-                <marker date="1586787769075" expanded="true" signature="1821:1915" ph="..." />
-                <marker date="1586787769075" expanded="true" signature="2742:2745" ph="..." />
+                <marker date="1586787970333" expanded="true" signature="1821:1915" ph="..." />
+                <marker date="1586787970333" expanded="true" signature="2742:2745" ph="..." />
               </folding>
             </state>
           </provider>
@@ -197,18 +188,6 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/extraUtils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-99">
-              <caret column="20" selection-end-line="1" />
-              <folding>
-                <marker date="1585661783764" expanded="false" signature="996:1001" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -238,8 +217,9 @@
       <find>lit</find>
       <find>lit_</find>
       <find>finetuning</find>
-      <find>BasicBlockReluDoubleShortcut</find>
       <find>training_a</find>
+      <find>get_de</find>
+      <find>BasicBlockReluDoubleShortcut</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -407,13 +387,13 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.4362227" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.4362227" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.2746988" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -736,13 +716,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/nn/modules/conv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
-          <caret line="341" selection-start-line="341" selection-end-line="341" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/OriginalResNet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1695">
@@ -756,9 +729,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Figures/all_methods_double_shortcut/method_a_double_shortcut_with_relu_finetuning_Xnor++_20200410.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/autograd/function.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="148" column="8" selection-start-line="148" selection-start-column="8" selection-end-line="148" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/tensor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="448" selection-start-line="448" selection-end-line="448" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/extraUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-99">
+        <state relative-caret-position="-159">
           <caret column="20" selection-end-line="1" />
           <folding>
             <marker date="1585661783764" expanded="false" signature="996:1001" ph="..." />
@@ -778,13 +768,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Figures/all_methods_double_shortcut/method_a_double_shortcut_with_relu_finetuning_Xnor++_20200410.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/autograd/function.py">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="148" column="8" selection-start-line="148" selection-start-column="8" selection-end-line="148" selection-end-column="8" />
+        <state relative-caret-position="-1534">
+          <caret line="909" lean-forward="true" selection-start-line="909" selection-end-line="909" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#12326#16340#0" />
+            <element signature="e#16365#16447#0" />
+            <marker date="1586787490010" expanded="true" signature="457:462" ph="..." />
+            <marker date="1586787490010" expanded="true" signature="12698:16594" ph="..." />
+            <marker date="1586787490010" expanded="true" signature="22616:25047" ph="..." />
+            <marker date="1586787490010" expanded="true" signature="25210:31332" ph="..." />
+            <marker date="1586787490010" expanded="true" signature="35612:35702" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/nn/modules/conv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="341" selection-start-line="341" selection-end-line="341" />
         </state>
       </provider>
     </entry>
@@ -799,13 +803,6 @@
             <marker date="1586707491715" expanded="true" signature="4091:4110" ph="..." />
             <marker date="1586707491715" expanded="true" signature="4091:4116" ph="..." />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/tensor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="448" selection-start-line="448" selection-end-line="448" />
         </state>
       </provider>
     </entry>
@@ -827,31 +824,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="106">
-          <caret line="974" column="4" selection-start-line="974" selection-start-column="4" selection-end-line="975" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <element signature="e#12326#16340#0" />
-            <element signature="e#16365#16447#0" />
-            <marker date="1586787490010" expanded="true" signature="457:462" ph="..." />
-            <marker date="1586787490010" expanded="true" signature="12698:16594" ph="..." />
-            <marker date="1586787490010" expanded="true" signature="22616:25047" ph="..." />
-            <marker date="1586787490010" expanded="true" signature="25210:31332" ph="..." />
-            <marker date="1586787490010" expanded="true" signature="35612:35702" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/binaryUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="177" column="68" selection-start-line="177" selection-start-column="68" selection-end-line="177" selection-end-column="68" />
+        <state relative-caret-position="382">
+          <caret line="178" lean-forward="true" selection-start-line="178" selection-end-line="178" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <marker date="1586787769075" expanded="true" signature="1821:1915" ph="..." />
-            <marker date="1586787769075" expanded="true" signature="2742:2745" ph="..." />
+            <marker date="1586787970333" expanded="true" signature="1821:1915" ph="..." />
+            <marker date="1586787970333" expanded="true" signature="2742:2745" ph="..." />
           </folding>
         </state>
       </provider>
