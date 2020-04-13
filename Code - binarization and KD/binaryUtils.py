@@ -174,6 +174,9 @@ class myConv2d(nn.Module):
                     self.gamma = torch.nn.Parameter(scaling_factor * torch.ones(1, 1, output_size), requires_grad=True)
                     self.gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
                     # gamma_large = torch.einsum('i, j, k -> ijk', self.alpha, self.beta, self.gamma)
+                    if torch.cuda.is_available():
+                        self.gamma_large = self.gamma_large.to('gpu')
+
                 else:
                     self.gamma_large = torch.nn.Parameter(
                         scaling_factor * torch.ones(output_channels, output_size, output_size), requires_grad=True)
