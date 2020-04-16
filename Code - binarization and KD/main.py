@@ -16,6 +16,36 @@ import dataloaders
 import warnings
 
 
+def load_imageNet():
+    normalizing_mean = [0.485, 0.456, 0.406]
+    normalizing_std = [0.229, 0.224, 0.225]
+
+    if torch.cuda.is_available():
+        batch_size_training = 256
+        batch_size_validation = 256
+    else:
+        batch_size_training = 4
+        batch_size_validation = 4
+
+    transform_train = transforms.Compose([
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomCrop(32, 4),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
+
+    transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
+
+    train_set = torchvision.datasets.ImageNet(root='./data', split='train', transform=transform_train)
+    validation_set = torchvision.datasets.ImageNet(root='./data', split='valid', transform=transform_test)
+
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
+                                               shuffle=True, num_workers=2)
+    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
+                                                    shuffle=False, num_workers=2)
+
+    return train_loader, validation_loader
 
 def load_data(dataset):
     # Load data
@@ -64,8 +94,8 @@ def load_data(dataset):
                                                shuffle=True, num_workers=2)
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
                                                     shuffle=False, num_workers=2)
-    #test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size_validation,
-    #                                          shuffle=False, num_workers=2)
+    test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size_validation,
+                                              shuffle=False, num_workers=2)
 
     return train_loader, validation_loader, test_loader
 
@@ -948,7 +978,7 @@ def main():
     train_loader, validation_loader, test_loader = load_data(dataset)
 
     resnet18 = models.resnet18(pretrained=True)
-    train_loader, validation_loader, test_loader = load_data('ImageNet')
+    train_loader, validation_loader = load_imageNet()
 
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
