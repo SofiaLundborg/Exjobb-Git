@@ -16,6 +16,7 @@ import dataloaders
 import warnings
 
 
+
 def load_data(dataset):
     # Load data
     normalizing_mean = [0.485, 0.456, 0.406]
@@ -47,10 +48,9 @@ def load_data(dataset):
         test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
                                                 download=True, transform=transform_test)
     elif dataset == 'ImageNet':
-        train_set = torchvision.datasets.ImageNet(root='./data', train=True,
-                                                  download=False, transform=transform_train)
-        test_set = torchvision.datasets.ImageNet(root='./data', train=False,
-                                                 download=False, transform=transform_test)
+        train_set = torchvision.datasets.ImageNet(root='./data', train=True, transform=transform_train)
+        #test_set = torchvision.datasets.ImageNet(root='./data', train=False,
+                                                  #transform=transform_test)
 
     # divide into train and validation data (80% train)
     train_size = int(0.8 * len(train_set))
@@ -64,8 +64,8 @@ def load_data(dataset):
                                                shuffle=True, num_workers=2)
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
                                                     shuffle=False, num_workers=2)
-    test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size_validation,
-                                              shuffle=False, num_workers=2)
+    #test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size_validation,
+    #                                          shuffle=False, num_workers=2)
 
     return train_loader, validation_loader, test_loader
 
