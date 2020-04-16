@@ -813,12 +813,14 @@ class ResNetReluFirst(nn.Module):
             self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
             self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, bias=False, factorized_gamma=factorized_gamma)
             self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-            self.layer4 = self._make_layer(block, ip * 8, layers[3], input_size, stride=2)
             self.avgpool = nn.AvgPool2d(7, stride=1)
 
         self.layer1 = self._make_layer(block, ip, input_size, layers[0], stride=1, net_type=net_type)
         self.layer2 = self._make_layer(block, ip * 2, input_size, layers[1], stride=2, net_type=net_type)
         self.layer3 = self._make_layer(block, ip * 4, input_size, layers[2], stride=2, net_type=net_type)
+
+        if "ImageNet" in dataset:
+            self.layer4 = self._make_layer(block, ip * 8, input_size, layers[3], stride=2, net_type=net_type)
 
         if ("cifar" in dataset) or ("svhn" in dataset):
             self.linear = nn.Linear(ip * 4 * block.expansion, num_classes)
@@ -1047,6 +1049,15 @@ class CifarModel():
     @staticmethod
     def resnet20ForTeacher(net_type, dataset='cifar10', **kwargs):
         return ResNetReluFirst(BasicBlockForTeacher, [3, 3, 3], net_type, dataset=dataset, **kwargs)
+
+    @staticmethod
+    def resnet18ReluDoubleShortcut(net_type, dataset, factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockReluDoubleShortcut, [2, 2, 2, 2], net_type, dataset=dataset,
+                               factorized_gamma=factorized_gamma, **kwargs)
+    @staticmethod
+    def resnet18ForTeacher(net_type, dataset, **kwargs):
+        return ResNetReluFirst(BasicBlockForTeacher, [2, 2, 2, 2], net_type, dataset=dataset, **kwargs)
+
     @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)
@@ -1073,6 +1084,8 @@ resnet_models = {
         "resnet20AbsDoubleShortcut": CifarModel.resnet20AbsDoubleShortcut,
         "resnet20ReluDoubleShortcut": CifarModel.resnet20ReluDoubleShortcut,
         "resnet20ForTeacher": CifarModel.resnet20ForTeacher,
+        "resnet18ReluDoubleShortcut": CifarModel.resnet18ReluDoubleShortcut,
+        "resnet18ForTeacher": CifarModel.resnet18ForTeacher,
         "resnet32": CifarModel.resnet32,
         "resnet44": CifarModel.resnet44,
         "resnet56": CifarModel.resnet56,

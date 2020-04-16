@@ -978,13 +978,30 @@ def main():
     train_loader, validation_loader, test_loader = load_data(dataset)
 
     resnet18 = models.resnet18(pretrained=True)
-    train_loader, validation_loader = load_imageNet()
+    torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
+    original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
+
+    myResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
+    checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, myResNet18)
+    myResNet18.load_state_dict(checkpoint_teacher)
+
+    #train_loader, validation_loader = load_imageNet()
     print('ImageNet loaded')
 
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
+        myResNet18 = myResNet18.cuda()
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
+
+    results_org = resnet18(sample)
+    my_results = myResNet18(sample)
+
+    print(results_org == my_results)
+    print(results_org)
+    print(my_results)
+
+
 
     # initailize_networks
     teacher_net = resNet.resnet_models['resnet20ForTeacher']('full_precision', dataset)
