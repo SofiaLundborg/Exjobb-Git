@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/binaryUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/binaryUtils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/distillation_loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/distillation_loss.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/resNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resNet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plot_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -83,12 +78,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="26945" />
+          <entry key="py" value="26955" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="26945" />
+          <entry key="Python" value="26955" />
         </counts>
       </usages-collector>
     </session>
@@ -98,17 +93,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="957" column="13" lean-forward="true" selection-start-line="957" selection-start-column="13" selection-end-line="957" selection-end-column="13" />
+            <state relative-caret-position="401">
+              <caret line="52" column="63" selection-start-line="52" selection-start-column="63" selection-end-line="52" selection-end-column="63" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#12326#16340#0" />
                 <element signature="e#16365#16447#0" />
-                <marker date="1587014539895" expanded="true" signature="457:462" ph="..." />
-                <marker date="1587014539895" expanded="true" signature="12825:16721" ph="..." />
-                <marker date="1587014539895" expanded="true" signature="22743:25174" ph="..." />
-                <marker date="1587014539895" expanded="true" signature="25337:31459" ph="..." />
-                <marker date="1587014539895" expanded="true" signature="35739:35829" ph="..." />
+                <marker date="1587015484289" expanded="true" signature="457:462" ph="..." />
+                <marker date="1587015484289" expanded="true" signature="12827:16723" ph="..." />
+                <marker date="1587015484289" expanded="true" signature="22745:25176" ph="..." />
+                <marker date="1587015484289" expanded="true" signature="25339:31461" ph="..." />
+                <marker date="1587015484289" expanded="true" signature="35741:35831" ph="..." />
               </folding>
             </state>
           </provider>
@@ -871,17 +866,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="957" column="13" lean-forward="true" selection-start-line="957" selection-start-column="13" selection-end-line="957" selection-end-column="13" />
+        <state relative-caret-position="401">
+          <caret line="52" column="63" selection-start-line="52" selection-start-column="63" selection-end-line="52" selection-end-column="63" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#12326#16340#0" />
             <element signature="e#16365#16447#0" />
-            <marker date="1587014539895" expanded="true" signature="457:462" ph="..." />
-            <marker date="1587014539895" expanded="true" signature="12825:16721" ph="..." />
-            <marker date="1587014539895" expanded="true" signature="22743:25174" ph="..." />
-            <marker date="1587014539895" expanded="true" signature="25337:31459" ph="..." />
-            <marker date="1587014539895" expanded="true" signature="35739:35829" ph="..." />
+            <marker date="1587015484289" expanded="true" signature="457:462" ph="..." />
+            <marker date="1587015484289" expanded="true" signature="12827:16723" ph="..." />
+            <marker date="1587015484289" expanded="true" signature="22745:25176" ph="..." />
+            <marker date="1587015484289" expanded="true" signature="25339:31461" ph="..." />
+            <marker date="1587015484289" expanded="true" signature="35741:35831" ph="..." />
           </folding>
         </state>
       </provider>
