@@ -979,6 +979,7 @@ def main():
 
     resnet18 = models.resnet18(pretrained=True)
     train_loader, validation_loader = load_imageNet()
+    print('ImageNet loaded')
 
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
