@@ -1028,25 +1028,25 @@ class CifarModel():
         return ResNet(BasicBlock, [3, 3, 3], net_type, dataset, **kwargs)
     @staticmethod
     def resnet20relufirst(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
-        return ResNetReluFirst(BasicBlockReluFirst, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
+        return ResNetReluFirst(BasicBlockReluFirst, [3, 3, 3], net_type, dataset=dataset, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
     def resnet20Naive(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
-        return ResNetReluFirst(BasicBlockNaive, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
+        return ResNetReluFirst(BasicBlockNaive, [3, 3, 3], net_type, dataset=dataset,factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
     def resnet20WithRelu(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
-        return ResNetReluFirst(BasicBlockWithRelu, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
+        return ResNetReluFirst(BasicBlockWithRelu, [3, 3, 3], net_type, dataset=dataset,factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
     def resnet20Abs(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
-        return ResNetReluFirst(BasicBlockAbs, [3, 3, 3], net_type,factorized_gamma=factorized_gamma,  **kwargs)
+        return ResNetReluFirst(BasicBlockAbs, [3, 3, 3], net_type, dataset=dataset,factorized_gamma=factorized_gamma,  **kwargs)
     @staticmethod
     def resnet20AbsDoubleShortcut(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
-        return ResNetReluFirst(BasicBlockAbsDoubleShortcut, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
+        return ResNetReluFirst(BasicBlockAbsDoubleShortcut, [3, 3, 3], net_type, dataset=dataset, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
     def resnet20ReluDoubleShortcut(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
-        return ResNetReluFirst(BasicBlockReluDoubleShortcut, [3, 3, 3], net_type, factorized_gamma=factorized_gamma, **kwargs)
+        return ResNetReluFirst(BasicBlockReluDoubleShortcut, [3, 3, 3], net_type, dataset=dataset, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
     def resnet20ForTeacher(net_type, dataset='cifar10', **kwargs):
-        return ResNetReluFirst(BasicBlockForTeacher, [3, 3, 3], net_type, **kwargs)
+        return ResNetReluFirst(BasicBlockForTeacher, [3, 3, 3], net_type, dataset=dataset, **kwargs)
     @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)

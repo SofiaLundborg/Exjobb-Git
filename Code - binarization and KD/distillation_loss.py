@@ -53,7 +53,6 @@ class Loss(nn.Module):
             return total_loss
 
 
-
         if intermediate_layers:
             features_student, output_student = student_net(inputs, intermediate_layers, cut_network)
         else:

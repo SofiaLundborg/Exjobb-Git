@@ -178,7 +178,6 @@ class myConv2d(nn.Module):
                     #     self.beta = self.beta.to('cuda')
                     #     self.gamma = self.gamma.to('cuda')
                     self.gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
-                    print('hej')
                     # gamma_large = torch.einsum('i, j, k -> ijk', self.alpha, self.beta, self.gamma)
 
                 else:
