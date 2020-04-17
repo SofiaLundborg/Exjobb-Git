@@ -807,11 +807,11 @@ class ResNetReluFirst(nn.Module):
         ip = self.in_planes
         if ("cifar" in dataset) or ("svhn" in dataset):
             self.linear = nn.Linear(ip * 4 * block.expansion, num_classes)
-            self.conv1 = myConv2d(3, ip, input_size, kernel_size=3, stride=1, padding=1, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
+            self.conv1 = myConv2d(3, ip, input_size, kernel_size=3, stride=1, padding=1, net_type='full_precision', bias=False, factorized_gamma=factorized_gamma)
             self.layer4 = None
         else:
             self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
-            self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, bias=False, factorized_gamma=factorized_gamma)
+            self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, net_type='full_precision', bias=False, factorized_gamma=factorized_gamma)
             self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
             self.avgpool = nn.AvgPool2d(7, stride=1)
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
