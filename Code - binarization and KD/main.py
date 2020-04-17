@@ -1052,6 +1052,8 @@ def main():
     accuracy_org = calculate_accuracy(train_loader, resnet18)
     accuracy_teacher = calculate_accuracy(train_loader, teacher_ResNet18)
 
+    print('accuracy org: ' + str(accuracy_org))
+    print('accuracy teacher: ' + str(accuracy_teacher))
 
 
 
