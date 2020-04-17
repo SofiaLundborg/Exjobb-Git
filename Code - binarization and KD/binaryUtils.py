@@ -168,6 +168,7 @@ class myConv2d(nn.Module):
             if input_size is not None:
                 scaling_factor = 1
                 output_size = input_size[0]
+                print(str(output_size))
 
                 if factorized_gamma:
                     self.alpha = torch.nn.Parameter(scaling_factor * torch.ones(output_channels, 1, 1), requires_grad=True)
