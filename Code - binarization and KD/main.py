@@ -21,8 +21,8 @@ def load_imageNet():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 256
-        batch_size_validation = 256
+        batch_size_training = 64
+        batch_size_validation = 64
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -1013,7 +1013,7 @@ def main():
     temperature_kd_loss = 6.0       # LIT: 6.0
 
 
-    train_loader, validation_loader, test_loader = load_data(dataset)
+    #train_loader, validation_loader, test_loader = load_data(dataset)
 
     resnet18 = models.resnet18(pretrained=True)
     torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
@@ -1049,7 +1049,8 @@ def main():
 
 
 
-
+    accuracy_org = calculate_accuracy(train_loader, resnet18)
+    accuracy_teacher = calculate_accuracy(train_loader, teacher_ResNet18)
 
 
 
