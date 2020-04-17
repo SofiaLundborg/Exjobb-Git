@@ -57,10 +57,10 @@ def load_imageNet():
     print('validation set is loaded')
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
-                                               shuffle=True, num_workers=2)
+                                               shuffle=True, num_workers=16)
     print('train_loader finished')
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
-                                                    shuffle=False, num_workers=2)
+                                                    shuffle=False, num_workers=16)
     print('validation_loader finished')
 
 
@@ -169,12 +169,6 @@ def calculate_accuracy(data_loader, net):
             prec1 = accuracy(outputs, targets)
             accuracy1.update(prec1[0], images.size(0))
 
-            # if i % 10 == 9:
-            #    print('mean accuarcy: ' + str(accuracy1.avg))
-
-            # _, predicted = torch.max(outputs.data, 1)
-            # n_total += targets.size(0)
-            # n_correct += (predicted == targets).sum().item()
 
     return accuracy1.avg.item()        #100 * n_correct / n_total
 
