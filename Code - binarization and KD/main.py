@@ -1030,13 +1030,14 @@ def main():
     temperature_kd_loss = 6.0       # LIT: 6.0
 
 
-    #train_loader, validation_loader, test_loader = load_data(dataset)
+    train_loader, validation_loader, test_loader = load_data(dataset)
     train_loader, validation_loader = load_imageNet()
     print('ImageNet loaded')
 
     resnet18 = models.resnet18(pretrained=True)
     torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
     original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
+    print('pretrained model loaded')
 
     teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
     checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
