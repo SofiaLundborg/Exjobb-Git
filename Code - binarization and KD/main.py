@@ -1059,11 +1059,7 @@ def main():
 
     print(results_org == my_results)
 
-    accuracy_org = calculate_accuracy(train_loader, resnet18)
-    accuracy_teacher = calculate_accuracy(train_loader, teacher_ResNet18)
 
-    print('accuracy org: ' + str(accuracy_org))
-    print('accuracy teacher: ' + str(accuracy_teacher))
 
     filename = 'method_a_double_shortcut_with_relu_long_' + str(net_type)
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
@@ -1073,8 +1069,13 @@ def main():
         student_ResNet18 = student_ResNet18.cuda()
     path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
 
+    print('finished training')
 
+    accuracy_org = calculate_accuracy(train_loader, resnet18)
+    accuracy_teacher = calculate_accuracy(train_loader, teacher_ResNet18)
 
+    print('accuracy org: ' + str(accuracy_org))
+    print('accuracy teacher: ' + str(accuracy_teacher))
 
 
 
