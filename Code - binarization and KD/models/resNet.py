@@ -814,6 +814,7 @@ class ResNetReluFirst(nn.Module):
             self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, bias=False, factorized_gamma=factorized_gamma)
             self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
             self.avgpool = nn.AvgPool2d(7, stride=1)
+            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
         self.layer1 = self._make_layer(block, ip, input_size, layers[0], stride=1, net_type=net_type)
         self.layer2 = self._make_layer(block, ip * 2, input_size, layers[1], stride=2, net_type=net_type)
