@@ -21,8 +21,8 @@ def load_imageNet():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 256
-        batch_size_validation = 256
+        batch_size_training = 512
+        batch_size_validation = 512
     else:
         batch_size_training = 4
         batch_size_validation = 4
