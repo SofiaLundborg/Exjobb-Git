@@ -1043,12 +1043,9 @@ def main():
 
     # Initialize distributed training
     if torch.cuda.device_count() > 1:
-        dist.init_process_group(backend='nccl',  # 'distributed backend'
-                                init_method='tcp://127.0.0.1:9999',  # distributed training init method
-                                world_size=1,  # number of nodes for distributed training
-                                rank=0)  # distributed training node rank
-        teacher_ResNet18 = torch.nn.parallel.DistributedDataParallel(teacher_ResNet18)
-        resnet18 = torch.nn.parallel.DistributedDataParallel(resnet18)
+        teacher_ResNet18 = torch.nn.DataParallel(teacher_ResNet18)
+        resnet18 = torch.nn.DataParallel(resnet18)
+
 
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
