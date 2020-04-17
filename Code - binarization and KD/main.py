@@ -364,7 +364,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 folder = 'ImageNet/'
             else:
                 folder = 'cifar10/'
-            torch.save(validation_loss[:total_epoch+1], './Results/' folder + 'validation_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') +  '.pt')
+            torch.save(validation_loss[:total_epoch+1], './Results/' + folder + 'validation_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') +  '.pt')
             torch.save(train_loss[:total_epoch+1], './Results/' + folder + 'train_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
 
             if validation_loss_for_epoch < best_validation_loss:
