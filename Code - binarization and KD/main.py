@@ -57,10 +57,10 @@ def load_imageNet():
     print('validation set is loaded')
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
-                                               shuffle=True, num_workers=16, pin_memory=True)
+                                               shuffle=True, num_workers=8, pin_memory=True)
     print('train_loader finished')
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
-                                                    shuffle=False, num_workers=16, pin_memory=True)
+                                                    shuffle=False, num_workers=8, pin_memory=True)
     print('validation_loader finished')
 
 
