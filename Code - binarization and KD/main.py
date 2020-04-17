@@ -52,7 +52,7 @@ def load_imageNet():
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
 
     train_set = torchvision.datasets.ImageNet(root='./data', split='train', transform=transform_train)
-    validation_set = torchvision.datasets.ImageNet(root='./data', split='valid', transform=preprocessing_valid)
+    validation_set = torchvision.datasets.ImageNet(root='./data', split='valid', transform=transform_test)
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
