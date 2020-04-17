@@ -21,8 +21,8 @@ def load_imageNet():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 8
-        batch_size_validation = 8
+        batch_size_training = 16
+        batch_size_validation = 16
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -33,12 +33,26 @@ def load_imageNet():
         transforms.ToTensor(),
         transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
 
+    preprocessing_train = transforms.Compose([
+        transforms.RandomSizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=normalizing_mean, std=normalizing_std),
+    ])
+
+    preprocessing_valid = transforms.Compose([
+        transforms.Scale(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=normalizing_mean, std=normalizing_std),
+    ])
+
     transform_test = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
 
-    train_set = torchvision.datasets.ImageNet(root='./data', split='train', transform=transform_train)
-    validation_set = torchvision.datasets.ImageNet(root='./data', split='valid', transform=transform_test)
+    train_set = torchvision.datasets.ImageNet(root='./data', split='train', transform=preprocessing_train)
+    validation_set = torchvision.datasets.ImageNet(root='./data', split='valid', transform=preprocessing_valid)
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=2)
@@ -1014,6 +1028,8 @@ def main():
 
 
     #train_loader, validation_loader, test_loader = load_data(dataset)
+    train_loader, validation_loader = load_imageNet()
+    print('ImageNet loaded')
 
     resnet18 = models.resnet18(pretrained=True)
     torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
@@ -1022,9 +1038,6 @@ def main():
     teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
     checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
     teacher_ResNet18.load_state_dict(checkpoint_teacher)
-
-    train_loader, validation_loader = load_imageNet()
-    print('ImageNet loaded')
 
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
