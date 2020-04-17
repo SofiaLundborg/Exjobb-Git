@@ -100,6 +100,30 @@ def load_data(dataset):
     return train_loader, validation_loader, test_loader
 
 
+def save_training(epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, PATH):
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'train_loss': train_loss,
+        'validation_loss': validation_loss,
+        'train_accuracy': train_accuracy,
+        'validation_accuracy': validation_accuracy
+    }, PATH)
+
+def load_training(model, optimizer, PATH):
+    checkpoint = torch.load(PATH)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    epoch = checkpoint['epoch']
+    train_loss = checkpoint['train_loss']
+    validation_loss = checkpoint['validation_loss']
+    train_accuracy = checkpoint['train_accuracy']
+    validation_accuracy = checkpoint['validation_accuracy']
+
+    return epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy
+
+
 def get_data_loaders():
     return dataloaders.CIFAR10DataLoaders.train_loader(batch_size=32), dataloaders.CIFAR10DataLoaders.val_loader()
 
@@ -312,32 +336,46 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             validation_loss_for_epoch = running_validation_loss / len(validation_loader)
             validation_loss[total_epoch] = validation_loss_for_epoch
 
+            if student_net.dataset == 'ImageNet':
+                folder = 'ImageNet/'
+            else:
+                folder = 'cifar10/'
+
             if layer == 'all':
                 accuracy_train_epoch = calculate_accuracy(train_loader, student_net)
                 accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net)
                 train_accuracy[epoch] = accuracy_train_epoch
                 validation_accuracy[epoch] = accuracy_validation_epoch
-                plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename,
+                plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=folder + filename,
                              title=title_accuracy)
+
+
                 torch.save(validation_accuracy[:total_epoch + 1],
-                           './Results/validation_accuracy_' + filename + '_' + datetime.today().strftime(
+                           './Results/' + folder + 'validation_accuracy_' + filename + '_' + datetime.today().strftime(
                                '%Y%m%d') + '.pt')
                 torch.save(train_accuracy[:total_epoch + 1],
-                           './Results/train_accuracy_' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+                           './Results/' + folder + 'train_accuracy_' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pt')
 
             make_weights_real(student_net)
 
-            plot_results(ax_loss, fig, train_loss, validation_loss, total_epoch, filename=filename, title=title_loss)
+            plot_results(ax_loss, fig, train_loss, validation_loss, total_epoch, filename= folder + filename, title=title_loss)
 
-            torch.save(validation_loss[:total_epoch+1], './Results/validation_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') +  '.pt')
-            torch.save(train_loss[:total_epoch+1], './Results/train_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+            if student_net.dataset == 'ImageNet':
+                folder = 'ImageNet/'
+            else:
+                folder = 'cifar10/'
+            torch.save(validation_loss[:total_epoch+1], './Results/' folder + 'validation_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') +  '.pt')
+            torch.save(train_loss[:total_epoch+1], './Results/' + folder + 'train_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
 
             if validation_loss_for_epoch < best_validation_loss:
                 # save network
-                PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+                PATH = './Trained_Models/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
                 best_validation_loss = validation_loss_for_epoch
                 best_epoch = total_epoch
+
+            save_training(epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,
+                          'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
             print('Epoch: ' + str(total_epoch))
             print('Best epoch: ' + str(best_epoch))
@@ -981,25 +1019,38 @@ def main():
     torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
     original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
 
-    myResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
-    checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, myResNet18)
-    myResNet18.load_state_dict(checkpoint_teacher)
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
+    checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
+    teacher_ResNet18.load_state_dict(checkpoint_teacher)
 
-    #train_loader, validation_loader = load_imageNet()
+    train_loader, validation_loader = load_imageNet()
     print('ImageNet loaded')
 
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
-        myResNet18 = myResNet18.cuda()
+        teacher_ResNet18 = teacher_ResNet18.cuda()
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
     results_org = resnet18(sample)
-    my_results = myResNet18(sample)
+    my_results = teacher_ResNet18(sample)
 
     print(results_org == my_results)
     print(results_org)
     print(my_results)
+
+    filename = 'method_a_double_shortcut_with_relu_long_' + str(net_type)
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
+    checkpoint_student = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
+    student_ResNet18.load_state_dict(checkpoint_student)
+    if torch.cuda.is_available():
+        student_ResNet18 = student_ResNet18.cuda()
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
+
+
+
+
+
 
 
 
@@ -1134,13 +1185,7 @@ def main():
 
     learning_rate_change = [50, 70, 90, 100]
     #
-    # filename = 'method_a_double_shortcut_with_relu_long_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, factorized_gamma=False)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
+
 
     #
     # net_type = 'Xnor++'
