@@ -11,6 +11,7 @@ from datetime import datetime
 from matplotlib.lines import Line2D
 import time
 import torchvision.models as models
+import torch.distributed as dist
 
 import dataloaders
 import warnings
@@ -158,7 +159,8 @@ def calculate_accuracy(data_loader, net):
     n_total = 0
     accuracy1 = AverageMeter()
     with torch.no_grad():
-        for i, data in enumerate(data_loader):
+        for i, data in enumerate(tqdm(data_loader)):
+
             images, targets = data
 
             if torch.cuda.is_available():
@@ -1039,6 +1041,15 @@ def main():
     checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
     teacher_ResNet18.load_state_dict(checkpoint_teacher)
 
+    # Initialize distributed training
+    if torch.cuda.device_count() > 1:
+        dist.init_process_group(backend='nccl',  # 'distributed backend'
+                                init_method='tcp://127.0.0.1:9999',  # distributed training init method
+                                world_size=1,  # number of nodes for distributed training
+                                rank=0)  # distributed training node rank
+        teacher_ResNet18 = torch.nn.parallel.DistributedDataParallel(teacher_ResNet18)
+        resnet18 = torch.nn.parallel.DistributedDataParallel(resnet18)
+
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
         teacher_ResNet18 = teacher_ResNet18.cuda()
@@ -1057,6 +1068,13 @@ def main():
     print('accuracy org: ' + str(accuracy_org))
     accuracy_teacher = calculate_accuracy(validation_loader, teacher_ResNet18)
     print('accuracy teacher: ' + str(accuracy_teacher))
+
+
+
+
+
+
+
 
 
     filename = 'method_a_double_shortcut_with_relu_long_' + str(net_type)
