@@ -612,8 +612,8 @@ class BasicBlockReluDoubleShortcut(nn.Module):
                 self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
             else:
                 self.shortcut = nn.Sequential(
-                     #nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
-                     myConv2d(in_planes, self.expansion*planes, input_size, kernel_size=1, stride=stride, bias=False, padding=0, net_type='full_precision'),
+                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     # myConv2d(in_planes, self.expansion*planes, input_size, kernel_size=1, stride=stride, bias=False, padding=0, net_type='full_precision'),
                      nn.BatchNorm2d(self.expansion * planes)
                 )
 
@@ -812,7 +812,9 @@ class ResNetReluFirst(nn.Module):
             self.layer4 = None
         else:
             self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
+            print(str(input_size))
             self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, net_type='full_precision', bias=False, factorized_gamma=factorized_gamma)
+            print(str(input_size))
             self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
             self.avgpool = nn.AvgPool2d(7, stride=1)
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
