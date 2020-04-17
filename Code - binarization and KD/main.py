@@ -1052,15 +1052,22 @@ def main():
     sample = get_one_sample(train_loader).to(device)
 
     results_org = resnet18(sample)
+    print(results_org[:5])
+
     my_results = teacher_ResNet18(sample)
+    print(my_results[:5])
 
     print(results_org == my_results)
-    print(results_org)
-    print(my_results)
+
+    accuracy_org = calculate_accuracy(train_loader, resnet18)
+    accuracy_teacher = calculate_accuracy(train_loader, teacher_ResNet18)
+
+    print('accuracy org: ' + str(accuracy_org))
+    print('accuracy teacher: ' + str(accuracy_teacher))
 
     filename = 'method_a_double_shortcut_with_relu_long_' + str(net_type)
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
-    checkpoint_student = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
+    checkpoint_student = change_loaded_checkpoint(original_teacher_dict, student_ResNet18)
     student_ResNet18.load_state_dict(checkpoint_student)
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
@@ -1068,11 +1075,7 @@ def main():
 
 
 
-    accuracy_org = calculate_accuracy(train_loader, resnet18)
-    accuracy_teacher = calculate_accuracy(train_loader, teacher_ResNet18)
 
-    print('accuracy org: ' + str(accuracy_org))
-    print('accuracy teacher: ' + str(accuracy_teacher))
 
 
 
