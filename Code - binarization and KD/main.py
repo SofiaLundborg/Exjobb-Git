@@ -121,7 +121,7 @@ def load_data(dataset):
     return train_loader, validation_loader, test_loader
 
 
-def save_training(epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, PATH):
+def save_training(epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx, PATH):
     torch.save({
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
@@ -129,7 +129,8 @@ def save_training(epoch, model, optimizer, train_loss, validation_loss, train_ac
         'train_loss': train_loss,
         'validation_loss': validation_loss,
         'train_accuracy': train_accuracy,
-        'validation_accuracy': validation_accuracy
+        'validation_accuracy': validation_accuracy,
+        'layer_index': layer_idx
     }, PATH)
 
 def load_training(model, optimizer, PATH):
@@ -141,8 +142,9 @@ def load_training(model, optimizer, PATH):
     validation_loss = checkpoint['validation_loss']
     train_accuracy = checkpoint['train_accuracy']
     validation_accuracy = checkpoint['validation_accuracy']
+    layer_index = checkpoint['layer_index']
 
-    return epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy
+    return epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index
 
 
 def get_data_loaders():
@@ -234,7 +236,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     return min_loss
 
 
-def training_a(student_net, teacher_net, train_loader, validation_loader, filename=None):
+def training_a(student_net, teacher_net, train_loader, validation_loader, filename=None, saved_training=None):
 
     if not filename:
         filename = 'method_a_' + str(student_net.net_type)
@@ -249,29 +251,36 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
     max_epoch_layer = 30
-    max_epoch_layer = 30
     max_epochs = max_epoch_layer * 3 + 60
 
-    if torch.cuda.is_available():
-        criterion = criterion.cuda()
-    device = get_device()
-
-    teacher_net.eval()
-
-    train_loss = np.empty(max_epochs)
-    validation_loss = np.empty(max_epochs)
-    train_accuracy = np.empty(110)
-    validation_accuracy = np.empty(110)
+    if saved_training:
+        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, criterion, saved_training)
+    else:
+        train_loss = np.empty(max_epochs)
+        validation_loss = np.empty(max_epochs)
+        train_accuracy = np.empty(110)
+        validation_accuracy = np.empty(110)
+        layer_idx = 0
 
     PATH = None
 
-    for layer_idx, layer in enumerate(layers):
+    total_epoch = -1
+
+    if torch.cuda.is_available():
+        criterion = criterion.cuda()
+        device = get_device()
+    teacher_net.eval()
+
+    while layer_idx < len(layers):
+        layer = layers[layer_idx]
+    #for layer_idx, layer in enumerate(layers):
+        n_not_improved = 0
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
             max_epoch_layer = 60
             criterion = torch.nn.CrossEntropyLoss()
-
         else:
+            max_epoch_layer = 30
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         if student_net.dataset == 'ImageNet':
             cut_network = 1 + 4 * (layer_idx +1)
@@ -287,10 +296,16 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         best_validation_loss = np.inf
         best_epoch = 0
 
-        for epoch in range(max_epoch_layer):
+        #for epoch in range(max_epoch_layer):
+
+        print(layer + " is training")
+        epoch = -1
+        while (epoch < max_epoch_layer) and (learning_rate_change >= 1e-6):
+            epoch += 1
             start_time_epoch = time.time()
 
-            total_epoch = epoch + 30*layer_idx
+            #total_epoch = epoch + 30*layer_idx
+            total_epoch += 1
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -306,10 +321,12 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 learning_rate_change = [50, 70, 90, 100]
                 learning_rate_change = [30, 40, 50]
 
-            if epoch in learning_rate_change:
+            if n_not_improved >= 2:
                 lr = lr * 0.1
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = lr
+
+                print('laerning rate decreased to: ' + str(lr))
 
             running_loss = 0
             start_training_time = time.time()
@@ -418,8 +435,10 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 torch.save(student_net.state_dict(), PATH)
                 best_validation_loss = validation_loss_for_epoch
                 best_epoch = total_epoch
+            else:
+                n_not_improved += 1
 
-            save_training(epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,
+            save_training(epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx,
                           'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
             print('Epoch: ' + str(total_epoch))
@@ -437,6 +456,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             log.close()
 
             time.sleep(5)
+            layer_idx += 1
 
     return PATH
 
