@@ -12,7 +12,7 @@ from matplotlib.lines import Line2D
 import time
 import torchvision.models as models
 import torch.distributed as dist
-import tqdm
+from tqdm import tqdm
 
 import dataloaders
 import warnings
