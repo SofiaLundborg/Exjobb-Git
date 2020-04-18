@@ -23,8 +23,8 @@ def load_imageNet():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 64
-        batch_size_validation = 64
+        batch_size_training = 128
+        batch_size_validation = 128
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -311,6 +311,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             running_loss = 0
             start_training_time = time.time()
             for i, data in enumerate(tqdm(train_loader)):
+                print('Training of epoch ' + str(i) + "has started")
                 inputs, targets = data
 
                 # cpu / gpu
@@ -343,6 +344,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             training_loss_for_epoch = running_loss / len(train_loader)
             train_loss[total_epoch] = training_loss_for_epoch
 
+            print("validation loss calculation has started")
             start_validation_loss = time.time()
             running_validation_loss = 0
             binarize_weights(student_net)
@@ -372,6 +374,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             else:
                 folder = 'cifar10/'
 
+            print("accuracy calculation has started")
             start_accuracy_time = time.time()
             if layer == 'all':
                 accuracy_train_epoch = calculate_accuracy(train_loader, student_net)
