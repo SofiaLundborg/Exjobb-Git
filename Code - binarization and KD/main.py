@@ -1052,8 +1052,6 @@ def main():
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
-
-
     layers_to_binarize = ['layer1', 'layer2', 'layer3', 'layer4']
     set_layers_to_binarize(teacher_ResNet18, layers_to_binarize)
 
