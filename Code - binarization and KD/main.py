@@ -273,7 +273,10 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
-        cut_network = 1 + 6 * (layer_idx+1)
+        if student_net.dataset == 'ImageNet':
+            cut_network = 1 + 4 * (layer_idx +1)
+        else:
+            cut_network = 1 + 6 * (layer_idx+1)
 
         lr = 0.01
         weight_decay = 0  # 0.00001
