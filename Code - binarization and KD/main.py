@@ -1082,19 +1082,6 @@ def main():
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
-    layers_to_binarize = ['layer1', 'layer2', 'layer3', 'layer4']
-    set_layers_to_binarize(teacher_ResNet18, layers_to_binarize)
-
-    my_results = teacher_ResNet18(sample)
-    print(my_results[:5])
-
-    results_org = resnet18(sample)
-    print(results_org[:5])
-
-    print(results_org == my_results)
-
-
-
 
     filename = 'method_a_double_shortcut_with_relu_long_' + str(net_type)
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
@@ -1103,51 +1090,49 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-
     path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
 
     print('finished training')
 
-    accuracy_org = calculate_accuracy(validation_loader, resnet18)
-    print('accuracy org: ' + str(accuracy_org))
-    accuracy_teacher = calculate_accuracy(validation_loader, teacher_ResNet18)
-    print('accuracy teacher: ' + str(accuracy_teacher))
-
-    # initailize_networks
-    teacher_net = resNet.resnet_models['resnet20ForTeacher']('full_precision', dataset)
-
-
-    student_net = resNet.resnet_models[net_name + 'relufirst'](net_type)
-
-    # load pretrained network into student and techer network
-    teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
-    teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
-    new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_net)
-    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    teacher_net.load_state_dict(new_checkpoint_teacher)
-    student_net.load_state_dict(new_checkpoint_student)
-
-    checkpoint = torch.load('./Trained_Models/lit_finetuning_binary_20200316.pth', map_location='cpu')
-
-    teacher_net_org = originalResnet.resnet_models["cifar"][net_name]()
-    teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
-    teacher_checkpoint_org = torch.load(teacher_pth, map_location='cpu')
-    teacher_net_org.load_state_dict(teacher_checkpoint_org)
-
-    if torch.cuda.is_available():
-        teacher_net = teacher_net.cuda()
-        student_net = student_net.cuda()
-        teacher_net_org = teacher_net_org.cuda()
-
-    trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
-    trained_student_net = resNet.resnet_models[net_name]('Xnor++')
-    trained_student_net.load_state_dict(trained_student_checkpoint)
-
-
-
-    #teacher_net_pretrained = models.resnet18(pretrained=True)
-
-    teacher_net.eval()
+    #
+    # accuracy_org = calculate_accuracy(validation_loader, resnet18)
+    # print('accuracy org: ' + str(accuracy_org))
+    # accuracy_teacher = calculate_accuracy(validation_loader, teacher_ResNet18)
+    # print('accuracy teacher: ' + str(accuracy_teacher))
+    #
+    # # initailize_networks
+    # teacher_net = resNet.resnet_models['resnet20ForTeacher']('full_precision', dataset)
+    # student_net = resNet.resnet_models[net_name + 'relufirst'](net_type)
+    #
+    # # load pretrained network into student and techer network
+    # teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
+    # teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
+    # new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_net)
+    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
+    # teacher_net.load_state_dict(new_checkpoint_teacher)
+    # student_net.load_state_dict(new_checkpoint_student)
+    #
+    # checkpoint = torch.load('./Trained_Models/lit_finetuning_binary_20200316.pth', map_location='cpu')
+    #
+    # teacher_net_org = originalResnet.resnet_models["cifar"][net_name]()
+    # teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
+    # teacher_checkpoint_org = torch.load(teacher_pth, map_location='cpu')
+    # teacher_net_org.load_state_dict(teacher_checkpoint_org)
+    #
+    # if torch.cuda.is_available():
+    #     teacher_net = teacher_net.cuda()
+    #     student_net = student_net.cuda()
+    #     teacher_net_org = teacher_net_org.cuda()
+    #
+    # trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
+    # trained_student_net = resNet.resnet_models[net_name]('Xnor++')
+    # trained_student_net.load_state_dict(trained_student_checkpoint)
+    #
+    #
+    #
+    # #teacher_net_pretrained = models.resnet18(pretrained=True)
+    #
+    # teacher_net.eval()
 
     #acc_teacher = calculate_accuracy(train_loader, teacher_net)
     #print(acc_teacher)
