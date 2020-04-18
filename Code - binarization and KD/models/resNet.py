@@ -869,6 +869,7 @@ class ResNetReluFirst(nn.Module):
         features = OrderedDict()
 
         out = self.bn1(self.conv1(x))
+        print('out: ' + str(out.size()))
         i_layer = 1
 
         if cut_network == i_layer:
