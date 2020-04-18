@@ -1041,11 +1041,10 @@ def main():
     checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
     teacher_ResNet18.load_state_dict(checkpoint_teacher)
 
-    # Initialize distributed training
-    if torch.cuda.device_count() > 1:
-        teacher_ResNet18 = torch.nn.DataParallel(teacher_ResNet18)
-        resnet18 = torch.nn.DataParallel(resnet18)
-
+    # # Initialize distributed training
+    # if torch.cuda.device_count() > 1:
+    #     teacher_ResNet18 = torch.nn.DataParallel(teacher_ResNet18)
+    #     resnet18 = torch.nn.DataParallel(resnet18)
 
     if torch.cuda.is_available():
         resnet18 = resnet18.cuda()
