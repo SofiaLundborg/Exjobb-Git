@@ -1055,20 +1055,13 @@ def main():
     results_org = resnet18(sample)
     print(results_org[:5])
 
+    layers_to_binarize = ['layer1', 'layer2', 'layer3', 'layer4']
+    set_layers_to_binarize(teacher_ResNet18, layers_to_binarize)
+
     my_results = teacher_ResNet18(sample)
     print(my_results[:5])
 
     print(results_org == my_results)
-
-    accuracy_org = calculate_accuracy(validation_loader, resnet18)
-    print('accuracy org: ' + str(accuracy_org))
-    accuracy_teacher = calculate_accuracy(validation_loader, teacher_ResNet18)
-    print('accuracy teacher: ' + str(accuracy_teacher))
-
-
-
-
-
 
 
 
@@ -1079,13 +1072,16 @@ def main():
     student_ResNet18.load_state_dict(checkpoint_student)
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
+
+
     path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
 
     print('finished training')
 
-
-
-
+    accuracy_org = calculate_accuracy(validation_loader, resnet18)
+    print('accuracy org: ' + str(accuracy_org))
+    accuracy_teacher = calculate_accuracy(validation_loader, teacher_ResNet18)
+    print('accuracy teacher: ' + str(accuracy_teacher))
 
     # initailize_networks
     teacher_net = resNet.resnet_models['resnet20ForTeacher']('full_precision', dataset)
