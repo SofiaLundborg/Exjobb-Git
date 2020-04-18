@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/resNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resNet.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -90,11 +91,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="466">
-              <caret line="434" lean-forward="true" selection-start-line="434" selection-end-line="434" />
+            <state relative-caret-position="406">
+              <caret line="430" lean-forward="true" selection-start-line="430" selection-end-line="430" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#4357#4584#0" />
@@ -168,11 +169,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/models/resNet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="393">
-              <caret line="1106" column="9" selection-start-line="1106" selection-start-column="4" selection-end-line="1106" selection-end-column="9" />
+            <state relative-caret-position="333">
+              <caret line="895" column="13" lean-forward="true" selection-start-line="895" selection-start-column="13" selection-end-line="895" selection-end-column="13" />
               <folding>
                 <element signature="e#89#110#0" expanded="true" />
                 <element signature="e#974#3078#0" />
@@ -248,9 +249,9 @@
       <find>plot(</find>
       <find>parse_devkit</find>
       <find>BasicBlockReluDoubleShortcut</find>
-      <find>training_a</find>
       <find>print</find>
       <find>prin</find>
+      <find>training_a</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -279,9 +280,9 @@
         <option value="$PROJECT_DIR$/plot_main.py" />
         <option value="$PROJECT_DIR$/loadImageNet.py" />
         <option value="$PROJECT_DIR$/extraUtils.py" />
-        <option value="$PROJECT_DIR$/models/resNet.py" />
         <option value="$PROJECT_DIR$/binaryUtils.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/models/resNet.py" />
       </list>
     </option>
   </component>
@@ -850,24 +851,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/resNet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="1106" column="9" selection-start-line="1106" selection-start-column="4" selection-end-line="1106" selection-end-column="9" />
-          <folding>
-            <element signature="e#89#110#0" expanded="true" />
-            <element signature="e#974#3078#0" />
-            <element signature="e#4464#8598#0" />
-            <element signature="e#9161#15146#0" />
-            <element signature="e#14642#17017#0" />
-            <element signature="e#16625#19240#0" />
-            <element signature="e#7993#9333#0" />
-            <element signature="e#9371#12418#0" />
-            <element signature="e#16940#21355#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/binaryUtils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
@@ -882,8 +865,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="434" lean-forward="true" selection-start-line="434" selection-end-line="434" />
+        <state relative-caret-position="406">
+          <caret line="430" lean-forward="true" selection-start-line="430" selection-end-line="430" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#4357#4584#0" />
@@ -897,6 +880,24 @@
             <marker date="1587211056580" expanded="true" signature="27541:29972" ph="..." />
             <marker date="1587211056580" expanded="true" signature="30135:36257" ph="..." />
             <marker date="1587211056580" expanded="true" signature="40537:40627" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/resNet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="333">
+          <caret line="895" column="13" lean-forward="true" selection-start-line="895" selection-start-column="13" selection-end-line="895" selection-end-column="13" />
+          <folding>
+            <element signature="e#89#110#0" expanded="true" />
+            <element signature="e#974#3078#0" />
+            <element signature="e#4464#8598#0" />
+            <element signature="e#9161#15146#0" />
+            <element signature="e#14642#17017#0" />
+            <element signature="e#16625#19240#0" />
+            <element signature="e#7993#9333#0" />
+            <element signature="e#9371#12418#0" />
+            <element signature="e#16940#21355#0" />
           </folding>
         </state>
       </provider>
