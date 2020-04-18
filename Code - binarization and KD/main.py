@@ -366,7 +366,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             log = open("timelog.txt", "a+")
             log.write(
                 "Validation loss calculation time for epoch " + str(total_epoch) + ": " + str(
-                    end_validation_loss - start_validation_loss) + "seconds \n\r")
+                    end_validation_loss - start_validation_loss) + " seconds \n\r")
             log.close()
 
             if student_net.dataset == 'ImageNet':
@@ -395,7 +395,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             log = open("timelog.txt", "a+")
             log.write(
                 "Accuracy calculation time for epoch " + str(total_epoch) + ": " + str(
-                    end_accuracy_time - start_accuracy_time) + "seconds\n\r")
+                    end_accuracy_time - start_accuracy_time) + " seconds\n\r")
             log.close()
 
             make_weights_real(student_net)
@@ -430,7 +430,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             end_time_epoch = time.time()
 
             log = open("timelog.txt", "a+")
-            log.write("Total time for epoch " + str(total_epoch) + ": " + str(end_time_epoch-start_time_epoch) + "seconds\n\n\r" )
+            log.write("TOTAL TIME for epoch " + str(total_epoch) + ": " + str(end_time_epoch-start_time_epoch) + " seconds\n\n\r" )
             log.close()
 
             time.sleep(5)
