@@ -1052,14 +1052,16 @@ def main():
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
-    results_org = resnet18(sample)
-    print(results_org[:5])
+
 
     layers_to_binarize = ['layer1', 'layer2', 'layer3', 'layer4']
     set_layers_to_binarize(teacher_ResNet18, layers_to_binarize)
 
     my_results = teacher_ResNet18(sample)
     print(my_results[:5])
+
+    results_org = resnet18(sample)
+    print(results_org[:5])
 
     print(results_org == my_results)
 
