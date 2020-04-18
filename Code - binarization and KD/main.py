@@ -310,7 +310,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
             running_loss = 0
             start_training_time = time.time()
-            print('Training of epoch ' + str(total_epoch) + "has started")
+            print('Training of epoch ' + str(total_epoch) + " has started")
             for i, data in enumerate(tqdm(train_loader)):
                 inputs, targets = data
 
@@ -338,7 +338,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             end_training_time = time.time()
             log = open("timelog.txt", "a+")
             log.write(
-                "Training time for epoch " + str(total_epoch) + ": " + str(end_training_time - start_training_time) + "seconds")
+                "Training time for epoch " + str(total_epoch) + ": " + str(end_training_time - start_training_time) + "seconds \n\r")
             log.close()
 
             training_loss_for_epoch = running_loss / len(train_loader)
@@ -366,7 +366,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             log = open("timelog.txt", "a+")
             log.write(
                 "Validation loss calculation time for epoch " + str(total_epoch) + ": " + str(
-                    end_validation_loss - start_validation_loss) + "seconds")
+                    end_validation_loss - start_validation_loss) + "seconds \n\r")
             log.close()
 
             if student_net.dataset == 'ImageNet':
@@ -395,7 +395,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             log = open("timelog.txt", "a+")
             log.write(
                 "Accuracy calculation time for epoch " + str(total_epoch) + ": " + str(
-                    end_accuracy_time - start_accuracy_time) + "seconds")
+                    end_accuracy_time - start_accuracy_time) + "seconds\n\r")
             log.close()
 
             make_weights_real(student_net)
@@ -430,7 +430,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             end_time_epoch = time.time()
 
             log = open("timelog.txt", "a+")
-            log.write("Total time for epoch " + str(total_epoch) + ": " + str(end_time_epoch-start_time_epoch) + "seconds" )
+            log.write("Total time for epoch " + str(total_epoch) + ": " + str(end_time_epoch-start_time_epoch) + "seconds\n\n\r" )
             log.close()
 
             time.sleep(5)
