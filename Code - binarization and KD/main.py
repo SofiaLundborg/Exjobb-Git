@@ -310,8 +310,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
             running_loss = 0
             start_training_time = time.time()
+            print('Training of epoch ' + str(total_epoch) + "has started")
             for i, data in enumerate(tqdm(train_loader)):
-                print('Training of epoch ' + str(i) + "has started")
                 inputs, targets = data
 
                 # cpu / gpu
