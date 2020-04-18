@@ -300,7 +300,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         print(layer + " is training")
         epoch = -1
-        while (epoch < max_epoch_layer) and (learning_rate_change >= 1e-6):
+        while (epoch < max_epoch_layer) and (lr >= 1e-6):
             epoch += 1
             start_time_epoch = time.time()
 
