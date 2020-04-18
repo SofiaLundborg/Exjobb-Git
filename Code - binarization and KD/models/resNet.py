@@ -603,12 +603,12 @@ class BasicBlockReluDoubleShortcut(nn.Module):
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         print('input size: ' + str(input_size))
         if not net_type == 'full_precision':
-            print('gamma: ' + self.conv1.gamma_large.size())
+            print('gamma: ' + str(self.conv1.gamma_large.size()))
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
         print('input size: ' + str(input_size))
         if not net_type == 'full_precision':
-            print('gamma: ' + self.conv1.gamma_large.size())
+            print('gamma: ' + str(self.conv1.gamma_large.size()))
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
