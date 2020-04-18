@@ -601,14 +601,8 @@ class BasicBlockReluDoubleShortcut(nn.Module):
     def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockReluDoubleShortcut, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
-        print('input size: ' + str(input_size))
-        if not net_type == 'full_precision':
-            print('gamma: ' + str(self.conv1.gamma_large.size()))
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
-        print('input size: ' + str(input_size))
-        if not net_type == 'full_precision':
-            print('gamma: ' + str(self.conv1.gamma_large.size()))
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
@@ -818,22 +812,15 @@ class ResNetReluFirst(nn.Module):
             self.layer4 = None
         else:
             self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
-            #print('input size: ' + str(input_size))
             self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, net_type='full_precision', bias=False, factorized_gamma=factorized_gamma)
-            #print('input size: ' + str(input_size))
             self.maxpool = myMaxPool2d(kernel_size=3, stride=2, padding=1, input_size=input_size)
             self.avgpool = nn.AvgPool2d(7, stride=1)
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
 
         self.layer1 = self._make_layer(block, ip, input_size, layers[0], stride=1, net_type=net_type)
-        #print('input size: ' + str(input_size))
-
         self.layer2 = self._make_layer(block, ip * 2, input_size, layers[1], stride=2, net_type=net_type)
-        #print('input size: ' + str(input_size))
-
         self.layer3 = self._make_layer(block, ip * 4, input_size, layers[2], stride=2, net_type=net_type)
-        #print('input size: ' + str(input_size))
 
 
         if "ImageNet" in dataset:

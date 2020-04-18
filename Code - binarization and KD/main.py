@@ -12,6 +12,7 @@ from matplotlib.lines import Line2D
 import time
 import torchvision.models as models
 import torch.distributed as dist
+import tqdm
 
 import dataloaders
 import warnings
@@ -246,9 +247,9 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         criterion = criterion.cuda()
     device = get_device()
 
-    layers = ['layer1', 'layer2', 'layer3', 'all']
+    layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
     max_epoch_layer = 30
-    max_epoch_layer = 60
+    max_epoch_layer = 30
     max_epochs = max_epoch_layer * 3 + 60
 
     if torch.cuda.is_available():
@@ -266,7 +267,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     for layer_idx, layer in enumerate(layers):
         if layer == 'all':
-            set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
+            set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
             max_epoch_layer = 60
             criterion = torch.nn.CrossEntropyLoss()
 
@@ -284,6 +285,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         best_epoch = 0
 
         for epoch in range(max_epoch_layer):
+            start_time_epoch = time.time()
 
             total_epoch = epoch + 30*layer_idx
 
@@ -296,7 +298,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 set_layers_to_update(student_net, layers[:layer_idx+1])
 
             learning_rate_change = [15, 20, 25]
-            learning_rate_change = [30, 45, 50, 55]
+            #learning_rate_change = [30, 45, 50, 55]
             if layer == 'all':
                 learning_rate_change = [50, 70, 90, 100]
                 learning_rate_change = [30, 40, 50]
@@ -307,7 +309,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                     param_group['lr'] = lr
 
             running_loss = 0
-            for i, data in enumerate(train_loader, 0):
+            start_training_time = time.time()
+            for i, data in enumerate(tqdm(train_loader)):
                 inputs, targets = data
 
                 # cpu / gpu
@@ -331,12 +334,19 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 make_weights_real(student_net)
                 optimizer.step()
 
+            end_training_time = time.time()
+            log = open("timelog.txt", "a+")
+            log.write(
+                "Training time for epoch " + str(total_epoch) + ": " + str(end_training_time - start_training_time) + "seconds")
+            log.close()
+
             training_loss_for_epoch = running_loss / len(train_loader)
             train_loss[total_epoch] = training_loss_for_epoch
 
+            start_validation_loss = time.time()
             running_validation_loss = 0
             binarize_weights(student_net)
-            for i, data in enumerate(validation_loader, 0):
+            for i, data in enumerate(tqdm(validation_loader)):
                 inputs, targets = data
                 inputs = inputs.to(device)
                 targets = targets.to(device)
@@ -347,15 +357,22 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                         output_student = student_net(inputs, cut_network=cut_network)
                         output_teacher = teacher_net(inputs, cut_network=cut_network)
                         running_validation_loss += criterion(output_student, output_teacher).item()
-
             validation_loss_for_epoch = running_validation_loss / len(validation_loader)
             validation_loss[total_epoch] = validation_loss_for_epoch
+            end_validation_loss = time.time()
+
+            log = open("timelog.txt", "a+")
+            log.write(
+                "Validation loss calculation time for epoch " + str(total_epoch) + ": " + str(
+                    end_validation_loss - start_validation_loss) + "seconds")
+            log.close()
 
             if student_net.dataset == 'ImageNet':
                 folder = 'ImageNet/'
             else:
                 folder = 'cifar10/'
 
+            start_accuracy_time = time.time()
             if layer == 'all':
                 accuracy_train_epoch = calculate_accuracy(train_loader, student_net)
                 accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net)
@@ -370,6 +387,13 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                                '%Y%m%d') + '.pt')
                 torch.save(train_accuracy[:total_epoch + 1],
                            './Results/' + folder + 'train_accuracy_' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+            end_accuracy_time = time.time()
+
+            log = open("timelog.txt", "a+")
+            log.write(
+                "Accuracy calculation time for epoch " + str(total_epoch) + ": " + str(
+                    end_accuracy_time - start_accuracy_time) + "seconds")
+            log.close()
 
             make_weights_real(student_net)
 
@@ -399,6 +423,12 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             if layer == 'all':
                 print('Accuracy on train images: %d %%' % accuracy_train_epoch)
                 print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
+
+            end_time_epoch = time.time()
+
+            log = open("timelog.txt", "a+")
+            log.write("Total time for epoch " + str(total_epoch) + ": " + str(end_time_epoch-start_time_epoch) + "seconds" )
+            log.close()
 
             time.sleep(5)
 
