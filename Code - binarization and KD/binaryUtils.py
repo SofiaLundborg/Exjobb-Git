@@ -245,7 +245,7 @@ class myConv2d(nn.Module):
                     gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
                     x = x*gamma_large
                 else:
-                    print('x: ' + str(x.size))
+                    print('x: ' + str(x.size()))
                     print('gamma: ' + str(self.gamma_large.size()))
                     x = x*self.gamma_large
             else:
