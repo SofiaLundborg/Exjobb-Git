@@ -5,7 +5,7 @@ Resnet Implementation Heavily Inspired by the torchvision resnet implementation
 import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
-from binaryUtils import myConv2d
+from binaryUtils import myConv2d, myMaxPool2d
 import matplotlib.pyplot as plt
 import torch
 import math
@@ -821,7 +821,7 @@ class ResNetReluFirst(nn.Module):
             #print('input size: ' + str(input_size))
             self.conv1 = myConv2d(3, ip, input_size, kernel_size=7, stride=2, padding=3, net_type='full_precision', bias=False, factorized_gamma=factorized_gamma)
             #print('input size: ' + str(input_size))
-            self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1, input_size=input_size)
+            self.maxpool = myMaxPool2d(kernel_size=3, stride=2, padding=1, input_size=input_size)
             self.avgpool = nn.AvgPool2d(7, stride=1)
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
