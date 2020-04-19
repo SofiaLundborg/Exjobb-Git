@@ -250,12 +250,15 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         criterion = criterion.cuda()
     device = get_device()
 
+
+    optimizer = optim.Adam(student_net.parameters(), lr=0.01, weight_decay=0)
+
     layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
     max_epoch_layer = 30
     max_epochs = max_epoch_layer * 3 + 60
 
     if saved_training:
-        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, criterion, saved_training)
+        epoch, model, criterion, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
@@ -271,6 +274,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         criterion = criterion.cuda()
         device = get_device()
     teacher_net.eval()
+
+    changed_layer = False
 
     while layer_idx < len(layers):
         layer = layers[layer_idx]
@@ -288,11 +293,12 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         else:
             cut_network = 1 + 6 * (layer_idx+1)
 
-        lr = 0.01
-        if layer == 'all':
-            lr = 0.0001
-        weight_decay = 0  # 0.00001
-        optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
+        if changed_layer:
+            lr = 0.01
+            if layer == 'all':
+                lr = 0.0001
+            weight_decay = 0  # 0.00001
+            optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
 
         fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
@@ -464,6 +470,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
             time.sleep(5)
         layer_idx += 1
+        changed_layer = True
 
     return PATH
 
