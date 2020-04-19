@@ -456,7 +456,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             log.close()
 
             time.sleep(5)
-            layer_idx += 1
+        layer_idx += 1
 
     return PATH
 
