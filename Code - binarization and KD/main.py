@@ -258,7 +258,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     max_epochs = max_epoch_layer * 3 + 60
 
     if saved_training:
-        epoch, model, criterion, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
+        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
