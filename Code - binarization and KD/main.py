@@ -23,8 +23,8 @@ def load_imageNet():
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 128
-        batch_size_validation = 128
+        batch_size_training = 64
+        batch_size_validation = 64
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -132,6 +132,7 @@ def save_training(epoch, model, optimizer, train_loss, validation_loss, train_ac
         'validation_accuracy': validation_accuracy,
         'layer_index': layer_idx
     }, PATH)
+
 
 def load_training(model, optimizer, PATH):
     checkpoint = torch.load(PATH)
@@ -288,6 +289,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             cut_network = 1 + 6 * (layer_idx+1)
 
         lr = 0.01
+        if layer == 'all':
+            lr = 0.0001
         weight_decay = 0  # 0.00001
         optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -431,10 +434,14 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
             if validation_loss_for_epoch < best_validation_loss:
                 # save network
+                if layer=='all':
+                    PATH = './Trained_Models/' + folder + filename + '_finetuning' + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+
                 PATH = './Trained_Models/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
                 best_validation_loss = validation_loss_for_epoch
                 best_epoch = total_epoch
+
             else:
                 n_not_improved += 1
 
@@ -1116,7 +1123,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200419')
 
     print('finished training')
 
