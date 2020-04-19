@@ -265,6 +265,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         train_accuracy = np.empty(110)
         validation_accuracy = np.empty(110)
         layer_idx = 0
+        epoch = -1
 
     PATH = None
 
@@ -312,7 +313,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         #for epoch in range(max_epoch_layer):
 
         print(layer + " is training")
-        epoch = -1
+        #epoch = -1
         while (epoch < max_epoch_layer) and (lr >= 1e-6):
             epoch += 1
             start_time_epoch = time.time()
