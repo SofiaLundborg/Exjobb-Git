@@ -293,12 +293,16 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         else:
             cut_network = 1 + 6 * (layer_idx+1)
 
-        if changed_layer:
+        if changed_layer or (not saved_training):
             lr = 0.01
             if layer == 'all':
                 lr = 0.0001
             weight_decay = 0  # 0.00001
             optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
+        else:
+            for param_group in optimizer.param_groups:
+                lr = param_group['lr']
+            optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=0)
 
         fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
