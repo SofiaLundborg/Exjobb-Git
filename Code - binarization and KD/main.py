@@ -258,18 +258,18 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     max_epochs = max_epoch_layer * 3 + 60
 
     if saved_training:
-        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
+        total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
         train_accuracy = np.empty(110)
         validation_accuracy = np.empty(110)
         layer_idx = 0
-        epoch = -1
+        total_epoch = -1
 
     PATH = None
 
-    total_epoch = -1
+    epoch = -1
 
     if torch.cuda.is_available():
         criterion = criterion.cuda()
@@ -456,7 +456,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             else:
                 n_not_improved += 1
 
-            save_training(epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx,
+            save_training(total_epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx,
                           'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
             print('Epoch: ' + str(total_epoch))
