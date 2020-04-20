@@ -892,6 +892,9 @@ class ResNetReluFirst(nn.Module):
             out, i_layer, feature_layers_to_extract, features, cut_network = self.layer4([out, i_layer, feature_layers_to_extract, features, cut_network])
             # out = self.relu(out)
             out = F.relu(out)
+            if cut_network:
+                if cut_network <= i_layer:
+                    return output[0]
             out = self.avgpool(out)
         else:
             out = self.relu(out)

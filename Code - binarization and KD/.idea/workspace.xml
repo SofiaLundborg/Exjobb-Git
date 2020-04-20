@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/resNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resNet.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -78,23 +79,23 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="31251" />
+          <entry key="py" value="31283" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="31251" />
+          <entry key="Python" value="31283" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1416">
-              <caret line="271" column="20" selection-start-line="271" selection-start-column="20" selection-end-line="271" selection-end-column="20" />
+            <state relative-caret-position="1012">
+              <caret line="420" lean-forward="true" selection-start-line="420" selection-end-line="420" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#12326#16340#0" />
@@ -157,14 +158,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/models/resNet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="61" column="43" selection-start-line="61" selection-start-column="43" selection-end-line="61" selection-end-column="43" />
+            <state relative-caret-position="292">
+              <caret line="665" lean-forward="true" selection-start-line="665" selection-end-line="665" />
               <folding>
                 <element signature="e#89#110#0" expanded="true" />
-                <element signature="e#4464#8598#0" />
+                <element signature="e#3123#8488#0" />
                 <element signature="e#9161#15146#0" />
                 <element signature="e#14642#17017#0" />
                 <element signature="e#16625#19240#0" />
@@ -270,8 +271,8 @@
         <option value="$PROJECT_DIR$/loadImageNet.py" />
         <option value="$PROJECT_DIR$/extraUtils.py" />
         <option value="$PROJECT_DIR$/binaryUtils.py" />
-        <option value="$PROJECT_DIR$/models/resNet.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/models/resNet.py" />
       </list>
     </option>
   </component>
@@ -298,11 +299,6 @@
               <item name="Code - binarization and KD" type="b2602c69:ProjectViewProjectNode" />
               <item name="Code - binarization and KD" type="462c0819:PsiDirectoryNode" />
               <item name="Figures" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Code - binarization and KD" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Code - binarization and KD" type="462c0819:PsiDirectoryNode" />
-              <item name="Trained_Models" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -464,12 +460,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/models/resNet.py</url>
-          <line>1014</line>
+          <line>1017</line>
           <option name="timeStamp" value="420" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/models/resNet.py</url>
-          <line>1008</line>
+          <line>1011</line>
           <option name="timeStamp" value="421" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -852,27 +848,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/resNet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="61" column="43" selection-start-line="61" selection-start-column="43" selection-end-line="61" selection-end-column="43" />
-          <folding>
-            <element signature="e#89#110#0" expanded="true" />
-            <element signature="e#4464#8598#0" />
-            <element signature="e#9161#15146#0" />
-            <element signature="e#14642#17017#0" />
-            <element signature="e#16625#19240#0" />
-            <element signature="e#7993#9333#0" />
-            <element signature="e#9371#12418#0" />
-            <element signature="e#16940#21355#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1416">
-          <caret line="271" column="20" selection-start-line="271" selection-start-column="20" selection-end-line="271" selection-end-column="20" />
+        <state relative-caret-position="1012">
+          <caret line="420" lean-forward="true" selection-start-line="420" selection-end-line="420" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#12326#16340#0" />
@@ -884,6 +863,23 @@
             <marker date="1587330355913" expanded="true" signature="29094:31525" ph="..." />
             <marker date="1587330355913" expanded="true" signature="31688:37810" ph="..." />
             <marker date="1587330355913" expanded="true" signature="42090:42180" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/resNet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="665" lean-forward="true" selection-start-line="665" selection-end-line="665" />
+          <folding>
+            <element signature="e#89#110#0" expanded="true" />
+            <element signature="e#3123#8488#0" />
+            <element signature="e#9161#15146#0" />
+            <element signature="e#14642#17017#0" />
+            <element signature="e#16625#19240#0" />
+            <element signature="e#7993#9333#0" />
+            <element signature="e#9371#12418#0" />
+            <element signature="e#16940#21355#0" />
           </folding>
         </state>
       </provider>
