@@ -457,11 +457,12 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 # save network
                 if layer=='all':
                     PATH = './Trained_Models/' + folder + filename + '_finetuning' + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
-
-                PATH = './Trained_Models/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+                else:
+                    PATH = './Trained_Models/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
                 torch.save(student_net.state_dict(), PATH)
                 best_validation_loss = validation_loss_for_epoch
                 best_epoch = total_epoch
+
 
             else:
                 n_not_improved += 1
