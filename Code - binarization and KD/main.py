@@ -1146,7 +1146,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200419')
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     print('finished training')
 
