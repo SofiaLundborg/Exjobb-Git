@@ -259,6 +259,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
+        lr = 0.01
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
@@ -297,7 +298,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         if changed_layer or (not saved_training):
             lr = 0.01
             if layer == 'all':
-                lr = 0.0001
+                lr = 0.01
             weight_decay = 0  # 0.00001
             optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
         else:
@@ -309,6 +310,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         best_validation_loss = np.inf
         best_epoch = 0
+        n_change_learning_rate = 0
 
         #for epoch in range(max_epoch_layer):
 
@@ -336,11 +338,19 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 learning_rate_change = [30, 40, 50]
 
             if n_not_improved >= 2:
-                lr = lr * 0.1
+                if layer == 'all':
+                    if n_change_learning_rate >= 4:
+                        lr = lr * 0.1
+                        n_change_learning_rate = 0
+                    else:
+                        n_change_learning_rate += 1
+                else:
+                    lr = lr * 0.1
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = lr
+                    n_not_improved = 0
 
-                print('laerning rate decreased to: ' + str(lr))
+                print('learning rate decreased to: ' + str(lr))
 
             running_loss = 0
             start_training_time = time.time()
@@ -1128,7 +1138,7 @@ def main():
     sample = get_one_sample(train_loader).to(device)
 
 
-    filename = 'method_a_double_shortcut_with_relu_long_' + str(net_type)
+    filename = 'method_a_double_shortcut_with_finetuning_' + str(net_type)
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
     checkpoint_student = change_loaded_checkpoint(original_teacher_dict, student_ResNet18)
     student_ResNet18.load_state_dict(checkpoint_student)
