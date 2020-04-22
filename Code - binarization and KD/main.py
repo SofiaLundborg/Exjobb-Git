@@ -18,7 +18,7 @@ import dataloaders
 import warnings
 
 
-def load_imageNet():
+def load_imageNet(subsets=None):
     normalizing_mean = [0.485, 0.456, 0.406]
     normalizing_std = [0.229, 0.224, 0.225]
 
@@ -65,8 +65,14 @@ def load_imageNet():
                                                     shuffle=False, num_workers=8, pin_memory=True)
     print('validation_loader finished')
 
+    if subsets:
+        train_subset, ndjkfnskj = torch.utils.data.random_split(train_set, [10000, len(train_set) - 10000])
+        validation_subset, ndjkfnskj = torch.utils.data.random_split(validation_set, [10000, len(validation_set)-10000])
+        return train_subset, validation_subset
 
-    return train_loader, validation_loader
+    else:
+        return train_loader, validation_loader
+
 
 def load_data(dataset):
     # Load data
@@ -1138,6 +1144,10 @@ def main():
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
 
+    train_loader_subset, validation_loader_subset = load_imageNet(subsets=True)
+    torch.save(train_loader_subset, 'train_loader_subset.pth')
+    torch.save(validation_loader_subset, 'validation_loader_subset.pth')
+
 
     filename = 'method_a_double_shortcut_with_finetuning_' + str(net_type)
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
@@ -1145,6 +1155,7 @@ def main():
     student_ResNet18.load_state_dict(checkpoint_student)
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
+
 
     path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
