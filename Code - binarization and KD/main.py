@@ -519,21 +519,21 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         criterion = criterion.cuda()
     device = get_device()
 
-    lr = 0.01
+    lr = 0.1
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
-    train_loss = np.empty(max_epochs)
-    validation_loss = np.empty(max_epochs)
-    train_accuracy = np.empty(max_epochs)
-    train_accuracy_top5 = np.empty(max_epochs)
-    validation_accuracy = np.empty(max_epochs)
-    validation_accuracy_top5 = np.empty(max_epochs)
+    train_loss = np.empty(max_epochs+1)
+    validation_loss = np.empty(max_epochs+1)
+    train_accuracy = np.empty(max_epochs+1)
+    train_accuracy_top5 = np.empty(max_epochs+1)
+    validation_accuracy = np.empty(max_epochs+1)
+    validation_accuracy_top5 = np.empty(max_epochs+1)
     best_validation_loss = np.inf
     best_epoch = 0
 
     if not learning_rate_change:
-        learning_rate_change = [4, 8, 12, 16]
+        learning_rate_change = [5, 10, 15, 20]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1184,9 +1184,9 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_after_method_a_double_shortcut_with_subsets' + str(net_type)
+    filename = 'finetuning_after_method_a_double_shortcut' + str(net_type)
     load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/method_a_20200421_ready_For_finetuning')
-    finetuning(student_ResNet18, train_loader_subset, validation_loader_subset, 20, filename=filename, learning_rate_change = None)
+    finetuning(student_ResNet18, train_loader, validation_loader, 20, filename=filename, learning_rate_change = None)
 
     #path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
