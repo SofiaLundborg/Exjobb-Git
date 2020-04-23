@@ -499,10 +499,11 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     return PATH
 
 
-def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None, learning_rate_change=None, saved_training = None):
+def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None, learning_rate_change=None, saved_training = None, saved_model=None):
 
     if net.dataset == 'ImageNet':
         layers_to_train = ['layer1', 'layer2', 'layer3', 'layer4']
+        print(layers_to_train)
     else:
         layers_to_train = ['layer1', 'layer2', 'layer3']
     set_layers_to_binarize(net, layers_to_train)
@@ -518,9 +519,14 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         criterion = criterion.cuda()
     device = get_device()
 
+
     lr = 0.01
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
+
+    if saved_model:
+        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
+            net, optimizer, saved_model)
 
     train_loss = np.empty(max_epochs+1)
     validation_loss = np.empty(max_epochs+1)
@@ -1184,9 +1190,9 @@ def main():
 
     filename = 'finetuning_after_method_a_double_shortcut_subset_using_training_a' + str(net_type)
     student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcutXnor++_20200423')
-    #finetuning(student_ResNet18, train_loader_subset, validation_loader_subset, 20, filename=filename, learning_rate_change = None)
+    finetuning(student_ResNet18, train_loader_subset, validation_loader_subset, 20, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
+    #path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     print('finished training')
 
