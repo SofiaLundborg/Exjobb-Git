@@ -1192,9 +1192,9 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_after_method_a_double_shortcut_subset_using_training_a' + str(net_type)
+    filename = 'finetuning_after_method_a_double_shortcut_complete_set' + str(net_type)
     student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcutXnor++_20200423')
-    finetuning(student_ResNet18, train_loader_subset, validation_loader_subset, 20, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
+    finetuning(student_ResNet18, train_loader, validation_loader, 20, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     #path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
