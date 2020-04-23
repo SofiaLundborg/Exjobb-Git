@@ -437,7 +437,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=folder + filename,
                              title=title_accuracy)
 
-
                 torch.save(validation_accuracy[:total_epoch + 1],
                            './Results/' + folder + 'validation_accuracy_' + filename + '_' + datetime.today().strftime(
                                '%Y%m%d') + '.pt')
@@ -1183,7 +1182,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_after_method_a_double_shortcut_subset' + str(net_type)
+    filename = 'finetuning_after_method_a_double_shortcutXnor++_20200423' + str(net_type)
     load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/method_a_double_shortcut_with_finetuning_Xnor++_20200422')
     finetuning(student_ResNet18, train_loader_subset, validation_loader_subset, 20, filename=filename, learning_rate_change = None)
 
