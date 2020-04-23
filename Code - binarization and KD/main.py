@@ -588,9 +588,9 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         validation_loss[epoch] = validation_loss_for_epoch
 
         print('Accuracy of train set has started')
-        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net, topk=[1,5])
+        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net, topk=(1,5))
         print('Accuracy of validation set has started')
-        accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net, topk=[1,5])
+        accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net, topk=(1,5))
 
         train_accuracy[epoch] = accuracy_train_epoch
         train_accuracy_top5[epoch] = accuracy_train_epoch_top5
@@ -961,8 +961,8 @@ def lit_training(student_net, train_loader, validation_loader, max_epochs=200, t
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
 
-        accuracy_train_epoch = calculate_accuracy(train_loader, student_net)
-        accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net)
+        accuracy_train_epoch = calculate_accuracy(train_loader, student_net, topk=(1,))
+        accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net, topk=(1,0))
         train_accuracy[epoch] = accuracy_train_epoch
         validation_accuracy[epoch] = accuracy_validation_epoch
         make_weights_real(student_net)
