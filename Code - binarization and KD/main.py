@@ -164,11 +164,12 @@ def get_one_sample(data_loader):
     return image
 
 
-def calculate_accuracy(data_loader, net, topk=1):
+def calculate_accuracy(data_loader, net, topk=(1,5)):
     net.eval()
     n_correct = 0
     n_total = 0
     accuracy1 = AverageMeter()
+    accuracy5 = AverageMeter()
     with torch.no_grad():
         for i, data in enumerate(tqdm(data_loader)):
 
@@ -179,9 +180,13 @@ def calculate_accuracy(data_loader, net, topk=1):
                 targets = targets.to('cuda')
 
             outputs = net(images)
-            prec1 = accuracy(outputs, targets, topk=topk)
+            prec1, prec5 = accuracy(outputs, targets, topk=topk)
             accuracy1.update(prec1[0], images.size(0))
-    return accuracy1.avg.item()        #100 * n_correct / n_total
+            accuracy5.update(prec5[0], images.size(0))
+    if len(topk)>1:
+        return accuracy1.avg.item(), accuracy5.avg.item() #100 * n_correct / n_total
+    else:
+        return accuracy1.avg.item()
 
 
 def accuracy(output, target, topk=(1,5)):
