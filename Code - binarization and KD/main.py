@@ -528,9 +528,9 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
             net, optimizer, saved_model)
 
-    lr = 0.01
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
+    # lr = 0.01
+    # for param_group in optimizer.param_groups:
+    #     param_group['lr'] = lr
 
 
     train_loss = np.empty(max_epochs+1)
@@ -543,7 +543,7 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
     best_epoch = 0
 
     if not learning_rate_change:
-        learning_rate_change = [5, 10, 15, 20]
+        learning_rate_change = [0, 5, 10, 15, 20]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
