@@ -430,8 +430,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             print("accuracy calculation has started")
             start_accuracy_time = time.time()
             if layer == 'all':
-                accuracy_train_epoch = calculate_accuracy(train_loader, student_net)
-                accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net)
+                accuracy_train_epoch = calculate_accuracy(train_loader, student_net, topk=(1,))
+                accuracy_validation_epoch = calculate_accuracy(validation_loader, student_net, topk=(1,))
                 train_accuracy[epoch] = accuracy_train_epoch
                 validation_accuracy[epoch] = accuracy_validation_epoch
                 plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=folder + filename,
