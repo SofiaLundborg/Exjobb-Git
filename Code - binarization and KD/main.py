@@ -519,8 +519,7 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         criterion = criterion.cuda()
     device = get_device()
 
-
-    lr = 0.01
+    lr = 0.001
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
