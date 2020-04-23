@@ -538,6 +538,7 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         epoch = -1
     while epoch < max_epochs:
         epoch += 1
+        print('training for epoch ' + str(epoch) + 'has started')
     #for epoch in range(max_epochs):
         net.train()
         for p in list(net.parameters()):
@@ -549,7 +550,7 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
                 param_group['lr'] = lr
 
         running_loss = 0
-        for i, data in enumerate(train_loader, 0):
+        for i, data in enumerate(tqdm(train_loader)):
             inputs, targets = data
 
             # cpu / gpu
@@ -572,7 +573,8 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
 
         running_validation_loss = 0
         binarize_weights(net)
-        for i, data in enumerate(validation_loader, 0):
+        print('Validation loss calculation has started')
+        for i, data in enumerate(tqdm(validation_loader)):
             inputs, targets = data
             inputs = inputs.to(device)
             targets = targets.to(device)
@@ -581,7 +583,9 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
 
+        print('Accuracy of train set has started')
         accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net)
+        print('Accuracy of validation set has started')
         accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net)
 
 
