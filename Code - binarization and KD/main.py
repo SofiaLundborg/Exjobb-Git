@@ -153,6 +153,10 @@ def load_training(model, optimizer, PATH):
 
     return epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index
 
+def load_model_from_saved_training(model, PATH):
+    checkpoint = torch.load(PATH)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    return model
 
 def get_data_loaders():
     return dataloaders.CIFAR10DataLoaders.train_loader(batch_size=32), dataloaders.CIFAR10DataLoaders.val_loader()
@@ -163,7 +167,7 @@ def get_one_sample(data_loader):
     return image
 
 
-def calculate_accuracy(data_loader, net):
+def calculate_accuracy(data_loader, net, topk=1):
     net.eval()
     n_correct = 0
     n_total = 0
@@ -178,14 +182,12 @@ def calculate_accuracy(data_loader, net):
                 targets = targets.to('cuda')
 
             outputs = net(images)
-            prec1 = accuracy(outputs, targets)
+            prec1 = accuracy(outputs, targets, topk=topk)
             accuracy1.update(prec1[0], images.size(0))
-
-
     return accuracy1.avg.item()        #100 * n_correct / n_total
 
 
-def accuracy(output, target, topk=(1,)):
+def accuracy(output, target, topk=(1,5)):
     """Computes the precision@k for the specified values of k"""
     with torch.no_grad():
         maxk = max(topk)
@@ -255,7 +257,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     if torch.cuda.is_available():
         criterion = criterion.cuda()
     device = get_device()
-
 
     optimizer = optim.Adam(student_net.parameters(), lr=0.01, weight_decay=0)
 
@@ -497,13 +498,17 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     return PATH
 
 
-def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None, learning_rate_change=None):
+def finetuning(net, train_loader, validation_loader, max_epochs, path=None, filename=None, learning_rate_change=None, saved_training = None):
 
-    layers_to_train = ['layer1', 'layer2', 'layer3']
+    if net.dataset == 'ImageNet':
+        layers_to_train = ['layer1', 'layer2', 'layer3', 'layer4']
+    else:
+        layers_to_train = ['layer1', 'layer2', 'layer3']
     set_layers_to_binarize(net, layers_to_train)
 
     title_loss = 'loss, ' + str(net.net_type)
     title_accuracy = 'accuracy, ' + str(net.net_type)
+    title_accuracy_top5 = 'top 5 accuracy, ' + str(net.net_type)
     if not filename:
         filename = 'finetuning_' + str(net.net_type)
 
@@ -516,20 +521,27 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
-    if not learning_rate_change:
-        learning_rate_change = [30, 40, 50, 60]
-
-    fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
-
     train_loss = np.empty(max_epochs)
     validation_loss = np.empty(max_epochs)
     train_accuracy = np.empty(max_epochs)
+    train_accuracy_top5 = np.empty(max_epochs)
     validation_accuracy = np.empty(max_epochs)
+    validation_accuracy_top5 = np.empty(max_epochs)
     best_validation_loss = np.inf
     best_epoch = 0
 
-    for epoch in range(max_epochs):
+    if not learning_rate_change:
+        learning_rate_change = [4, 8, 12, 16]
 
+    fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
+
+    if saved_training:
+        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(net, optimizer, saved_training)
+    else:
+        epoch = -1
+    while epoch < max_epochs:
+        epoch += 1
+    #for epoch in range(max_epochs):
         net.train()
         for p in list(net.parameters()):
             p.requires_grad = True
@@ -558,8 +570,6 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
             make_weights_real(net)
             optimizer.step()
 
-        time.sleep(5)
-
         training_loss_for_epoch = running_loss / len(train_loader)
         train_loss[epoch] = training_loss_for_epoch
 
@@ -574,23 +584,34 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
 
-        accuracy_train_epoch = calculate_accuracy(train_loader, net)
-        accuracy_validation_epoch = calculate_accuracy(validation_loader, net)
+        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net)
+        accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net)
+
+
         train_accuracy[epoch] = accuracy_train_epoch
+        train_accuracy_top5[epoch] = accuracy_train_epoch_top5
         validation_accuracy[epoch] = accuracy_validation_epoch
+        validation_accuracy_top5[epoch] = accuracy_validation_epoch_top5
+
         make_weights_real(net)
 
-        plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=filename, title=title_loss)
-        plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=filename, title=title_accuracy)
+        if net.dataset == 'ImageNet':
+            folder = 'ImageNet/'
+        else:
+            folder = 'cifar10/'
 
-        torch.save(validation_loss[:epoch + 1], './Results/validation_loss_' + filename + '.pt')
-        torch.save(train_loss[:epoch + 1], './Results/train_loss_' + filename + '.pt')
-        torch.save(validation_accuracy[:epoch + 1], './Results/validation_accuracy_' + filename + '.pt')
-        torch.save(train_accuracy[:epoch + 1], './Results/train_accuracy_' + filename + '.pt')
+        plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=folder+filename, title=title_loss)
+        plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=folder+filename, title=title_accuracy)
+        plot_results(ax_acc5, fig, train_accuracy_top5, validation_accuracy_top5, epoch, filename=folder+filename, title=title_accuracy_top5)
+
+        torch.save(validation_loss[:epoch + 1], './Results/' + folder + 'validation_loss_' + filename + '.pt')
+        torch.save(train_loss[:epoch + 1], './Results/' + folder + 'train_loss_' + filename + '.pt')
+        torch.save(validation_accuracy[:epoch + 1], './Results/' + folder + 'validation_accuracy_' + filename + '.pt')
+        torch.save(train_accuracy[:epoch + 1], './Results/' + folder + 'train_accuracy_' + filename + '.pt')
 
         if validation_loss_for_epoch < best_validation_loss:
             # save network
-            PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+            PATH = './Trained_Models/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
             torch.save(net.state_dict(), PATH)
             best_validation_loss = validation_loss_for_epoch
             best_epoch = epoch
@@ -602,7 +623,8 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         print('Accuracy on train images: %d %%' % accuracy_train_epoch)
         print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
 
-        time.sleep(5)
+        save_training(epoch, net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,
+                      None, 'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
 
 def training_c(student_net, teacher_net, train_loader, validation_loader, filename=None, max_epochs=200, scaling_factor_total=0.5):
@@ -1156,8 +1178,11 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
+    filename = 'finetuning_after_method_a_double_shortcut_with_subsets' + str(net_type)
+    load_model_from_saved_training(student_ResNet18, PATH='./saved-training/ImageNet/method_a_20200421_ready_For_finetuning')
+    finetuning(student_ResNet18, train_loader_subset, validation_loader_subset, 20, filename=None, learning_rate_change = None)
 
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
+    #path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     print('finished training')
 
