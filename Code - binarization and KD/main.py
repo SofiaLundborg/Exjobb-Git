@@ -584,9 +584,9 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         validation_loss[epoch] = validation_loss_for_epoch
 
         print('Accuracy of train set has started')
-        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net)
+        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net, topk=[1,5])
         print('Accuracy of validation set has started')
-        accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net)
+        accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net, topk=[1,5])
 
 
         train_accuracy[epoch] = accuracy_train_epoch
