@@ -57,6 +57,9 @@ def load_imageNet(subsets=None):
     print('train set is loaded')
     validation_set = torchvision.datasets.ImageNet(root='./data', split='val', transform=preprocessing_valid)
     print('validation set is loaded')
+    if subsets:
+        train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [10000, len(train_set) - 10000])
+        validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [10000, len(validation_set)-10000])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=8, pin_memory=True)
@@ -65,13 +68,7 @@ def load_imageNet(subsets=None):
                                                     shuffle=False, num_workers=8, pin_memory=True)
     print('validation_loader finished')
 
-    if subsets:
-        train_subset, ndjkfnskj = torch.utils.data.random_split(train_set, [10000, len(train_set) - 10000])
-        validation_subset, ndjkfnskj = torch.utils.data.random_split(validation_set, [10000, len(validation_set)-10000])
-        return train_subset, validation_subset
-
-    else:
-        return train_loader, validation_loader
+    return train_loader, validation_loader
 
 
 def load_data(dataset):
@@ -1167,8 +1164,8 @@ def main():
     sample = get_one_sample(train_loader).to(device)
 
     train_loader_subset, validation_loader_subset = load_imageNet(subsets=True)
-    torch.save(train_loader_subset, 'train_loader_subset.pth')
-    torch.save(validation_loader_subset, 'validation_loader_subset.pth')
+    #torch.save(train_loader_subset, 'train_loader_subset.pth')
+    #torch.save(validation_loader_subset, 'validation_loader_subset.pth')
 
 
     filename = 'method_a_double_shortcut_with_finetuning_' + str(net_type)
