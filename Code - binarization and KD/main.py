@@ -528,6 +528,11 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
             net, optimizer, saved_model)
 
+
+    lr = 0.01
+    weight_decay = 0  # 0.00001
+    optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
+
     train_loss = np.empty(max_epochs+1)
     validation_loss = np.empty(max_epochs+1)
     train_accuracy = np.empty(max_epochs+1)
