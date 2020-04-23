@@ -65,25 +65,25 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="eps" value="1" />
-          <entry key="png" value="7" />
+          <entry key="png" value="8" />
           <entry key="py" value="29" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Image" value="7" />
+          <entry key="Image" value="8" />
           <entry key="PLAIN_TEXT" value="1" />
           <entry key="Python" value="29" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="33078" />
+          <entry key="py" value="33079" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="33078" />
+          <entry key="Python" value="33079" />
         </counts>
       </usages-collector>
     </session>
@@ -93,20 +93,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="1186" column="57" lean-forward="true" selection-start-line="1186" selection-start-column="57" selection-end-line="1186" selection-end-column="57" />
+            <state relative-caret-position="258">
+              <caret line="1186" column="141" selection-start-line="1186" selection-start-column="141" selection-end-line="1186" selection-end-column="141" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#28984#31056#0" />
                 <element signature="e#12326#16340#0" />
                 <element signature="e#16365#16447#0" />
-                <marker date="1587637744772" expanded="true" signature="521:2683" ph="..." />
-                <marker date="1587637744772" expanded="false" signature="2706:2711" ph="..." />
-                <marker date="1587637744772" expanded="true" signature="6326:6437" ph="..." />
-                <marker date="1587637744772" expanded="true" signature="20330:25643" ph="..." />
-                <marker date="1587637744772" expanded="true" signature="31665:34096" ph="..." />
-                <marker date="1587637744772" expanded="true" signature="34259:40381" ph="..." />
-                <marker date="1587637744772" expanded="true" signature="44661:44751" ph="..." />
+                <marker date="1587644827566" expanded="true" signature="521:2683" ph="..." />
+                <marker date="1587644827566" expanded="false" signature="2706:2711" ph="..." />
+                <marker date="1587644827566" expanded="true" signature="6326:6437" ph="..." />
+                <marker date="1587644827566" expanded="true" signature="20330:25643" ph="..." />
+                <marker date="1587644827566" expanded="true" signature="31665:34096" ph="..." />
+                <marker date="1587644827566" expanded="true" signature="34259:40381" ph="..." />
+                <marker date="1587644827566" expanded="true" signature="44661:44751" ph="..." />
               </folding>
             </state>
           </provider>
@@ -300,6 +300,17 @@
               <item name="Code - binarization and KD" type="462c0819:PsiDirectoryNode" />
               <item name="data" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="Code - binarization and KD" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Code - binarization and KD" type="462c0819:PsiDirectoryNode" />
+              <item name="Figures" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Code - binarization and KD" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Code - binarization and KD" type="462c0819:PsiDirectoryNode" />
+              <item name="Figures" type="462c0819:PsiDirectoryNode" />
+              <item name="ImageNet" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -451,7 +462,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1094</line>
+          <line>1093</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -471,12 +482,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1417</line>
+          <line>1416</line>
           <option name="timeStamp" value="429" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1351</line>
+          <line>1350</line>
           <option name="timeStamp" value="432" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -486,7 +497,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1201</line>
+          <line>1200</line>
           <option name="timeStamp" value="438" />
         </line-breakpoint>
       </breakpoints>
@@ -866,22 +877,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Figures/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200420.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="1186" column="57" lean-forward="true" selection-start-line="1186" selection-start-column="57" selection-end-line="1186" selection-end-column="57" />
+        <state relative-caret-position="258">
+          <caret line="1186" column="141" selection-start-line="1186" selection-start-column="141" selection-end-line="1186" selection-end-column="141" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#28984#31056#0" />
             <element signature="e#12326#16340#0" />
             <element signature="e#16365#16447#0" />
-            <marker date="1587637744772" expanded="true" signature="521:2683" ph="..." />
-            <marker date="1587637744772" expanded="false" signature="2706:2711" ph="..." />
-            <marker date="1587637744772" expanded="true" signature="6326:6437" ph="..." />
-            <marker date="1587637744772" expanded="true" signature="20330:25643" ph="..." />
-            <marker date="1587637744772" expanded="true" signature="31665:34096" ph="..." />
-            <marker date="1587637744772" expanded="true" signature="34259:40381" ph="..." />
-            <marker date="1587637744772" expanded="true" signature="44661:44751" ph="..." />
+            <marker date="1587644827566" expanded="true" signature="521:2683" ph="..." />
+            <marker date="1587644827566" expanded="false" signature="2706:2711" ph="..." />
+            <marker date="1587644827566" expanded="true" signature="6326:6437" ph="..." />
+            <marker date="1587644827566" expanded="true" signature="20330:25643" ph="..." />
+            <marker date="1587644827566" expanded="true" signature="31665:34096" ph="..." />
+            <marker date="1587644827566" expanded="true" signature="34259:40381" ph="..." />
+            <marker date="1587644827566" expanded="true" signature="44661:44751" ph="..." />
           </folding>
         </state>
       </provider>

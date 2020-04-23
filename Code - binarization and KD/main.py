@@ -519,7 +519,7 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         criterion = criterion.cuda()
     device = get_device()
 
-    lr = 0.1
+    lr = 0.01
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -592,7 +592,6 @@ def finetuning(net, train_loader, validation_loader, max_epochs, path=None, file
         accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net, topk=[1,5])
         print('Accuracy of validation set has started')
         accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net, topk=[1,5])
-
 
         train_accuracy[epoch] = accuracy_train_epoch
         train_accuracy_top5[epoch] = accuracy_train_epoch_top5
@@ -1185,7 +1184,7 @@ def main():
         student_ResNet18 = student_ResNet18.cuda()
 
     filename = 'finetuning_after_method_a_double_shortcut' + str(net_type)
-    load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/method_a_20200421_ready_For_finetuning')
+    load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/method_a_double_shortcut_with_finetuning_Xnor++_20200422')
     finetuning(student_ResNet18, train_loader, validation_loader, 20, filename=filename, learning_rate_change = None)
 
     #path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
