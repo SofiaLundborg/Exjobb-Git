@@ -1196,8 +1196,12 @@ def main():
     student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
     acc1, acc5 = calculate_accuracy(train_loader_subset, student_ResNet18)
-    print('top 1 accuracy ' + str(acc1))
-    print('top 5 accuracy ' + str(acc5))
+    print('top 1 accuracy train ' + str(acc1))
+    print('top 5 accuracy train' + str(acc5))
+
+    acc1, acc5 = calculate_accuracy(validation_loader_subset, student_ResNet18)
+    print('top 1 accuracy valid' + str(acc1))
+    print('top 5 accuracy valid' + str(acc5))
 
 
     #finetuning(student_ResNet18, train_loader, validation_loader, 20, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
