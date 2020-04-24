@@ -23,8 +23,8 @@ def load_imageNet(subsets=None):
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 16    #64
-        batch_size_validation = 16  #64
+        batch_size_training = 64    #64
+        batch_size_validation = 64  #64
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -600,7 +600,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         validation_loss[epoch] = validation_loss_for_epoch
 
         print('Accuracy of train set has started')
-        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, net, topk=(1,5))
+        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader_for_accuracy, net, topk=(1,5))
         print('Accuracy of validation set has started')
         accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, net, topk=(1,5))
 
