@@ -1195,7 +1195,6 @@ def main():
     filename = 'finetuning_after_method_a_double_shortcut_complete_set' + str(net_type)
     student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
-    set_layers_to_binarize(student_ResNet18, ['layer1', 'layer2', 'layer3', 'layer4'])
 
     lr = 0.001
     weight_decay = 0  # 0.00001
@@ -1203,6 +1202,9 @@ def main():
 
     epoch, student_ResNet18, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
         student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
+
+    set_layers_to_binarize(student_ResNet18, ['layer1', 'layer2', 'layer3', 'layer4'])
+    binarize_weights(student_ResNet18)
 
     acc1, acc5 = calculate_accuracy(train_loader_subset, student_ResNet18)
     print('top 1 accuracy train ' + str(acc1))
