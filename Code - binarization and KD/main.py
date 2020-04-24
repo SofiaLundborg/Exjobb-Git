@@ -23,8 +23,8 @@ def load_imageNet(subsets=None):
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 64
-        batch_size_validation = 64
+        batch_size_training = 16    #64
+        batch_size_validation = 16  #64
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -53,7 +53,7 @@ def load_imageNet(subsets=None):
             transforms.ToTensor(),
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
 
-    train_set = torchvision.datasets.ImageNet(root='./data', split='train', transform=preprocessing_train)
+    train_set = torchvision.datasets.ImageNet(root='./data', split='train', transform=preprocessing_valid)
     print('train set is loaded')
     validation_set = torchvision.datasets.ImageNet(root='./data', split='val', transform=preprocessing_valid)
     print('validation set is loaded')
@@ -1193,8 +1193,14 @@ def main():
         student_ResNet18 = student_ResNet18.cuda()
 
     filename = 'finetuning_after_method_a_double_shortcut_complete_set' + str(net_type)
-    student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcutXnor++_20200423')
-    finetuning(student_ResNet18, train_loader, validation_loader, 20, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
+    student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
+
+    acc1, acc5 = calculate_accuracy(train_loader_subset, student_ResNet18)
+    print('top 1 accuracy ' + str(acc1))
+    print('top 5 accuracy ' + str(acc5))
+
+
+    #finetuning(student_ResNet18, train_loader, validation_loader, 20, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     #path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
