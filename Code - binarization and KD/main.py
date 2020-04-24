@@ -1195,6 +1195,8 @@ def main():
     filename = 'finetuning_after_method_a_double_shortcut_complete_set' + str(net_type)
     student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
+    set_layers_to_binarize(student_ResNet18, ['layer1', 'layer2', 'layer3', 'layer4'])
+
     acc1, acc5 = calculate_accuracy(train_loader_subset, student_ResNet18)
     print('top 1 accuracy train ' + str(acc1))
     print('top 5 accuracy train' + str(acc5))
