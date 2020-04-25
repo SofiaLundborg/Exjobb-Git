@@ -523,6 +523,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     device = get_device()
 
     lr = 0.001
+    lr = 0.01
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -544,7 +545,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     best_epoch = 0
 
     if not learning_rate_change:
-        learning_rate_change = [0, 10, 15, 20]
+        learning_rate_change = [0, 10, 20, 25]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1197,7 +1198,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_after_method_a_complete_set_' + str(net_type)
+    filename = 'finetuning_after_method_a_complete_set_initial_lr_0.001_' + str(net_type)
     student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
 
@@ -1208,7 +1209,7 @@ def main():
     # epoch, student_ResNet18, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
     #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     #path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
