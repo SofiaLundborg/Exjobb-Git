@@ -283,8 +283,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     PATH = None
 
-    epoch = -1
-
     if torch.cuda.is_available():
         criterion = criterion.cuda()
         device = get_device()
@@ -329,8 +327,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         print(layer + " is training")
         epoch = -1
-	print(max_epoch_layer)
-	print(epoch)
+        print(max_epoch_layer)
+        print(epoch)
         #for epoch in range(max_epoch_layer):
 
         while (epoch <= max_epoch_layer):
