@@ -1164,17 +1164,19 @@ def main():
     scaling_factor_kd_loss = 0.95   # LIT: 0.95
     temperature_kd_loss = 6.0       # LIT: 6.0
 
+    resnet18 = models.resnet18(pretrained=True)
+    torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
+    original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
+    print('pretrained model loaded')
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
 
     train_loader, validation_loader, test_loader = load_data(dataset)
     train_loader, validation_loader, train_loader_not_disturbed = load_imageNet()
     print('ImageNet loaded')
 
-    resnet18 = models.resnet18(pretrained=True)
-    torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
-    original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
-    print('pretrained model loaded')
 
-    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
+
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
     checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
     teacher_ResNet18.load_state_dict(checkpoint_teacher)
 

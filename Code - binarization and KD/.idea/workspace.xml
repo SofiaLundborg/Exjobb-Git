@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/models/resNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resNet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin_xnor_xnorpp_method_a.eps" beforeDir="false" afterPath="$PROJECT_DIR$/bin_xnor_xnorpp_method_a.eps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin_xnor_xnorpp_no_method.eps" beforeDir="false" afterPath="$PROJECT_DIR$/bin_xnor_xnorpp_no_method.eps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extraUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/extraUtils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_resnet_models_imagenet/resnet18.pth" beforeDir="false" afterPath="$PROJECT_DIR$/pretrained_resnet_models_imagenet/resnet18.pth" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -78,28 +82,28 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="34693" />
+          <entry key="py" value="34768" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="34693" />
+          <entry key="Python" value="34768" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1414">
-              <caret line="340" column="35" lean-forward="true" selection-start-line="340" selection-start-column="35" selection-end-line="340" selection-end-column="35" />
+            <state relative-caret-position="338">
+              <caret line="1177" lean-forward="true" selection-start-line="1177" selection-end-line="1177" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1587919065574" expanded="true" signature="521:3070" ph="..." />
-                <marker date="1587919065574" expanded="false" signature="3093:3098" ph="..." />
-                <marker date="1587919065574" expanded="true" signature="6713:6824" ph="..." />
+                <marker date="1587920133924" expanded="true" signature="521:3070" ph="..." />
+                <marker date="1587920133924" expanded="false" signature="3093:3098" ph="..." />
+                <marker date="1587920133924" expanded="true" signature="6713:6824" ph="..." />
               </folding>
             </state>
           </provider>
@@ -118,7 +122,7 @@
         <entry file="file://$PROJECT_DIR$/plot_main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="510">
-              <caret line="501" column="25" lean-forward="true" selection-start-line="501" selection-start-column="25" selection-end-line="501" selection-end-column="25" />
+              <caret line="501" column="25" selection-start-line="501" selection-start-column="25" selection-end-line="501" selection-end-column="25" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
                 <element signature="e#54#159#0" />
@@ -144,8 +148,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/binaryUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3154">
-              <caret line="238" column="37" selection-start-line="238" selection-start-column="37" selection-end-line="238" selection-end-column="37" />
+            <state relative-caret-position="327">
+              <caret line="180" selection-start-line="180" selection-end-line="180" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <marker date="1587201749075" expanded="true" signature="1821:1915" ph="..." />
@@ -155,10 +159,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/resNet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
+            <state relative-caret-position="273">
               <caret line="617" column="181" selection-start-line="617" selection-start-column="181" selection-end-line="617" selection-end-column="181" />
               <folding>
                 <element signature="e#89#110#0" expanded="true" />
@@ -192,10 +196,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/extraUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="20" column="28" selection-start-line="20" selection-start-column="28" selection-end-line="20" selection-end-column="28" />
+            <state relative-caret-position="495">
+              <caret line="34" column="57" selection-start-line="34" selection-start-column="57" selection-end-line="34" selection-end-column="57" />
               <folding>
-                <marker date="1587125916297" expanded="false" signature="996:1001" ph="..." />
+                <marker date="1587920222502" expanded="false" signature="996:1001" ph="..." />
               </folding>
             </state>
           </provider>
@@ -266,11 +270,11 @@
         <option value="$PROJECT_DIR$/OriginalResNet.py" />
         <option value="$PROJECT_DIR$/distillation_loss.py" />
         <option value="$PROJECT_DIR$/loadImageNet.py" />
-        <option value="$PROJECT_DIR$/extraUtils.py" />
         <option value="$PROJECT_DIR$/binaryUtils.py" />
         <option value="$PROJECT_DIR$/plot_main.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/models/resNet.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/extraUtils.py" />
       </list>
     </option>
   </component>
@@ -344,7 +348,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.plot_main">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="testTutorial" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -393,8 +397,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.plot_main" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.plot_main" />
       </list>
     </recent_temporary>
   </component>
@@ -420,8 +424,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2746988" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.28674698" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2746988" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.28674698" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -481,23 +485,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1444</line>
+          <line>1446</line>
           <option name="timeStamp" value="429" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1378</line>
+          <line>1380</line>
           <option name="timeStamp" value="432" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/binaryUtils.py</url>
-          <line>180</line>
-          <option name="timeStamp" value="435" />
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>1230</line>
+          <option name="timeStamp" value="438" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1228</line>
-          <option name="timeStamp" value="438" />
+          <line>1172</line>
+          <option name="timeStamp" value="443" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -789,19 +793,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/OriginalResNet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1695">
-          <caret line="45" column="41" selection-start-line="45" selection-start-column="41" selection-end-line="45" selection-end-column="41" />
-          <folding>
-            <element signature="e#89#101#0" expanded="true" />
-            <element signature="e#1932#3272#0" />
-            <element signature="e#2938#3272#0" />
-            <marker date="1584007232470" expanded="true" signature="5465:5471" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///anaconda3/envs/testTutorial/lib/python3.6/site-packages/torch/serialization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="179">
@@ -819,32 +810,10 @@
     <entry file="file://$PROJECT_DIR$/Figures/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200420.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/extraUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="20" column="28" selection-start-line="20" selection-start-column="28" selection-end-line="20" selection-end-column="28" />
-          <folding>
-            <marker date="1587125916297" expanded="false" signature="996:1001" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3154">
-          <caret line="238" column="37" selection-start-line="238" selection-start-column="37" selection-end-line="238" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-            <marker date="1587201749075" expanded="true" signature="1821:1915" ph="..." />
-            <marker date="1587201749075" expanded="true" signature="2742:2745" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/plot_main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
-          <caret line="501" column="25" lean-forward="true" selection-start-line="501" selection-start-column="25" selection-end-line="501" selection-end-column="25" />
+          <caret line="501" column="25" selection-start-line="501" selection-start-column="25" selection-end-line="501" selection-end-column="25" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
             <element signature="e#54#159#0" />
@@ -866,22 +835,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1414">
-          <caret line="340" column="35" lean-forward="true" selection-start-line="340" selection-start-column="35" selection-end-line="340" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1587919065574" expanded="true" signature="521:3070" ph="..." />
-            <marker date="1587919065574" expanded="false" signature="3093:3098" ph="..." />
-            <marker date="1587919065574" expanded="true" signature="6713:6824" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/resNet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
+        <state relative-caret-position="273">
           <caret line="617" column="181" selection-start-line="617" selection-start-column="181" selection-end-line="617" selection-end-column="181" />
           <folding>
             <element signature="e#89#110#0" expanded="true" />
@@ -892,6 +848,54 @@
             <element signature="e#7993#9333#0" />
             <element signature="e#9371#12418#0" />
             <element signature="e#16940#21355#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OriginalResNet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1695">
+          <caret line="45" column="41" selection-start-line="45" selection-start-column="41" selection-end-line="45" selection-end-column="41" />
+          <folding>
+            <element signature="e#89#101#0" expanded="true" />
+            <element signature="e#1932#3272#0" />
+            <element signature="e#2938#3272#0" />
+            <marker date="1584007232470" expanded="true" signature="5465:5471" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/binaryUtils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="180" selection-start-line="180" selection-end-line="180" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+            <marker date="1587201749075" expanded="true" signature="1821:1915" ph="..." />
+            <marker date="1587201749075" expanded="true" signature="2742:2745" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extraUtils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="34" column="57" selection-start-line="34" selection-start-column="57" selection-end-line="34" selection-end-column="57" />
+          <folding>
+            <marker date="1587920222502" expanded="false" signature="996:1001" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="1177" lean-forward="true" selection-start-line="1177" selection-end-line="1177" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1587920133924" expanded="true" signature="521:3070" ph="..." />
+            <marker date="1587920133924" expanded="false" signature="3093:3098" ph="..." />
+            <marker date="1587920133924" expanded="true" signature="6713:6824" ph="..." />
           </folding>
         </state>
       </provider>
