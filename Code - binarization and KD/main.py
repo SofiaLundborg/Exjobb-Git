@@ -266,6 +266,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     optimizer = optim.Adam(student_net.parameters(), lr=0.01, weight_decay=0)
 
     layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
+    layers = ['layer1', 'layer2', 'layer3', 'layer4']
     max_epoch_layer = 30
     max_epochs = max_epoch_layer * 3 + 60
 
@@ -300,7 +301,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             max_epoch_layer = 60
             criterion = torch.nn.CrossEntropyLoss()
         else:
-            max_epoch_layer = 30
+            max_epoch_layer = 6
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         if student_net.dataset == 'ImageNet':
             cut_network = 1 + 4 * (layer_idx +1)
@@ -328,12 +329,14 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         print(layer + " is training")
         #epoch = -1
-        while (epoch < max_epoch_layer) and (lr >= 1e-6):
-            epoch += 1
+
+        for epoch in range(max_epoch_layer):
+        #while (epoch < max_epoch_layer) and (lr >= 1e-5):
+            #epoch += 1
             start_time_epoch = time.time()
 
-            #total_epoch = epoch + 30*layer_idx
-            total_epoch += 1
+            total_epoch = epoch + 6*layer_idx
+            #total_epoch += 1
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -343,25 +346,29 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             else:
                 set_layers_to_update(student_net, layers[:layer_idx+1])
 
-            learning_rate_change = [15, 20, 25]
+            learning_rate_change = [2, 4, 5]
             #learning_rate_change = [30, 45, 50, 55]
             if layer == 'all':
                 learning_rate_change = [50, 70, 90, 100]
                 learning_rate_change = [30, 40, 50]
 
-            if n_not_improved >= 2:
-                if layer == 'all':
-                    if n_change_learning_rate >= 4:
-                        lr = lr * 0.1
-                        n_change_learning_rate = 0
-                    else:
-                        n_change_learning_rate += 1
-                else:
-                    lr = lr * 0.1
-                for param_group in optimizer.param_groups:
-                    param_group['lr'] = lr
-                    n_not_improved = 0
+            # if n_not_improved >= 2:
+            #     if layer == 'all':
+            #         if n_change_learning_rate >= 4:
+            #             lr = lr * 0.1
+            #             n_change_learning_rate = 0
+            #         else:
+            #             n_change_learning_rate += 1
+            #     else:
+            #         lr = lr * 0.1
+            #     for param_group in optimizer.param_groups:
+            #         param_group['lr'] = lr
+            #         n_not_improved = 0
 
+        if epoch in learning_rate_change:
+            lr = lr * 0.1
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
                 print('learning rate decreased to: ' + str(lr))
 
             running_loss = 0
@@ -474,7 +481,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 best_validation_loss = validation_loss_for_epoch
                 best_epoch = total_epoch
 
-
             else:
                 n_not_improved += 1
 
@@ -495,7 +501,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             log.write("TOTAL TIME for epoch " + str(total_epoch) + ": " + str(end_time_epoch-start_time_epoch) + " seconds\n\n\r" )
             log.close()
 
-            time.sleep(5)
         layer_idx += 1
         changed_layer = True
 
@@ -1192,7 +1197,7 @@ def main():
 
 
     filename = 'method_a_double_shortcut_with_finetuning_' + str(net_type)
-    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
     checkpoint_student = change_loaded_checkpoint(original_teacher_dict, student_ResNet18)
     student_ResNet18.load_state_dict(checkpoint_student)
     if torch.cuda.is_available():
@@ -1209,9 +1214,10 @@ def main():
     # epoch, student_ResNet18, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
     #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
+    #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
-    #path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename, saved_training='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
+    filename = 'method_a_correct_shortcut_factorized_Xnor++_'
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename)
 
     print('finished training')
 

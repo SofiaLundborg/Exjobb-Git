@@ -466,8 +466,10 @@ class BasicBlockAbs(nn.Module):
             if option == 'cifar10':
                 self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
             else:
+                input_size_temp = input_size
                 self.shortcut = nn.Sequential(
-                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     #nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     myConv2d(3, self.expansion*planes, input_size_temp, kernel_size=1, stride=stride, factorized_gamma=factorized_gamma),
                      nn.BatchNorm2d(self.expansion * planes)
                 )
 

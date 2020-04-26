@@ -53,6 +53,15 @@ def binary_xnor_xnorpp():
     xnorppF_no_valid_loss = torch.load(
         'Results/validation_loss_no_method_double_shortcut_with_relu_factorized_Xnor++.pt')
 
+    print('binary a max: ' + str(max(binary_a_valid_acc)))
+    print('binary no method max: ' + str(max(binary_no_valid_acc)))
+    print('xnor a max: ' + str(max(xnor_a_valid_acc)))
+    print('xnor no method: ' + str(max(xnor_no_valid_acc)))
+    print('xnorpp a max: ' + str(max(xnorpp_a_valid_acc)))
+    print('xnorpp no method: ' + str(max(xnorpp_no_valid_acc)))
+    print('xnorppF a max: ' + str(max(xnorppF_a_valid_acc)))
+    print('xnorppF no method: ' + str(max(xnorppF_no_valid_acc)))
+
     max_epochs_a = 90
     max_epoch_finetuning = 110
 
@@ -461,7 +470,6 @@ def plot_traing_a(train_loss, valid_loss, train_acc, valid_acc, filename, suptit
         axs[0, 1].set_visible(False)
         axs[0, 2].set_visible(False)
 
-
         ax0.plot(epochs_training, train_loss[:max_epoch_training], linestyle='dashed', label='train')
         ax0.plot(epochs_training, valid_loss[:max_epoch_training], linestyle='solid', label='validation')
         ax0.set_xlabel('Epochs')
@@ -512,6 +520,53 @@ def single_double_relu():
     relu_double_valid_acc = torch.load('Results/validation_accuracy_method_a_double_shortcut_with_relu_Xnor++_20200410.pt')
     relu_double_train_loss = torch.load('Results/train_loss_method_a_double_shortcut_with_relu_Xnor++_20200410.pt')
     relu_double_valid_loss = torch.load('Results/validation_loss_method_a_double_shortcut_with_relu_Xnor++_20200410.pt')
+
+    max_epoch_training = 90
+    max_epoch_finetuning = 60
+    epochs_training = np.arange(max_epoch_training)
+    epochs_finetuning = np.arange(max_epoch_finetuning)
+
+    sns.set()
+    sns.set_style("whitegrid")
+    # sns.set_context("talk")
+    with sns.color_palette("bright"):
+        fig, axs = plt.subplots(2, 3, figsize=(9, 5.5))
+        ax0 = axs[1, 0]
+        ax1 = axs[1, 1]
+        ax2 = axs[1, 2]
+
+        axs[0, 0].set_visible(False)
+        axs[0, 1].set_visible(False)
+        axs[0, 2].set_visible(False)
+
+        ax0.plot(epochs_training, train_loss[:max_epoch_training], linestyle='dashed', label='train')
+        ax0.plot(epochs_training, valid_loss[:max_epoch_training], linestyle='solid', label='validation')
+        ax0.set_xlabel('Epochs')
+        ax0.set_ylabel('MSE loss')
+        ax0.set_title('Training using method a)')
+        ax0.legend(loc='upper left')
+
+        ax1.plot(epochs_finetuning, train_loss[max_epoch_training:], linestyle='dashed', label='train')
+        ax1.plot(epochs_finetuning, valid_loss[max_epoch_training:], linestyle='solid', label='validation')
+        ax1.set_xlabel('Epochs')
+        ax1.set_ylabel('Cross entropy loss')
+        ax1.set_title('Training after method a) - loss')
+        ax1.legend(loc='upper right')
+
+        ax2.plot(epochs_finetuning, train_acc, linestyle='dashed', label='train')
+        ax2.plot(epochs_finetuning, valid_acc, linestyle='solid', label='validation')
+        ax2.set_xlabel('Epochs')
+        ax2.set_ylabel('Cross entropy loss')
+        ax2.set_title('Training after method a) - accuracy')
+        ax2.legend(loc='lower right')
+
+        plt.suptitle(suptitle, fontsize=14, y=0.6)
+
+        plt.tight_layout()
+        fig.savefig(filename + '.eps', format='eps')
+
+        plt.show()
+
 
     plot_traing_a(naive_train_loss, naive_valid_loss, naive_train_acc, naive_valid_acc, 'naive_method_a', 'Training with method a) using naive ResNet block')
     plot_traing_a(relu_single_train_loss, relu_single_valid_loss, relu_single_train_acc, relu_single_valid_acc, 'relu_one_shortcut_a', 'Training with method a) using single ReLU shortcut')
@@ -613,6 +668,7 @@ def method_a_ImageNet():
         plt.show()
 
 def main():
+    binary_xnor_xnorpp()
     #single_double_relu()
     method_a_ImageNet()
 
