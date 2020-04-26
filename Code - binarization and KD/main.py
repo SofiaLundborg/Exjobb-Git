@@ -1203,8 +1203,8 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_after_method_a_complete_set_initial_lr_0.001_' + str(net_type)
-    student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
+    #filename = 'finetuning_after_method_a_complete_set_initial_lr_0.001_' + str(net_type)
+    #student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
 
     # lr = 0.001
