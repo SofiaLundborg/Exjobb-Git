@@ -614,8 +614,8 @@ class BasicBlockReluDoubleShortcut(nn.Module):
                 self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
             else:
                 self.shortcut = nn.Sequential(
-                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
-                     # myConv2d(in_planes, self.expansion*planes, input_size, kernel_size=1, stride=stride, bias=False, padding=0, net_type='full_precision'),
+                     #nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     myConv2d(in_planes, self.expansion*planes, input_size, kernel_size=1, stride=stride, bias=False, padding=0, net_type=net_type),
                      nn.BatchNorm2d(self.expansion * planes)
                 )
 

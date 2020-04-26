@@ -299,7 +299,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             max_epoch_layer = 60
             criterion = torch.nn.CrossEntropyLoss()
         else:
-            max_epoch_layer = 6
+            max_epoch_layer = 5
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         if student_net.dataset == 'ImageNet':
             cut_network = 1 + 4 * (layer_idx+1)
@@ -333,7 +333,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             epoch += 1
             start_time_epoch = time.time()
 
-            #total_epoch = epoch + 6*layer_idx
+            #total_epoch = epoch + 5*layer_idx
             total_epoch += 1
 
             if layer == 'all':
@@ -344,7 +344,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             else:
                 set_layers_to_update(student_net, layers[:layer_idx+1])
 
-            learning_rate_change = [2, 4, 5]
+            learning_rate_change = [2, 3, 4]
             #learning_rate_change = [30, 45, 50, 55]
             if layer == 'all':
                 learning_rate_change = [50, 70, 90, 100]
