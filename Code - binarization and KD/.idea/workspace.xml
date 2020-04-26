@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd3510f4-8b2a-440c-bbc1-f5ec28c04390" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/bin_xnor_xnorpp_method_a.eps" beforeDir="false" afterPath="$PROJECT_DIR$/bin_xnor_xnorpp_method_a.eps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin_xnor_xnorpp_no_method.eps" beforeDir="false" afterPath="$PROJECT_DIR$/bin_xnor_xnorpp_no_method.eps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/extraUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/extraUtils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pretrained_resnet_models_imagenet/resnet18.pth" beforeDir="false" afterPath="$PROJECT_DIR$/pretrained_resnet_models_imagenet/resnet18.pth" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -82,28 +79,28 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="34768" />
+          <entry key="py" value="34770" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="34768" />
+          <entry key="Python" value="34770" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="338">
-              <caret line="1177" lean-forward="true" selection-start-line="1177" selection-end-line="1177" />
+            <state relative-caret-position="353">
+              <caret line="1178" column="89" selection-start-line="1178" selection-start-column="73" selection-end-line="1178" selection-end-column="89" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1587920133924" expanded="true" signature="521:3070" ph="..." />
-                <marker date="1587920133924" expanded="false" signature="3093:3098" ph="..." />
-                <marker date="1587920133924" expanded="true" signature="6713:6824" ph="..." />
+                <marker date="1587920516798" expanded="true" signature="521:3070" ph="..." />
+                <marker date="1587920516798" expanded="false" signature="3093:3098" ph="..." />
+                <marker date="1587920516798" expanded="true" signature="6713:6824" ph="..." />
               </folding>
             </state>
           </provider>
@@ -193,13 +190,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/extraUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="34" column="57" selection-start-line="34" selection-start-column="57" selection-end-line="34" selection-end-column="57" />
+            <state relative-caret-position="425">
+              <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
               <folding>
-                <marker date="1587920222502" expanded="false" signature="996:1001" ph="..." />
+                <marker date="1587920614674" expanded="false" signature="996:1001" ph="..." />
               </folding>
             </state>
           </provider>
@@ -485,17 +482,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1446</line>
+          <line>1445</line>
           <option name="timeStamp" value="429" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1380</line>
+          <line>1379</line>
           <option name="timeStamp" value="432" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1230</line>
+          <line>1229</line>
           <option name="timeStamp" value="438" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -877,25 +874,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/extraUtils.py">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="34" column="57" selection-start-line="34" selection-start-column="57" selection-end-line="34" selection-end-column="57" />
+        <state relative-caret-position="353">
+          <caret line="1178" column="89" selection-start-line="1178" selection-start-column="73" selection-end-line="1178" selection-end-column="89" />
           <folding>
-            <marker date="1587920222502" expanded="false" signature="996:1001" ph="..." />
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1587920516798" expanded="true" signature="521:3070" ph="..." />
+            <marker date="1587920516798" expanded="false" signature="3093:3098" ph="..." />
+            <marker date="1587920516798" expanded="true" signature="6713:6824" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
+    <entry file="file://$PROJECT_DIR$/extraUtils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="1177" lean-forward="true" selection-start-line="1177" selection-end-line="1177" />
+        <state relative-caret-position="425">
+          <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1587920133924" expanded="true" signature="521:3070" ph="..." />
-            <marker date="1587920133924" expanded="false" signature="3093:3098" ph="..." />
-            <marker date="1587920133924" expanded="true" signature="6713:6824" ph="..." />
+            <marker date="1587920614674" expanded="false" signature="996:1001" ph="..." />
           </folding>
         </state>
       </provider>

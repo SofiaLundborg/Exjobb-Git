@@ -1175,7 +1175,6 @@ def main():
     print('ImageNet loaded')
 
 
-
     teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
     checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
     teacher_ResNet18.load_state_dict(checkpoint_teacher)
