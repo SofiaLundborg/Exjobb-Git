@@ -327,8 +327,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         print(layer + " is training")
         epoch = -1
-        print(max_epoch_layer)
-        print(epoch)
         #for epoch in range(max_epoch_layer):
 
         while (epoch <= max_epoch_layer):
@@ -365,11 +363,11 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             #         param_group['lr'] = lr
             #         n_not_improved = 0
 
-        if epoch in learning_rate_change:
-            lr = lr * 0.1
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = lr
-                print('learning rate decreased to: ' + str(lr))
+            if epoch in learning_rate_change:
+                lr = lr * 0.1
+                for param_group in optimizer.param_groups:
+                    param_group['lr'] = lr
+                    print('learning rate decreased to: ' + str(lr))
 
             running_loss = 0
             start_training_time = time.time()
