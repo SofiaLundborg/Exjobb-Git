@@ -328,15 +328,17 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         #for epoch in range(max_epoch_layer):
 
         print(layer + " is training")
-        #epoch = -1
+        epoch = -1
+	print(max_epoch_layer)
+	print(epoch)
+        #for epoch in range(max_epoch_layer):
 
-        for epoch in range(max_epoch_layer):
-        #while (epoch < max_epoch_layer) and (lr >= 1e-5):
-            #epoch += 1
+        while (epoch <= max_epoch_layer):
+            epoch += 1
             start_time_epoch = time.time()
 
-            total_epoch = epoch + 6*layer_idx
-            #total_epoch += 1
+            #total_epoch = epoch + 6*layer_idx
+            total_epoch += 1
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -1203,8 +1205,8 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_after_method_a_complete_set_initial_lr_0.001_' + str(net_type)
-    student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
+    #filename = 'finetuning_after_method_a_complete_set_initial_lr_0.001_' + str(net_type)
+    #student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
 
     # lr = 0.001
@@ -1217,7 +1219,7 @@ def main():
     #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename)
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
 
     print('finished training')
 
