@@ -302,7 +302,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             max_epoch_layer = 6
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         if student_net.dataset == 'ImageNet':
-            cut_network = 1 + 4 * (layer_idx +1)
+            cut_network = 1 + 4 * (layer_idx+1)
         else:
             cut_network = 1 + 6 * (layer_idx+1)
 
@@ -329,7 +329,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         epoch = -1
         #for epoch in range(max_epoch_layer):
 
-        while (epoch <= max_epoch_layer):
+        while (epoch < max_epoch_layer-1):
             epoch += 1
             start_time_epoch = time.time()
 
