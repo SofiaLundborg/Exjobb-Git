@@ -273,7 +273,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
         lr = 0.01
-        print(layer_idx)
+        epoch = total_epoch % (layer_idx*max_epoch_layer)
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
@@ -281,6 +281,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         validation_accuracy = np.empty(110)
         layer_idx = 0
         total_epoch = -1
+        epoch = -1
 
     PATH = None
 
@@ -327,7 +328,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         #for epoch in range(max_epoch_layer):
 
         print(layer + " is training")
-        epoch = -1
+        # epoch = -1
         #for epoch in range(max_epoch_layer):
 
         while (epoch < max_epoch_layer-1):
@@ -1218,7 +1219,7 @@ def main():
     #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_correct_shortcut_factorized_Xnor++__20200427')
 
     print('finished training')
 
