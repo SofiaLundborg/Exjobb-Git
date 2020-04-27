@@ -616,7 +616,9 @@ class BasicBlockReluDoubleShortcut(nn.Module):
             else:
                 self.shortcut = nn.Sequential(
                      #nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
-                     myConv2d(in_planes, self.expansion*planes, input_size_temp, kernel_size=1, stride=stride, bias=False, padding=0, net_type=net_type, factorized_gamma=factorized_gamma),
+                     # myConv2d(in_planes, self.expansion*planes, input_size_temp, kernel_size=1, stride=stride, bias=False, padding=0, net_type=net_type, factorized_gamma=factorized_gamma),
+                     myConv2d(in_planes, self.expansion * planes, input_size_temp, kernel_size=1, stride=stride,
+                             bias=False, padding=0, net_type='full_precision', factorized_gamma=factorized_gamma),
                      nn.BatchNorm2d(self.expansion * planes)
                 )
 
