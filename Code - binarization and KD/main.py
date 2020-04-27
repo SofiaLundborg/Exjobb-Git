@@ -1217,8 +1217,8 @@ def main():
 
     #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
-    filename = 'method_a_correct_shortcut_factorized_Xnor++_subset_'
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader_subset, validation_loader_subset, filename)
+    filename = 'method_a_correct_shortcut_factorized_Xnor++_'
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
 
     print('finished training')
 
