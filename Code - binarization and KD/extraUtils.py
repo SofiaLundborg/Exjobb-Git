@@ -32,7 +32,7 @@ def change_loaded_checkpoint(checkpoint, student_net):
         str_key = str_key.replace('conv2.', 'conv2.conv2d.')
         str_key = str_key.replace('downsample', 'shortcut')
         str_key = str_key.replace('fc', 'linear')
-        str_key = str_key.replace('.0.shortcut.0.weight', '.0.shortcut.0.conv2d.weight')
+        #str_key = str_key.replace('.0.shortcut.0.weight', '.0.shortcut.0.conv2d.weight')
 
         new_checkpoint[str_key] = checkpoint[key]
 
