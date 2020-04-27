@@ -527,8 +527,8 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         criterion = criterion.cuda()
     device = get_device()
 
-    lr = 0.001
-    lr = 0.01
+    lr = 0.0001
+    #lr = 0.01
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -550,7 +550,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     best_epoch = 0
 
     if not learning_rate_change:
-        learning_rate_change = [0, 15, 25, 30]
+        learning_rate_change = [0, 10, 15, 20]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -644,10 +644,10 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         print('Best epoch: ' + str(best_epoch))
         print('Loss on train images: ' + str(training_loss_for_epoch))
         print('Loss on validation images: ' + str(validation_loss_for_epoch))
-        print('Accuracy top 1 on train images: %d %%' % accuracy_train_epoch)
-        print('Accuracy top 1 on validation images: %d %%' % accuracy_validation_epoch)
-        print('Accuracy top 5 on train images: %d %%' % accuracy_train_epoch_top5)
-        print('Accuracy top 5 on validation images: %d %%' % accuracy_validation_epoch_top5)
+        print('Accuracy top 1 on train images: ' + str(accuracy_train_epoch))
+        print('Accuracy top 1 on validation images: ' + str(accuracy_validation_epoch))
+        print('Accuracy top 5 on train images: %d %%' + str(accuracy_train_epoch_top5))
+        print('Accuracy top 5 on validation images: %d %%' + str(accuracy_validation_epoch_top5))
 
         save_training(epoch, net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
@@ -1206,9 +1206,8 @@ def main():
         student_ResNet18 = student_ResNet18.cuda()
 
     filename = 'finetuning_after_method_a_complete_set_initial_lr_0.001_' + str(net_type)
-    saved_training = './saved_training/ImageNet/finetuning_after_method_a_complete_set_initial_lr_0.001_Xnor++_lr0.001_20200426'
+    saved_training = './saved_training/ImageNet/finetuning_after_method_a_complete_set_initial_lr_0.001_Xnor++_lr0.0001_20200426'
     student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
-
 
     # lr = 0.001
     # weight_decay = 0  # 0.00001
@@ -1217,7 +1216,9 @@ def main():
     # epoch, student_ResNet18, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
     #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 35, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
+    #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 35, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
+
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
     #path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_correct_shortcut_factorized_Xnor++__20200427')
