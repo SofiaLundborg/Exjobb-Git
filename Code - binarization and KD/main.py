@@ -273,6 +273,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
         lr = 0.01
+        layer_idx = 1
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
@@ -292,6 +293,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     while layer_idx < len(layers):
         layer = layers[layer_idx]
+        print(layer)
     #for layer_idx, layer in enumerate(layers):
         n_not_improved = 0
         if layer == 'all':
