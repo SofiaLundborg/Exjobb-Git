@@ -650,6 +650,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         save_training(epoch, net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
 
+
 def training_c(student_net, teacher_net, train_loader, validation_loader, filename=None, max_epochs=200, scaling_factor_total=0.5):
     title_loss = 'method c) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method c) - accuracy, ' + str(student_net.net_type)
@@ -1216,7 +1217,7 @@ def main():
     #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421')
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
-    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename)
+    path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_correct_shortcut_factorized_Xnor++__20200426')
 
     print('finished training')
 

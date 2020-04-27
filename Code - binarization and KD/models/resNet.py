@@ -602,6 +602,7 @@ class BasicBlockReluDoubleShortcut(nn.Module):
 
     def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
         super(BasicBlockReluDoubleShortcut, self).__init__()
+        input_size_temp = input_size
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
@@ -615,7 +616,7 @@ class BasicBlockReluDoubleShortcut(nn.Module):
             else:
                 self.shortcut = nn.Sequential(
                      #nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
-                     myConv2d(in_planes, self.expansion*planes, input_size, kernel_size=1, stride=stride, bias=False, padding=0, net_type=net_type, factorized_gamma=factorized_gamma),
+                     myConv2d(in_planes, self.expansion*planes, input_size_temp, kernel_size=1, stride=stride, bias=False, padding=0, net_type=net_type, factorized_gamma=factorized_gamma),
                      nn.BatchNorm2d(self.expansion * planes)
                 )
 
