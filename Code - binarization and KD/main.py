@@ -1178,7 +1178,7 @@ def main():
     print('ImageNet loaded')
 
 
-    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
     checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
     teacher_ResNet18.load_state_dict(checkpoint_teacher)
 
@@ -1199,7 +1199,7 @@ def main():
 
 
     filename = 'method_a_double_shortcut_with_finetuning_' + str(net_type)
-    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
     checkpoint_student = change_loaded_checkpoint(original_teacher_dict, student_ResNet18)
     student_ResNet18.load_state_dict(checkpoint_student)
     if torch.cuda.is_available():
