@@ -550,7 +550,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     best_epoch = 0
 
     if not learning_rate_change:
-        learning_rate_change = [0, 10, 20, 25]
+        learning_rate_change = [0, 15, 25, 30]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1217,7 +1217,7 @@ def main():
     # epoch, student_ResNet18, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
     #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 30, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 35, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
     #path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_correct_shortcut_factorized_Xnor++__20200427')
