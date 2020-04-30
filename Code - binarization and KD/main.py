@@ -1232,7 +1232,7 @@ def main():
     #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
     #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 35, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training='./saved_training/ImageNet/finetuning_after_method_a_complete_set_initial_lr_0.001___Xnor++_lr1e-05_20200428')
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training='./saved_training/ImageNet/finetuning_after_method_a_complete_set_initial_lr_0.001___Xnor++_lr0.0001_20200430')
 
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
