@@ -556,7 +556,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
 
     if not learning_rate_change:
         learning_rate_change = [0, 10, 15, 20]
-        learning_rate_change = [0, 15, 20, 23]
+        learning_rate_change = [15, 20, 23]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
