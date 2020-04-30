@@ -530,7 +530,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     device = get_device()
 
     #lr = 0.0001
-    lr = 1e-5
+    lr = 1e-3
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -1186,7 +1186,7 @@ def main():
     distResNet = resNet.resnet_models['resnet20ForTeacher']('full_precision','cifar10')
     sample = get_one_sample(train_loader)
 
-    res = distResNet(sample)
+    #res = distResNet(sample)
 
 
     train_loader, validation_loader, train_loader_not_disturbed = load_imageNet()
@@ -1220,9 +1220,9 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_after_method_a_complete_set_initial_lr_0.001___' + str(net_type)
+    filename = 'finetuning_no_method_a_complete_set_initial_lr_0.001___' + str(net_type)
     saved_training = './saved_training/ImageNet/finetuning_after_method_a_complete_set_initial_lr_0.001_Xnor++_lr0.0001_20200426'
-    student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
+    #student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
     # lr = 0.001
     # weight_decay = 0  # 0.00001
@@ -1232,7 +1232,7 @@ def main():
     #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
     #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 35, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training='./saved_training/ImageNet/finetuning_after_method_a_complete_set_initial_lr_0.001___Xnor++_lr0.0001_20200430')
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename)
 
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
