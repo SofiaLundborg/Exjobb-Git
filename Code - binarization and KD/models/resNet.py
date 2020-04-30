@@ -9,6 +9,8 @@ from binaryUtils import myConv2d, myMaxPool2d
 import matplotlib.pyplot as plt
 import torch
 import math
+import seaborn as sns
+
 
 class LambdaLayer(nn.Module):
     def __init__(self, lambd):
@@ -118,26 +120,58 @@ class BasicBlockForTeacher(nn.Module):
             if i_layer > cut_network:
                 return inp
 
-
         x = F.relu(x)
-        x_to_shortcut = x
-        out = self.bn1(self.conv1(x))
-        out = F.relu(out)
 
-        i_layer += 1
-        if cut_network:
-            if cut_network == i_layer:
-                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+        sns.set()
+        sns.set_style("white")
+        sns.set_context("notebook")
 
-        out = self.bn2(self.conv2(out))
-        res_shortcut = self.shortcut(x_to_shortcut)
+        with sns.color_palette("bright"):
+            print(i_layer)
+            if i_layer == 5:
+                fig, ax = plt.subplots(1, 3, figsize=[9, 3])
+                ax[1].hist(x.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
+                ax[1].set_title('Output from previous layer')
+                ax[1].set_ylabel('density')
+                ax[1].set_xlabel('value')
+                ax[1].set_xlim([-8, 8])
 
-        i_layer += 1
+            x_to_shortcut = x
+            out = self.bn1(self.conv1(x))
+            out = F.relu(out)
+
+            i_layer += 1
+            if cut_network:
+                if cut_network == i_layer:
+                    return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+            out = self.bn2(self.conv2(out))
+
+            if i_layer == 6:
+                ax[0].hist(out.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
+                ax[0].set_title('Before summation')
+                ax[0].set_ylabel('density')
+                ax[0].set_xlabel('value')
+                ax[0].set_xlim([-8, 8])
 
 
-        out += res_shortcut
+            res_shortcut = self.shortcut(x_to_shortcut)
 
 
+            i_layer += 1
+
+            out += res_shortcut
+
+            if i_layer == 7:
+                ax[2].hist(out.view(-1),range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
+                ax[2].set_title('After summation')
+                ax[2].set_ylabel('density')
+                ax[2].set_xlabel('value')
+                ax[2].set_xlim([-8, 8])
+
+                plt.tight_layout(h_pad=3)
+                plt.show()
+                fig.savefig('distribution_shortcut.eps', format='eps')
 
         #if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
         #    out[out < 0] = out[out < 0]*0.5
