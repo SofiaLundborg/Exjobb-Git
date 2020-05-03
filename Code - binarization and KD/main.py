@@ -530,7 +530,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     device = get_device()
 
     #lr = 0.0001
-    lr = 1e-3
+    lr = 1e-1
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -556,7 +556,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
 
     if not learning_rate_change:
         learning_rate_change = [0, 10, 15, 20]
-        learning_rate_change = [15, 20, 23]
+        learning_rate_change = [50, 70, 90, 100]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1183,13 +1183,28 @@ def main():
     train_loader, validation_loader, test_loader = load_data(dataset)
 
 
+    teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher']('cifar10')
+    student_ResNet20 = resNet.resnet_models['resnet20Naive'](net_type, 'cifar10', factorized_gamma=False)
+
+    # load pretrained network into student and techer network
+    teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
+    teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
+    new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_ResNet20)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    teacher_ResNet20.load_state_dict(new_checkpoint_teacher)
+    student_ResNet20.load_state_dict(new_checkpoint_student)
+
+    filename = 'Naive_training_finetuning'
+    finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
+
+
     distResNet = resNet.resnet_models['resnet20ForTeacher']('full_precision','cifar10')
     sample = get_one_sample(train_loader)
 
     #res = distResNet(sample)
 
 
-    train_loader, validation_loader, train_loader_not_disturbed = load_imageNet()
+    # train_loader, validation_loader, train_loader_not_disturbed = load_imageNet()
     print('ImageNet loaded')
 
 
@@ -1207,6 +1222,8 @@ def main():
         teacher_ResNet18 = teacher_ResNet18.cuda()
     device = get_device()
     sample = get_one_sample(train_loader).to(device)
+
+
 
     train_loader_subset, validation_loader_subset, train_loader_not_disturbed_subset= load_imageNet(subsets=True)
     #torch.save(train_loader_subset, 'train_loader_subset.pth')
@@ -1232,7 +1249,7 @@ def main():
     #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
 
     #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 35, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename)
+    #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename)
 
 
     filename = 'method_a_correct_shortcut_factorized_Xnor++_'
