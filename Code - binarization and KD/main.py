@@ -1184,7 +1184,7 @@ def main():
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher']('cifar10')
-    student_ResNet20 = resNet.resnet_models['resnet20Naive'](net_type, 'cifar10', factorized_gamma=False)
+    student_ResNet20 = resNet.resnet_models['resnet20WithRelu'](net_type, 'cifar10', factorized_gamma=False)
 
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
@@ -1198,7 +1198,7 @@ def main():
         teacher_ResNet20 = teacher_ResNet20.cuda()
         student_ResNet20 = student_ResNet20.cuda()
 
-    filename = 'Naive_training_finetuning'
+    filename = 'ReLU_training_finetuning'
     finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
 
 
