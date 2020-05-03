@@ -1194,6 +1194,10 @@ def main():
     teacher_ResNet20.load_state_dict(new_checkpoint_teacher)
     student_ResNet20.load_state_dict(new_checkpoint_student)
 
+    if torch.cuda.is_available():
+        teacher_ResNet20 = teacher_ResNet20.cuda()
+        student_ResNet20 = student_ResNet20.cuda()
+
     filename = 'Naive_training_finetuning'
     finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
 
