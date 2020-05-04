@@ -252,7 +252,7 @@ def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_l
     return min_loss
 
 
-def training_a(student_net, teacher_net, train_loader, validation_loader, filename=None, saved_training=None, modified=True):
+def training_a(student_net, teacher_net, train_loader, validation_loader, filename=None, saved_training=None, modified=False):
 
     if not filename:
         filename = 'method_a_' + str(student_net.net_type)
