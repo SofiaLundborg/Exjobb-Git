@@ -300,6 +300,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         n_not_improved = 0
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
+            set_layers_to_binarize(student_net, ['layer1, layer2', 'layer3'])
             max_epoch_layer = 60
             criterion = torch.nn.CrossEntropyLoss()
         else:
