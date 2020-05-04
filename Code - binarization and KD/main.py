@@ -492,8 +492,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             else:
                 n_not_improved += 1
 
-            save_training(total_epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx,
-                          'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
+            # save_training(total_epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx,
+            #               'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
             print('Epoch: ' + str(total_epoch))
             print('Best epoch: ' + str(best_epoch))
