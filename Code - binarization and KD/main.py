@@ -336,6 +336,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         # epoch = -1
         #for epoch in range(max_epoch_layer):
 
+        epoch = -1
         while (epoch < max_epoch_layer-1):
             epoch += 1
             start_time_epoch = time.time()
