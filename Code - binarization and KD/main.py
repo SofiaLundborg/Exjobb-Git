@@ -303,7 +303,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             max_epoch_layer = 60
             criterion = torch.nn.CrossEntropyLoss()
         else:
-            max_epoch_layer = 4
+            max_epoch_layer = max_epoch_layer
             if modified:
                 set_layers_to_binarize(student_net, layers[:layer_idx+1])
             else:
@@ -354,8 +354,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 else:
                     set_layers_to_update(student_net, [layer])
 
-            learning_rate_change = [2, 3, 4]
-            #learning_rate_change = [30, 45, 50, 55]
+            #learning_rate_change = [2, 3, 4]
+            learning_rate_change = [15, 20, 25]
             if layer == 'all':
                 learning_rate_change = [50, 70, 90, 100]
                 learning_rate_change = [30, 40, 50]
@@ -1201,7 +1201,8 @@ def main():
         teacher_ResNet20 = teacher_ResNet20.cuda()
         student_ResNet20 = student_ResNet20.cuda()
     filename = 'original_method_a_double_shortcut_relu'
-    training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=None, saved_training=None,
+
+    training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
                modified=False)
     #finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
 
