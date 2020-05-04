@@ -315,6 +315,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         if changed_layer or (not saved_training):
             lr = 0.01
+            epoch = -1
             if layer == 'all':
                 lr = 0.01
             weight_decay = 0  # 0.00001
@@ -336,7 +337,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         # epoch = -1
         #for epoch in range(max_epoch_layer):
 
-        epoch = -1
         while (epoch < max_epoch_layer-1):
             epoch += 1
             start_time_epoch = time.time()
@@ -1189,7 +1189,7 @@ def main():
     train_loader, validation_loader, test_loader = load_data(dataset)
 
 
-    teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher']('cifar10')
+    teacher_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut']('cifar10')
     student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, 'cifar10', factorized_gamma=False)
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
