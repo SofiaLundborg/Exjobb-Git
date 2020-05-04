@@ -127,14 +127,14 @@ class BasicBlockForTeacher(nn.Module):
         sns.set_context("notebook")
 
         with sns.color_palette("bright"):
-            print(i_layer)
-            if i_layer == 5:
-                fig, ax = plt.subplots(1, 3, figsize=[9, 3])
-                ax[1].hist(x.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
-                ax[1].set_title('Output from previous layer')
-                ax[1].set_ylabel('density')
-                ax[1].set_xlabel('value')
-                ax[1].set_xlim([-8, 8])
+            # print(i_layer)
+            # if i_layer == 5:
+            #     fig, ax = plt.subplots(1, 3, figsize=[9, 3])
+            #     ax[1].hist(x.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
+            #     ax[1].set_title('Output from previous layer')
+            #     ax[1].set_ylabel('density')
+            #     ax[1].set_xlabel('value')
+            #     ax[1].set_xlim([-8, 8])
 
             x_to_shortcut = x
             out = self.bn1(self.conv1(x))
@@ -147,12 +147,12 @@ class BasicBlockForTeacher(nn.Module):
 
             out = self.bn2(self.conv2(out))
 
-            if i_layer == 6:
-                ax[0].hist(out.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
-                ax[0].set_title('Before summation')
-                ax[0].set_ylabel('density')
-                ax[0].set_xlabel('value')
-                ax[0].set_xlim([-8, 8])
+            # if i_layer == 6:
+            #     ax[0].hist(out.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
+            #     ax[0].set_title('Before summation')
+            #     ax[0].set_ylabel('density')
+            #     ax[0].set_xlabel('value')
+            #     ax[0].set_xlim([-8, 8])
 
 
             res_shortcut = self.shortcut(x_to_shortcut)
@@ -162,16 +162,16 @@ class BasicBlockForTeacher(nn.Module):
 
             out += res_shortcut
 
-            if i_layer == 7:
-                ax[2].hist(out.view(-1),range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
-                ax[2].set_title('After summation')
-                ax[2].set_ylabel('density')
-                ax[2].set_xlabel('value')
-                ax[2].set_xlim([-8, 8])
-
-                plt.tight_layout(h_pad=3)
-                plt.show()
-                fig.savefig('distribution_shortcut.eps', format='eps')
+            # if i_layer == 7:
+            #     ax[2].hist(out.view(-1),range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
+            #     ax[2].set_title('After summation')
+            #     ax[2].set_ylabel('density')
+            #     ax[2].set_xlabel('value')
+            #     ax[2].set_xlim([-8, 8])
+            #
+            #     plt.tight_layout(h_pad=3)
+            #     plt.show()
+            #     fig.savefig('distribution_shortcut.eps', format='eps')
 
         #if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
         #    out[out < 0] = out[out < 0]*0.5
