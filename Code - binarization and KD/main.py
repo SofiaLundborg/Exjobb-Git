@@ -1187,7 +1187,7 @@ def main():
     train_loader, validation_loader, test_loader = load_data(dataset)
 
 
-    teacher_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type='full_precision', dataset='cifar10')
+    teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
     student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
@@ -1200,6 +1200,8 @@ def main():
         teacher_ResNet20 = teacher_ResNet20.cuda()
         student_ResNet20 = student_ResNet20.cuda()
     filename = 'original_method_a_double_shortcut_relu'
+
+    print('Accuracy techer network: ' + str(calculate_accuracy(train_loader, teacher_ResNet18)))
 
     training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
                modified=False)
