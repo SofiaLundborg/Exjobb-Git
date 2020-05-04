@@ -1187,8 +1187,8 @@ def main():
     train_loader, validation_loader, test_loader = load_data(dataset)
 
 
-    teacher_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut']('cifar10')
-    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, 'cifar10', factorized_gamma=False)
+    teacher_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](dataset='cifar10')
+    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
     teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
