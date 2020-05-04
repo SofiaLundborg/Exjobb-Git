@@ -268,7 +268,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
     optimizer = optim.Adam(student_net.parameters(), lr=0.01, weight_decay=0)
 
     layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
-    #layers = ['layer1', 'layer2', 'layer3', 'layer4']
+    layers = ['layer1', 'layer2', 'layer3', 'all']
     max_epoch_layer = 30
     max_epochs = max_epoch_layer * 3 + 60
 
@@ -307,7 +307,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             if modified:
                 set_layers_to_binarize(student_net, layers[:layer_idx+1])
             else:
-                set_layers_to_binarize(student_net, [layers[layer_idx]])
+                set_layers_to_binarize(student_net, [layer])
         if student_net.dataset == 'ImageNet':
             cut_network = 1 + 4 * (layer_idx+1)
         else:
@@ -352,7 +352,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 if modified:
                     set_layers_to_update(student_net, layers[:layer_idx+1])
                 else:
-                    set_layers_to_update(student_net, [layers[layer_idx]])
+                    set_layers_to_update(student_net, [layer])
 
             #learning_rate_change = [2, 3, 4]
             learning_rate_change = [15, 20, 25]
