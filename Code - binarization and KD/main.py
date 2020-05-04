@@ -1201,7 +1201,7 @@ def main():
         student_ResNet20 = student_ResNet20.cuda()
     filename = 'original_method_a_double_shortcut_relu'
 
-    print('Accuracy techer network: ' + str(calculate_accuracy(train_loader, teacher_ResNet18)))
+    print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
     training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
                modified=False)
