@@ -81,7 +81,7 @@ def load_data(dataset):
 
     if torch.cuda.is_available():
         batch_size_training = 512
-        batch_size_validation = 256
+        batch_size_validation = 512
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -767,8 +767,8 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
             inputs, targets = data
             inputs = inputs.to(device)
             targets = targets.to(device)
-            output_student = studet_net(inputs)
             with torch.no_grad():
+                output_student = studet_net(inputs)
                 output_teacher = teacher_net(inputs)
             running_validation_loss += criterion(output_student, output_teacher, targets)
 
