@@ -702,6 +702,86 @@ class BasicBlockNaiveDoubleShortcut(nn.Module):
         return [out, i_layer, feature_layers_to_extract, features, cut_network]
 
 
+class BasicBlockBiReal(nn.Module):
+    """An implementation of a basic residual block
+       Args:
+           inplanes (int): input channels
+           planes (int): output channels
+           stride (int): filter stride (default is 1)
+    """
+    expansion = 1
+
+    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+        super(BasicBlockNaiveDoubleShortcut, self).__init__()
+        input_size_temp = input_size.copy()
+        self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.out_size = planes
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != planes:
+            if option == 'cifar10':
+                self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     # myConv2d(in_planes, self.expansion*planes, input_size_temp, kernel_size=1, stride=stride, bias=False, padding=0, net_type=net_type, factorized_gamma=factorized_gamma),
+                     #myConv2d(in_planes, self.expansion * planes, input_size_temp, kernel_size=1, stride=stride,
+                     #        bias=False, padding=0, net_type='full_precision', factorized_gamma=factorized_gamma),
+                     nn.BatchNorm2d(self.expansion * planes)
+                )
+
+    def forward(self, inp):
+        x, i_layer, feature_layers_to_extract, features, cut_network = inp
+
+        if cut_network:
+            if i_layer > cut_network:
+                return inp
+
+        if self.conv1.conv2d.weight.do_binarize:
+            x_to_shortcut = x
+        else:
+            x_to_shortcut = x
+
+        out = self.bn1(self.conv1(x))
+
+        if not self.conv2.conv2d.weight.do_binarize:
+            #out = F.relu(out)
+            out = out
+            out += self.shortcut(x_to_shortcut)
+            x_to_shortcut = out
+        else:
+            out_mid = out
+
+        i_layer += 1
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        out = self.bn2(self.conv2(out))
+        res_shortcut = self.shortcut(x_to_shortcut)
+
+        if self.conv1.conv2d.weight.do_binarize:
+            #out = (out + out_mid)*(1/math.sqrt(2)) + res_shortcut
+            out += res_shortcut
+        else:
+            out += res_shortcut
+
+        i_layer += 1
+
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        if feature_layers_to_extract:
+            if i_layer in feature_layers_to_extract:
+                features[i_layer] = out.detach()
+
+        return [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+
 class BasicBlockReluDoubleShortcut(nn.Module):
     """An implementation of a basic residual block
        Args:
@@ -1176,6 +1256,10 @@ class CifarModel():
     def resnet20NaiveDoubleShortcut(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
         return ResNetReluFirst(BasicBlockNaiveDoubleShortcut, [3, 3, 3], net_type, dataset=dataset, factorized_gamma=factorized_gamma, **kwargs)
     @staticmethod
+    def resnet20BiReal(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
+        return ResNetReluFirst(BasicBlockBiReal, [3, 3, 3], net_type, dataset=dataset, factorized_gamma=factorized_gamma, **kwargs)
+
+    @staticmethod
     def resnet18ReluDoubleShortcut(net_type, dataset, factorized_gamma=False, **kwargs):
         return ResNetReluFirst(BasicBlockReluDoubleShortcut, [2, 2, 2, 2], net_type, dataset=dataset,
                                factorized_gamma=factorized_gamma, **kwargs)
@@ -1210,6 +1294,7 @@ resnet_models = {
         "resnet20ReluDoubleShortcut": CifarModel.resnet20ReluDoubleShortcut,
         "resnet20NaiveDoubleShortcut": CifarModel.resnet20NaiveDoubleShortcut,
         "resnet20ForTeacher": CifarModel.resnet20ForTeacher,
+        "resnet20BiReal": CifarModel.resnet20AbsDoubleShortcut,
         "resnet18ReluDoubleShortcut": CifarModel.resnet18ReluDoubleShortcut,
         "resnet18ForTeacher": CifarModel.resnet18ForTeacher,
         "resnet32": CifarModel.resnet32,
