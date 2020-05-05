@@ -680,7 +680,6 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
         criterion = criterion.cuda()
     device = get_device()
 
-    #lr = 0.0001
     lr = 1e-2
     weight_decay = 0  # 0.00001
     optimizer = optim.Adam(studet_net.parameters(), lr=lr, weight_decay=weight_decay)
@@ -768,7 +767,10 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
             inputs, targets = data
             inputs = inputs.to(device)
             targets = targets.to(device)
-            running_validation_loss += criterion(studet_net(inputs), targets).item()
+            output_student = studet_net(inputs)
+            with torch.no_grad():
+                output_teacher = teacher_net(inputs)
+            running_validation_loss += criterion(output_student, output_teacher, targets)
 
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
