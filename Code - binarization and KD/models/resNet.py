@@ -682,7 +682,6 @@ class BasicBlockNaiveDoubleShortcut(nn.Module):
                 return [out, i_layer, feature_layers_to_extract, features, cut_network]
 
         out = self.bn2(self.conv2(out))
-
         res_shortcut = self.shortcut(x_to_shortcut)
 
         if self.conv1.conv2d.weight.do_binarize:
