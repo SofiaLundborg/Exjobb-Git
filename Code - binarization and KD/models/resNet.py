@@ -1294,7 +1294,7 @@ resnet_models = {
         "resnet20ReluDoubleShortcut": CifarModel.resnet20ReluDoubleShortcut,
         "resnet20NaiveDoubleShortcut": CifarModel.resnet20NaiveDoubleShortcut,
         "resnet20ForTeacher": CifarModel.resnet20ForTeacher,
-        "resnet20BiReal": CifarModel.resnet20AbsDoubleShortcut,
+        "resnet20BiReal": CifarModel.resnet20BiReal,
         "resnet18ReluDoubleShortcut": CifarModel.resnet18ReluDoubleShortcut,
         "resnet18ForTeacher": CifarModel.resnet18ForTeacher,
         "resnet32": CifarModel.resnet32,
