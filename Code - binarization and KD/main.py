@@ -514,6 +514,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     return PATH
 
+
 def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, max_epochs, path=None, filename=None, learning_rate_change=None, saved_training = None, saved_model=None):
 
     if net.dataset == 'ImageNet':
@@ -663,6 +664,163 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
 
         save_training(epoch, net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, train_accuracy_top5, validation_accuracy_top5,
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
+
+
+def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_loader_for_accuracy, temperature=6, scaling_factor_kd_loss=0.95, max_epochs=110, path=None, filename=None, learning_rate_change=None, saved_training = None, saved_model=None):
+
+
+    title_loss = 'loss, ' + str(studet_net.net_type)
+    title_accuracy = 'accuracy, ' + str(studet_net.net_type)
+    title_accuracy_top5 = 'top 5 accuracy, ' + str(studet_net.net_type)
+    if not filename:
+        filename = 'kd_' + str(studet_net.net_type)
+
+    criterion = distillation_loss.KdLoss(temperature=temperature, alpha=scaling_factor_kd_loss)
+    if torch.cuda.is_available():
+        criterion = criterion.cuda()
+    device = get_device()
+
+    #lr = 0.0001
+    lr = 1e-2
+    weight_decay = 0  # 0.00001
+    optimizer = optim.Adam(studet_net.parameters(), lr=lr, weight_decay=weight_decay)
+
+    if saved_model:
+        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
+            studet_net, optimizer, saved_model)
+        for param_group in optimizer.param_groups:
+            lr = param_group['lr']
+            print('current learning rate is ' + str(lr))
+
+    # lr = 0.01
+    # for param_group in optimizer.param_groups:
+    #     param_group['lr'] = lr
+
+    train_loss = np.empty(max_epochs+1)
+    validation_loss = np.empty(max_epochs+1)
+    train_accuracy = np.empty(max_epochs+1)
+    train_accuracy_top5 = np.empty(max_epochs+1)
+    validation_accuracy = np.empty(max_epochs+1)
+    validation_accuracy_top5 = np.empty(max_epochs+1)
+    best_validation_loss = np.inf
+    best_epoch = 0
+
+    if studet_net.dataset == 'ImageNet':
+        layers_to_train = ['layer1', 'layer2', 'layer3', 'layer4']
+        print(layers_to_train)
+    else:
+        layers_to_train = ['layer1', 'layer2', 'layer3']
+    set_layers_to_binarize(studet_net, layers_to_train)
+    teacher_net.eval()
+
+    if not learning_rate_change:
+        learning_rate_change = [50, 70, 90, 100]
+
+    fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
+
+    if saved_training:
+        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(net, optimizer, saved_training)
+    else:
+        epoch = -1
+    while epoch < max_epochs:
+        epoch += 1
+        print('training for epoch ' + str(epoch) + 'has started')
+        studet_net.train()
+        for p in list(studet_net.parameters()):
+            p.requires_grad = True
+
+        if epoch in learning_rate_change:
+            lr = lr * 0.1
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
+                print('changed learning rate to ' + str(lr))
+
+        running_loss = 0
+        for i, data in enumerate(tqdm(train_loader)):
+            inputs, targets = data
+
+            # cpu / gpu
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+
+            optimizer.zero_grad()
+            binarize_weights(studet_net)
+
+            output_student = studet_net(inputs)
+            with torch.no_grad():
+                output_teacher = teacher_net(inputs)
+
+            total_loss = criterion(output_student, output_teacher, targets)
+
+            total_loss.backward(retain_graph=True)  # calculate loss
+            running_loss += total_loss.item()
+
+            make_weights_real(studet_net)
+            optimizer.step()
+
+        training_loss_for_epoch = running_loss / len(train_loader)
+        train_loss[epoch] = training_loss_for_epoch
+
+        running_validation_loss = 0
+        binarize_weights(studet_net)
+        print('Validation loss calculation has started')
+        for i, data in enumerate(tqdm(validation_loader)):
+            inputs, targets = data
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+            running_validation_loss += criterion(studet_net(inputs), targets).item()
+
+        validation_loss_for_epoch = running_validation_loss / len(validation_loader)
+        validation_loss[epoch] = validation_loss_for_epoch
+
+        print('Accuracy of train set has started')
+        accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader_for_accuracy, studet_net, topk=(1,5))
+        print('Accuracy of validation set has started')
+        accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, studet_net, topk=(1,5))
+
+        train_accuracy[epoch] = accuracy_train_epoch
+        train_accuracy_top5[epoch] = accuracy_train_epoch_top5
+        validation_accuracy[epoch] = accuracy_validation_epoch
+        validation_accuracy_top5[epoch] = accuracy_validation_epoch_top5
+
+        make_weights_real(studet_net)
+
+        if studet_net.dataset == 'ImageNet':
+            folder = 'ImageNet/'
+        else:
+            folder = 'cifar10/'
+
+        plot_results(ax_loss, fig, train_loss, validation_loss, epoch, filename=folder+filename, title=title_loss)
+        plot_results(ax_acc, fig, train_accuracy, validation_accuracy, epoch, filename=folder+filename, title=title_accuracy)
+        plot_results(ax_acc5, fig, train_accuracy_top5, validation_accuracy_top5, epoch, filename=folder+filename, title=title_accuracy_top5)
+
+        torch.save(validation_loss[:epoch + 1], './Results/' + folder + 'validation_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+        torch.save(train_loss[:epoch + 1], './Results/' + folder + 'train_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+        torch.save(validation_accuracy[:epoch + 1], './Results/' + folder + 'validation_accuracy_top1_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+        torch.save(train_accuracy[:epoch + 1], './Results/' + folder + 'train_accuracy_top1_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+        torch.save(train_accuracy_top5[:epoch + 1], './Results/' + folder + 'train_accuracy_top5_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+        torch.save(validation_accuracy_top5[:epoch + 1], './Results/' + folder + 'validation_accuracy_top5_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+
+        if validation_loss_for_epoch < best_validation_loss:
+            # save network
+            PATH = './Trained_Models/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
+            torch.save(studet_net.state_dict(), PATH)
+            best_validation_loss = validation_loss_for_epoch
+            best_epoch = epoch
+
+        print('Epoch: ' + str(epoch))
+        print('Best epoch: ' + str(best_epoch))
+        print('Loss on train images: ' + str(training_loss_for_epoch))
+        print('Loss on validation images: ' + str(validation_loss_for_epoch))
+        print('Accuracy top 1 on train images: ' + str(accuracy_train_epoch))
+        print('Accuracy top 1 on validation images: ' + str(accuracy_validation_epoch))
+        print('Accuracy top 5 on train images: %d %%' + str(accuracy_train_epoch_top5))
+        print('Accuracy top 5 on validation images: %d %%' + str(accuracy_validation_epoch_top5))
+
+        save_training(epoch, studet_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, train_accuracy_top5, validation_accuracy_top5,
+                      None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
+
+
 
 
 def training_c(student_net, teacher_net, train_loader, validation_loader, filename=None, max_epochs=200, scaling_factor_total=0.5):
@@ -1189,7 +1347,7 @@ def main():
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
-    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
+    student_ResNet20 = resNet.resnet_models['resnet20Naive'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
     teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
@@ -1200,12 +1358,15 @@ def main():
     if torch.cuda.is_available():
         teacher_ResNet20 = teacher_ResNet20.cuda()
         student_ResNet20 = student_ResNet20.cuda()
-    filename = 'original_method_a_double_shortcut_relu'
+
 
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
-               modified=False)
+    filename = 'Kd_training_naive'
+    training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
+
+    #training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
+    #           modified=False)
     #finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
 
 
