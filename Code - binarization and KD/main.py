@@ -1364,11 +1364,11 @@ def main():
 
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    filename = 'Kd_training_bireal'
-    training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
+    # training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
 
     #training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
     #           modified=False)
+
     filename = 'finetuning_bireal'
     finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
 
