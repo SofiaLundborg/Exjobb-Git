@@ -81,7 +81,7 @@ def load_data(dataset):
 
     if torch.cuda.is_available():
         batch_size_training = 512
-        batch_size_validation = 512
+        batch_size_validation = 256
     else:
         batch_size_training = 4
         batch_size_validation = 4
