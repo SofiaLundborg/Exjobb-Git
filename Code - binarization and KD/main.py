@@ -1349,7 +1349,7 @@ def main():
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
-    student_ResNet20 = resNet.resnet_models['resnet20BiReal'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
+    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
     teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
@@ -1364,13 +1364,14 @@ def main():
 
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    # training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
+    filename = 'kd_double_relu_'
+
+    training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
 
     #training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
     #           modified=False)
 
-    filename = 'finetuning_bireal'
-    finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
+    #finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
 
 
 
