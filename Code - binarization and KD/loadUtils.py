@@ -65,7 +65,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
     normalizing_std = [0.2470, 0.2435, 0.2616]
 
     transform_train = transforms.Compose([
-            #transforms.RandomHorizontalFlip(),
+            transforms.RandomHorizontalFlip(),
             transforms.RandomCrop(32, 4),
             transforms.ToTensor(),
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])

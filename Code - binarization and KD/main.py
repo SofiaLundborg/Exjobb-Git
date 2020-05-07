@@ -262,7 +262,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
 def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, max_epochs, path=None, filename=None, learning_rate_change=None, saved_training = None, saved_model=None):
 
-    if net.dataset == 'ImageNet':
+    if net.n_layers == 18:
         layers_to_train = ['layer1', 'layer2', 'layer3', 'layer4']
         print(layers_to_train)
     else:

@@ -19,10 +19,10 @@ class LambdaLayer(nn.Module):
         return self.lambd(x)
 
 
-def my_conv3x3(in_planes, out_planes, input_size, stride=1, net_type='full_precision', bias=True, factorized_gamma=False):
+def my_conv3x3(in_planes, out_planes, input_size, stride=1, net_type='full_precision', bias=False, factorized_gamma=False):
     """3x3 convolution with padding"""
     return myConv2d(in_planes, out_planes, input_size, kernel_size=3, stride=stride,
-                    padding=1, net_type=net_type, bias=True, factorized_gamma=factorized_gamma)
+                    padding=1, net_type=net_type, bias=bias, factorized_gamma=factorized_gamma)
 
 
 class BasicBlock(nn.Module):
@@ -706,6 +706,7 @@ class ResNetReluFirst(nn.Module):
         self.dataset = dataset
         self.net_type = net_type
         self.factorized_gamma = factorized_gamma
+        self.n_layers = n_layers
 
         if in_planes:
             self.in_planes = in_planes
