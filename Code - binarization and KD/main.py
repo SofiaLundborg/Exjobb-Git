@@ -29,8 +29,10 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     optimizer = optim.Adam(student_net.parameters(), lr=0.01, weight_decay=0)
 
-    layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
-    layers = ['layer1', 'layer2', 'layer3', 'all']
+    if student_net.dataset == 'ImageNet':
+        layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
+    else:
+        layers = ['layer1', 'layer2', 'layer3', 'all']
     max_epoch_layer = 30
     max_epochs = max_epoch_layer * 3 + 60
 
@@ -58,11 +60,12 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
     while layer_idx < len(layers):
         layer = layers[layer_idx]
-    #for layer_idx, layer in enumerate(layers):
         n_not_improved = 0
         if layer == 'all':
-            #set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
-            set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
+            if student_net.dataset == 'ImageNet':
+                set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
+            else:
+                set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
             max_epoch_layer = 60
             criterion = torch.nn.CrossEntropyLoss()
         else:
@@ -89,19 +92,14 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
 
         best_validation_loss = np.inf
         best_epoch = 0
-        n_change_learning_rate = 0
 
-        #for epoch in range(max_epoch_layer):
 
         print(layer + " is training")
-        # epoch = -1
-        #for epoch in range(max_epoch_layer):
 
         while (epoch < max_epoch_layer-1):
             epoch += 1
             start_time_epoch = time.time()
 
-            #total_epoch = epoch + 5*layer_idx
             total_epoch += 1
 
             if layer == 'all':
@@ -115,25 +113,10 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 else:
                     set_layers_to_update(student_net, [layer])
 
-
-            #learning_rate_change = [2, 3, 4]
             learning_rate_change = [15, 20, 25]
             if layer == 'all':
                 learning_rate_change = [50, 70, 90, 100]
                 learning_rate_change = [30, 40, 50]
-
-            # if n_not_improved >= 2:
-            #     if layer == 'all':
-            #         if n_change_learning_rate >= 4:
-            #             lr = lr * 0.1
-            #             n_change_learning_rate = 0
-            #         else:
-            #             n_change_learning_rate += 1
-            #     else:
-            #         lr = lr * 0.1
-            #     for param_group in optimizer.param_groups:
-            #         param_group['lr'] = lr
-            #         n_not_improved = 0
 
             if epoch in learning_rate_change:
                 lr = lr * 0.1
@@ -1089,6 +1072,14 @@ def main():
 
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
 
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+                                                                          factorized_gamma=False)
+    if torch.cuda.is_available():
+        student_ResNet18 = student_ResNet18.cuda()
+
+    filename = 'finetuning_resnet18_cifar10'
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 120, filename=filename)
+
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
     student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
@@ -1104,16 +1095,16 @@ def main():
         student_ResNet20 = student_ResNet20.cuda()
 
 
+
+
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    filename = 'finetuning_train_set_as_validation_Xnor'
 
     # training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
 
     #training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
     #           modified=False)
 
-    finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120, filename=filename)
 
     # ImageNet
     resnet18 = models.resnet18(pretrained=True)
