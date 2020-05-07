@@ -306,7 +306,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     if not learning_rate_change:
         learning_rate_change = [50, 70, 90, 100]
         learning_rate_change = [70, 100, 120, 130]
-        learning_rate_change = [50, 70, 90, 100]
+        learning_rate_change = [100, 150, 200, 250]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1079,7 +1079,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_resnet18_same_as_BMX'
+    filename = 'finetuning_resnet18_long_training'
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 300, filename=filename)
 
 
