@@ -1087,8 +1087,6 @@ def main():
     net_type = 'Xnor++'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
 
 
-
-
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
 
 
