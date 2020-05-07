@@ -1075,7 +1075,7 @@ def main():
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
 
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
-                                                                          factorized_gamma=False)
+                                                                          factorized_gamma=True)
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
