@@ -307,6 +307,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     if not learning_rate_change:
         learning_rate_change = [50, 70, 90, 100]
         learning_rate_change = [70, 100, 120, 130]
+        learning_rate_change = [40, 60, 70, 80]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1078,7 +1079,7 @@ def main():
         student_ResNet18 = student_ResNet18.cuda()
 
     filename = 'finetuning_resnet18_cifar10'
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 120, filename=filename)
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 90, filename=filename)
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
