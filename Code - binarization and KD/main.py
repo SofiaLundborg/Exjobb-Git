@@ -296,7 +296,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         criterion = criterion.cuda()
     device = get_device()
 
-    lr = 1e-1
+    lr = 1e-2
     weight_decay = 0
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -322,7 +322,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
 
     if not learning_rate_change:
         learning_rate_change = [50, 70, 90, 100]
-        learning_rate_change = [30, 80, 100, 110]
+        learning_rate_change = [70, 100, 120, 130]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1122,7 +1122,7 @@ def main():
 
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    filename = 'finetuning_initial_leraning_rate_0.1'
+    filename = 'finetuning_initial_learning_rate_0.01_long_training'
 
     # training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
 
