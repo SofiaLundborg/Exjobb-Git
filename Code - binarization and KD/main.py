@@ -264,7 +264,6 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
 
     if net.n_layers == 18:
         layers_to_train = ['layer1', 'layer2', 'layer3', 'layer4']
-        print(layers_to_train)
     else:
         layers_to_train = ['layer1', 'layer2', 'layer3']
     set_layers_to_binarize(net, layers_to_train)
@@ -458,7 +457,7 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
     teacher_net.eval()
 
     if not learning_rate_change:
-        learning_rate_change = [50, 70, 90, 100]
+        learning_rate_change = [50, 200, 250]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1068,7 +1067,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor++'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
 
 
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
@@ -1078,8 +1077,8 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_resnet18_cifar10_Xnor++_no_aug'
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 110, filename=filename)
+    filename = 'finetuning_resnet18_same_as_BMX'
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 300, filename=filename)
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
