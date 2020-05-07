@@ -65,7 +65,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
     # normalizing_std = [0.2470, 0.2435, 0.2616]
 
     transform_train = transforms.Compose([
-            transforms.RandomHorizontalFlip(),
+            #transforms.RandomHorizontalFlip(),
             transforms.RandomCrop(32, 4),
             transforms.ToTensor(),
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
@@ -75,9 +75,9 @@ def load_cifar10(subsets=False, test_as_validation=False):
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
 
     train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                             download=True, transform=transform_test)
+                                             download=True, transform=transform_train)
     train_set_not_disturbed = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                             download=True, transform=transform_test)
+                                                           download=True, transform=transform_test)
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
                                             download=True, transform=transform_test)
 
