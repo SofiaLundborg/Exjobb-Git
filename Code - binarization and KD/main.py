@@ -354,10 +354,12 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         binarize_weights(net)
         print('Validation loss calculation has started')
         for i, data in enumerate(tqdm(validation_loader)):
+            net.eval()
             inputs, targets = data
             inputs = inputs.to(device)
             targets = targets.to(device)
-            running_validation_loss += criterion(net(inputs), targets).item()
+            with torch.no_grad():
+                running_validation_loss += criterion(net(inputs), targets).item()
 
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
