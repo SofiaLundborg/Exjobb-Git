@@ -1122,7 +1122,7 @@ def main():
 
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    filename = 'finetuning_regular_initialization'
+    filename = 'finetuning_initial_leraning_rate_0.1'
 
     # training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
 
