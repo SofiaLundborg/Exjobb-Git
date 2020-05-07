@@ -1078,7 +1078,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_resnet18_cifar10_Xnor++'
+    filename = 'finetuning_resnet18_cifar10_Xnor++_no_aug'
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 90, filename=filename)
 
 

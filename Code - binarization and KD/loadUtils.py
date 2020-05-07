@@ -75,7 +75,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
             transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
 
     train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                             download=True, transform=transform_train)
+                                             download=True, transform=transform_test)
     train_set_not_disturbed = torchvision.datasets.CIFAR10(root='./data', train=True,
                                              download=True, transform=transform_test)
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
