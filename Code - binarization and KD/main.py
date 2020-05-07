@@ -1089,7 +1089,7 @@ def main():
 
 
 
-    train_loader, validation_loader, test_loader = load_cifar10(test_as_validation=True)
+    train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
@@ -1115,7 +1115,7 @@ def main():
     #training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
     #           modified=False)
 
-    finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 120, filename=filename)
+    finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120, filename=filename)
 
     # ImageNet
     resnet18 = models.resnet18(pretrained=True)
