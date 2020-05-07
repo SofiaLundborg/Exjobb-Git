@@ -61,8 +61,8 @@ def load_cifar10(subsets=False, test_as_validation=False):
         batch_size_training = 4
         batch_size_validation = 4
 
-    # normalizing_mean = [0.4914, 0.4822, 0.4465]
-    # normalizing_std = [0.2470, 0.2435, 0.2616]
+    normalizing_mean = [0.4914, 0.4822, 0.4465]
+    normalizing_std = [0.2470, 0.2435, 0.2616]
 
     transform_train = transforms.Compose([
             #transforms.RandomHorizontalFlip(),
