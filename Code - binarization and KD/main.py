@@ -1,255 +1,16 @@
-import torchvision
-import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import torch.optim as optim
-from binaryUtils import *
-from extraUtils import change_loaded_checkpoint
 from models import resNet
-from models import originalResnet
 import distillation_loss
 from datetime import datetime
-from matplotlib.lines import Line2D
 import time
 import torchvision.models as models
-import torch.distributed as dist
 from tqdm import tqdm
-
-import dataloaders
 import warnings
+from binaryUtils import *
+from extraUtils import change_loaded_checkpoint, calculate_accuracy
+from loadUtils import save_training, load_model_from_saved_training, get_one_sample, load_cifar10, load_imageNet
 
-
-def load_imageNet(subsets=None):
-    normalizing_mean = [0.485, 0.456, 0.406]
-    normalizing_std = [0.229, 0.224, 0.225]
-
-    if torch.cuda.is_available():
-        batch_size_training = 64    #64
-        batch_size_validation = 64  #64
-    else:
-        batch_size_training = 4
-        batch_size_validation = 4
-
-    transform_train = transforms.Compose([
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, 4),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
-
-    preprocessing_train = transforms.Compose([
-        transforms.RandomSizedCrop(224),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=normalizing_mean, std=normalizing_std),
-    ])
-
-    preprocessing_valid = transforms.Compose([
-        transforms.Scale(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=normalizing_mean, std=normalizing_std),
-    ])
-
-    transform_test = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
-
-    train_set = torchvision.datasets.ImageNet(root='./data', split='train', transform=preprocessing_train)
-    train_set_not_disturbed = torchvision.datasets.ImageNet(root='./data', split='train', transform=preprocessing_valid)
-    print('train set is loaded')
-    validation_set = torchvision.datasets.ImageNet(root='./data', split='val', transform=preprocessing_valid)
-    print('validation set is loaded')
-    if subsets:
-        train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [10000, len(train_set) - 10000])
-        validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [10000, len(validation_set)-10000])
-
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
-                                               shuffle=True, num_workers=8, pin_memory=True)
-    train_loader_not_disturbed = torch.utils.data.DataLoader(train_set_not_disturbed, batch_size=batch_size_training,
-                                                             shuffle=False, num_workers=8, pin_memory=True)
-    print('train_loader finished')
-    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
-                                                    shuffle=False, num_workers=8, pin_memory=True)
-    print('validation_loader finished')
-
-    return train_loader, validation_loader, train_loader_not_disturbed
-
-
-def load_data(dataset):
-    # Load data
-    normalizing_mean = [0.485, 0.456, 0.406]
-    normalizing_std = [0.229, 0.224, 0.225]
-
-    if torch.cuda.is_available():
-        batch_size_training = 512
-        batch_size_validation = 512
-    else:
-        batch_size_training = 4
-        batch_size_validation = 4
-
-    # normalizing_mean = [0.4914, 0.4822, 0.4465]
-    # normalizing_std = [0.2470, 0.2435, 0.2616]
-
-    transform_train = transforms.Compose([
-            transforms.RandomHorizontalFlip(),
-            transforms.RandomCrop(32, 4),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
-
-    transform_test = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(mean=normalizing_mean, std=normalizing_std)])
-
-    if dataset == 'cifar10':
-        train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                                 download=True, transform=transform_train)
-        test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                                download=True, transform=transform_test)
-    elif dataset == 'ImageNet':
-        train_set = torchvision.datasets.ImageNet(root='./data', train=True, transform=transform_train)
-        #test_set = torchvision.datasets.ImageNet(root='./data', train=False,
-                                                  #transform=transform_test)
-
-    # divide into train and validation data (80% train)
-    train_size = int(0.8 * len(train_set))
-    validation_size = len(train_set) - train_size
-    train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
-
-    #train_set, ndjkfnskj = torch.utils.data.random_split(train_set, [200, len(train_set) - 200])
-    #validation_set, ndjkfnskj = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
-
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
-                                               shuffle=True, num_workers=2)
-    validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
-                                                    shuffle=False, num_workers=2)
-    test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size_validation,
-                                              shuffle=False, num_workers=2)
-
-    return train_loader, validation_loader, test_loader
-
-
-def save_training(epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, top5_accuracy_train, top5_accuracy_validation, layer_idx, PATH):
-    torch.save({
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'train_loss': train_loss,
-        'validation_loss': validation_loss,
-        'train_accuracy': train_accuracy,
-        'validation_accuracy': validation_accuracy,
-        'top5_train_accuracy': top5_accuracy_train,
-        'top5_validation_accuracy': top5_accuracy_validation,
-        'layer_index': layer_idx
-    }, PATH)
-
-
-def load_training(model, optimizer, PATH):
-    checkpoint = torch.load(PATH)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    epoch = checkpoint['epoch']
-    train_loss = checkpoint['train_loss']
-    validation_loss = checkpoint['validation_loss']
-    train_accuracy = checkpoint['train_accuracy']
-    validation_accuracy = checkpoint['validation_accuracy']
-    layer_index = checkpoint['layer_index']
-
-    return epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index
-
-def load_model_from_saved_training(model, PATH):
-    checkpoint = torch.load(PATH)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    return model
-
-def get_data_loaders():
-    return dataloaders.CIFAR10DataLoaders.train_loader(batch_size=32), dataloaders.CIFAR10DataLoaders.val_loader()
-
-
-def get_one_sample(data_loader):
-    image, targets = next(iter(data_loader))
-    return image
-
-
-def calculate_accuracy(data_loader, net, topk=(1,5)):
-    net.eval()
-    n_correct = 0
-    n_total = 0
-    accuracy1 = AverageMeter()
-    accuracy5 = AverageMeter()
-    with torch.no_grad():
-        for i, data in enumerate(tqdm(data_loader)):
-
-            images, targets = data
-
-            if torch.cuda.is_available():
-                images = images.to('cuda')
-                targets = targets.to('cuda')
-
-            outputs = net(images)
-            prec1, prec5 = accuracy(outputs, targets, topk=topk)
-            accuracy1.update(prec1[0], images.size(0))
-            accuracy5.update(prec5[0], images.size(0))
-    if len(topk)>1:
-        return accuracy1.avg.item(), accuracy5.avg.item() #100 * n_correct / n_total
-    else:
-        return accuracy1.avg.item()
-
-
-def accuracy(output, target, topk=(1,5)):
-    """Computes the precision@k for the specified values of k"""
-    with torch.no_grad():
-        maxk = max(topk)
-        batch_size = target.size(0)
-
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-        res = []
-        for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size))
-        return res
-
-
-class AverageMeter(object):
-    """Computes and stores the average and current value"""
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
-
-
-def train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type):
-    #set_layers_to_binarize(student_net, start_layer, end_layer)
-    #set_layers_to_update(student_net, start_layer, end_layer)
-
-    layers = ['layer1']
-
-    set_layers_to_binarize(student_net, layers)
-
-    cut_network = end_layer
-    # cut_network = None
-
-    criterion = distillation_loss.Loss(1, 0.95, 6.0)
-
-    filename = str(start_layer) + '_to_' + str(end_layer) + 'layers_bin_' + str(net_type)
-    title = 'loss, ' + str(start_layer) + ' to ' + str(end_layer) + ' layers binarized, ' + str(net_type)
-    train_results, validation_results = train_one_block(student_net, train_loader, validation_loader, max_epochs,
-                                                        criterion, teacher_net, layers_to_train=layers, cut_network=cut_network,
-                                                        filename=filename, title=title, accuracy_calc=False)
-    min_loss = min(train_results)
-
-    return min_loss
 
 
 def training_a(student_net, teacher_net, train_loader, validation_loader, filename=None, saved_training=None, modified=False):
@@ -535,9 +296,8 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         criterion = criterion.cuda()
     device = get_device()
 
-    #lr = 0.0001
     lr = 1e-2
-    weight_decay = 0  # 0.00001
+    weight_decay = 0
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
     if saved_model:
@@ -561,7 +321,6 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     best_epoch = 0
 
     if not learning_rate_change:
-        learning_rate_change = [0, 10, 15, 20]
         learning_rate_change = [50, 70, 90, 100]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
@@ -821,8 +580,6 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
 
         save_training(epoch, studet_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, train_accuracy_top5, validation_accuracy_top5,
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
-
-
 
 
 def training_c(student_net, teacher_net, train_loader, validation_loader, filename=None, max_epochs=200, scaling_factor_total=0.5):
@@ -1345,7 +1102,7 @@ def main():
     print('pretrained model loaded')
     teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
 
-    train_loader, validation_loader, test_loader = load_data(dataset)
+    train_loader, validation_loader, test_loader = load_cifar10()
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
@@ -1353,10 +1110,10 @@ def main():
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
     teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
-    new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_ResNet20)
-    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
-    teacher_ResNet20.load_state_dict(new_checkpoint_teacher)
-    student_ResNet20.load_state_dict(new_checkpoint_student)
+    #new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_ResNet20)
+    #new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    #teacher_ResNet20.load_state_dict(new_checkpoint_teacher)
+    #student_ResNet20.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
         teacher_ResNet20 = teacher_ResNet20.cuda()
         student_ResNet20 = student_ResNet20.cuda()
@@ -1364,14 +1121,14 @@ def main():
 
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    filename = 'kd_double_relu_'
+    filename = 'finetuning_regular_initialization'
 
-    training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
+    # training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
 
     #training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, saved_training=None,
     #           modified=False)
 
-    #finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
+    finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 110, filename=filename)
 
 
 

@@ -1,243 +1,0 @@
-Training time for epoch 0: 2143.663847923279seconds 
-
-Validation loss calculation time for epoch 0: 58.45623826980591 seconds 
-
-Accuracy calculation time for epoch 0: 2.384185791015625e-07 seconds
-
-TOTAL TIME for epoch 0: 2202.4083490371704 seconds
-
-
-Training time for epoch 1: 2118.413048505783seconds 
-
-Validation loss calculation time for epoch 1: 58.468488693237305 seconds 
-
-Accuracy calculation time for epoch 1: 2.384185791015625e-07 seconds
-
-TOTAL TIME for epoch 1: 2177.11198759079 seconds
-
-
-Training time for epoch 2: 2130.5077538490295seconds 
-
-Validation loss calculation time for epoch 2: 59.23954200744629 seconds 
-
-Accuracy calculation time for epoch 2: 4.76837158203125e-07 seconds
-
-TOTAL TIME for epoch 2: 2190.011159181595 seconds
-
-
-Training time for epoch 3: 2116.3266067504883seconds 
-
-Validation loss calculation time for epoch 3: 58.26381993293762 seconds 
-
-Accuracy calculation time for epoch 3: 4.76837158203125e-07 seconds
-
-TOTAL TIME for epoch 3: 2174.7849361896515 seconds
-
-
-Training time for epoch 4: 2133.5259549617767seconds 
-
-Validation loss calculation time for epoch 4: 58.370800495147705 seconds 
-
-Accuracy calculation time for epoch 4: 4.76837158203125e-07 seconds
-
-TOTAL TIME for epoch 4: 2192.094272851944 seconds
-
-
-Training time for epoch 5: 2109.3572340011597seconds 
-
-Validation loss calculation time for epoch 5: 58.173216819763184 seconds 
-
-Accuracy calculation time for epoch 5: 4.76837158203125e-07 seconds
-
-TOTAL TIME for epoch 5: 2167.7810547351837 seconds
-
-
-Training time for epoch 6: 2111.377825975418seconds 
-
-Validation loss calculation time for epoch 6: 58.132429361343384 seconds 
-
-Accuracy calculation time for epoch 6: 2.384185791015625e-07 seconds
-
-TOTAL TIME for epoch 6: 2169.710559129715 seconds
-
-
-Training time for epoch 7: 2108.4815289974213seconds 
-
-Validation loss calculation time for epoch 7: 58.63752889633179 seconds 
-
-Accuracy calculation time for epoch 7: 4.76837158203125e-07 seconds
-
-TOTAL TIME for epoch 7: 2167.330557823181 seconds
-
-
-Training time for epoch 0: 2155.0618090629578seconds 
-
-Validation loss calculation time for epoch 0: 58.28121995925903 seconds 
-
-Accuracy calculation time for epoch 0: 2.384185791015625e-07 seconds
-
-TOTAL TIME for epoch 0: 2213.6145980358124 seconds
-
-
-Training time for epoch 1: 2116.791389465332seconds 
-
-Validation loss calculation time for epoch 1: 58.06209325790405 seconds 
-
-Accuracy calculation time for epoch 1: 2.384185791015625e-07 seconds
-
-TOTAL TIME for epoch 1: 2175.103275537491 seconds
-
-
-Training time for epoch 2: 2111.5718700885773seconds 
-
-Validation loss calculation time for epoch 2: 58.04441475868225 seconds 
-
-Accuracy calculation time for epoch 2: 4.76837158203125e-07 seconds
-
-TOTAL TIME for epoch 2: 2169.810856819153 seconds
-
-
-Training time for epoch 3: 2112.0025849342346seconds 
-
-Validation loss calculation time for epoch 3: 58.31682205200195 seconds 
-
-Accuracy calculation time for epoch 3: 2.384185791015625e-07 seconds
-
-TOTAL TIME for epoch 3: 2170.5143241882324 seconds
-
-
-Run sunday:
-
-
-
-Training time for epoch 0: 2139.492676973343seconds 
-Validation loss calculation time for epoch 0: 58.232961893081665 seconds 
-Accuracy calculation time for epoch 0: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 0: 2198.0035812854767 seconds
-
-Training time for epoch 1: 2114.839266061783seconds 
-Validation loss calculation time for epoch 1: 58.36029934883118 seconds 
-Accuracy calculation time for epoch 1: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 1: 2173.4028866291046 seconds
-
-Training time for epoch 2: 2129.5624935626984seconds 
-Validation loss calculation time for epoch 2: 59.153481245040894 seconds 
-Accuracy calculation time for epoch 2: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 2: 2188.978438138962 seconds
-
-Training time for epoch 3: 2132.821211576462seconds 
-Validation loss calculation time for epoch 3: 58.521727561950684 seconds 
-Accuracy calculation time for epoch 3: 7.152557373046875e-07 seconds
-TOTAL TIME for epoch 3: 2191.6086189746857 seconds
-
-Training time for epoch 4: 2110.6016721725464seconds 
-Validation loss calculation time for epoch 4: 58.29699110984802 seconds 
-Accuracy calculation time for epoch 4: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 4: 2169.1075296401978 seconds
-
-Training time for epoch 5: 2109.94766163826seconds 
-Validation loss calculation time for epoch 5: 58.42044949531555 seconds 
-Accuracy calculation time for epoch 5: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 5: 2168.579917192459 seconds
-
-Training time for epoch 6: 2113.496419429779seconds 
-Validation loss calculation time for epoch 6: 58.733423948287964 seconds 
-Accuracy calculation time for epoch 6: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 6: 2172.5069692134857 seconds
-
-Training time for epoch 7: 2110.6110739707947seconds 
-Validation loss calculation time for epoch 7: 58.83785557746887 seconds 
-Accuracy calculation time for epoch 7: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 7: 2169.6641838550568 seconds
-
-Training time for epoch 8: 2111.9440875053406seconds 
-Validation loss calculation time for epoch 8: 57.90320682525635 seconds 
-Accuracy calculation time for epoch 8: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 8: 2170.057790517807 seconds
-
-Training time for epoch 9: 2127.6067831516266seconds 
-Validation loss calculation time for epoch 9: 59.53808641433716 seconds 
-Accuracy calculation time for epoch 9: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 9: 2187.3543972969055 seconds
-
-Training time for epoch 10: 3507.469663143158seconds 
-Validation loss calculation time for epoch 10: 59.348572731018066 seconds 
-Accuracy calculation time for epoch 10: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 10: 3567.1028685569763 seconds
-
-Training time for epoch 11: 3512.0255687236786seconds 
-Validation loss calculation time for epoch 11: 59.653823137283325 seconds 
-Accuracy calculation time for epoch 11: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 11: 3571.950701236725 seconds
-
-Training time for epoch 12: 3522.2335562705994seconds 
-Validation loss calculation time for epoch 12: 59.11957859992981 seconds 
-Accuracy calculation time for epoch 12: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 12: 3581.590439558029 seconds
-
-Training time for epoch 13: 3541.698709011078seconds 
-Validation loss calculation time for epoch 13: 59.830639362335205 seconds 
-Accuracy calculation time for epoch 13: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 13: 3601.752317428589 seconds
-
-Training time for epoch 14: 3525.743597507477seconds 
-Validation loss calculation time for epoch 14: 59.392924547195435 seconds 
-Accuracy calculation time for epoch 14: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 14: 3585.4261980056763 seconds
-
-Training time for epoch 15: 3529.9231340885162seconds 
-Validation loss calculation time for epoch 15: 59.31568932533264 seconds 
-Accuracy calculation time for epoch 15: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 15: 3589.466383934021 seconds
-
-Training time for epoch 16: 3529.5734322071075seconds 
-Validation loss calculation time for epoch 16: 59.797255992889404 seconds 
-Accuracy calculation time for epoch 16: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 16: 3589.6271278858185 seconds
-
-Training time for epoch 17: 3520.2673971652985seconds 
-Validation loss calculation time for epoch 17: 59.18828463554382 seconds 
-Accuracy calculation time for epoch 17: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 17: 3579.6795761585236 seconds
-
-Training time for epoch 18: 3528.898272037506seconds 
-Validation loss calculation time for epoch 18: 59.09441900253296 seconds 
-Accuracy calculation time for epoch 18: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 18: 3588.211734056473 seconds
-
-Training time for epoch 0: 4411.341720581055seconds 
-Validation loss calculation time for epoch 0: 60.171773195266724 seconds 
-Accuracy calculation time for epoch 0: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 0: 4471.797657728195 seconds
-
-Training time for epoch 1: 4414.929192304611seconds 
-Validation loss calculation time for epoch 1: 60.198813676834106 seconds 
-Accuracy calculation time for epoch 1: 7.152557373046875e-07 seconds
-TOTAL TIME for epoch 1: 4475.368866205215 seconds
-
-Training time for epoch 2: 4414.820112943649seconds 
-Validation loss calculation time for epoch 2: 60.23327851295471 seconds 
-Accuracy calculation time for epoch 2: 2.384185791015625e-07 seconds
-TOTAL TIME for epoch 2: 4475.3465411663055 seconds
-
-Training time for epoch 3: 4410.380749940872seconds 
-Validation loss calculation time for epoch 3: 60.08289408683777 seconds 
-Accuracy calculation time for epoch 3: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 3: 4470.694673538208 seconds
-
-Training time for epoch 4: 4410.455767154694seconds 
-Validation loss calculation time for epoch 4: 60.24258542060852 seconds 
-Accuracy calculation time for epoch 4: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 4: 4470.994923830032 seconds
-
-Training time for epoch 5: 4408.538557052612seconds 
-Validation loss calculation time for epoch 5: 60.038745403289795 seconds 
-Accuracy calculation time for epoch 5: 1.6689300537109375e-06 seconds
-TOTAL TIME for epoch 5: 4468.804085731506 seconds
-
-Training time for epoch 6: 4400.460862398148seconds 
-Validation loss calculation time for epoch 6: 60.15839505195618 seconds 
-Accuracy calculation time for epoch 6: 4.76837158203125e-07 seconds
-TOTAL TIME for epoch 6: 4460.896057367325 seconds
-
-

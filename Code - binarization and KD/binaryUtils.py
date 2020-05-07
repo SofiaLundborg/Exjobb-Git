@@ -32,17 +32,6 @@ def set_layers_to_binarize(net, layers):
                 p.do_binarize = True
 
 
-def set_layers_to_binarize_old(net, bin_layer_start, bin_layer_end):
-    """ set layers which convolutional layers to binarize """
-
-    i_parameter = 0
-    for p in list(net.parameters()):
-        if hasattr(p, 'do_binarize'):
-            if (i_parameter >= bin_layer_start) and (i_parameter < bin_layer_end):
-                p.do_binarize = True
-            i_parameter += 1
-
-
 def set_layers_to_update(net, layers):
     """ set which layers to apply weight update """
 
@@ -63,43 +52,11 @@ def set_layers_to_train_mode(net, layers):
         layer.train()
 
 
-def set_layers_to_update_old(net, start_conv_layer, end_conv_layer):
-    # find the real start layer and end layer
-    i_layer_conv = 0
-    start_param_layer = np.inf
-    end_param_layer = np.inf
-
-    for j, p in enumerate(list(net.parameters())):
-        if hasattr(p, 'do_binarize'):
-            if i_layer_conv == start_conv_layer:
-                start_param_layer = j
-            if i_layer_conv == end_conv_layer + 1:
-                end_param_layer = j - 1
-            i_layer_conv += 1
-
-    if net.net_type == 'Xnor++':
-        start_param_layer += -1
-        end_param_layer += -1
-
-    # set which parameters to update
-    for j, p in enumerate(list(net.parameters())):
-        if (j >= start_param_layer) and (j <= end_param_layer):
-            p.requires_grad = True
-        else:
-            p.requires_grad = False
-
-
 def make_weights_real(net):
     """ Set all the weigths that have been binarized to their real value version """
     for p in list(net.parameters()):
         if hasattr(p, 'real_weights'):
             p.data.copy_(p.real_weights.clamp_(-1, 1))  # Also clip them
-
-
-def clip_weights(net):
-    for p in list(net.parameters()):
-        if hasattr(p, 'real_weights'):
-            p.real_weights.clamp_(-1, 1)
 
 
 def delete_real_weights(net):
@@ -155,9 +112,6 @@ class myConv2d(nn.Module):
         self.conv2d = nn.Conv2d(input_channels, output_channels,
                                 kernel_size=kernel_size, stride=stride, padding=padding, bias=bias)
 
-        #if torch.cuda.is_available():
-        #    self.conv2d = self.conv2d.cuda()
-
         self.conv2d.weight.do_binarize = False
 
         if input_size is not None:
@@ -168,19 +122,13 @@ class myConv2d(nn.Module):
             if input_size is not None:
                 scaling_factor = 1
                 output_size = input_size[0]
-                #print('gamma:' + str(output_size))
 
                 if factorized_gamma:
                     self.alpha = torch.nn.Parameter(scaling_factor * torch.ones(output_channels, 1, 1), requires_grad=True)
                     self.beta = torch.nn.Parameter(scaling_factor * torch.ones(1, output_size, 1), requires_grad=True)
                     self.gamma = torch.nn.Parameter(scaling_factor * torch.ones(1, 1, output_size), requires_grad=True)
-                    # if torch.cuda.is_available():
-                    #     self.alpha = self.alpha.to('cuda')
-                    #     self.beta = self.beta.to('cuda')
-                    #     self.gamma = self.gamma.to('cuda')
                     self.gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
                     # gamma_large = torch.einsum('i, j, k -> ijk', self.alpha, self.beta, self.gamma)
-
                 else:
                     self.gamma_large = torch.nn.Parameter(
                         scaling_factor * torch.ones(output_channels, output_size, output_size), requires_grad=True)
@@ -240,7 +188,6 @@ class myConv2d(nn.Module):
             if self.conv2d.weight.do_binarize:
                 x = binarize(x)
                 x = self.conv2d(x)
-                # x = torch.mul(x, self.gamma_large)
                 if self.factorized_gamma:
                     gamma_large = torch.mul(torch.mul(self.alpha, self.beta), self.gamma)
                     x = x*gamma_large

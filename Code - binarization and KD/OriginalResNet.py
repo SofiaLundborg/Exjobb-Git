@@ -2,11 +2,9 @@
 Resnet Implementation Heavily Inspired by the torchvision resnet implementation
 '''
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
-from torch.nn import init
 
 class LambdaLayer(nn.Module):
     def __init__(self, lambd):

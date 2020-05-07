@@ -110,9 +110,6 @@ class KdLoss(nn.Module):
         # Calculate Cross Entropy with true targets
         hard_loss = self._hard_loss(inputs, hard_targets)
 
-        # Calculate number of correct hard predictions
-        hard = torch.nonzero(preds.ne(hard_targets).data)
-
         # Calculate Cross Entropy with soft targets
         hi_temp_inputs = self.log_softmax(inputs / self.temp)
         # Need high temperature probability distribution as target
@@ -130,30 +127,10 @@ class KdLoss(nn.Module):
         soft_entropy[soft_entropy != soft_entropy] = 0
         soft_entropy = soft_entropy.sum(1)
 
-        # Calculate Kullback-Leibler divergence
-        soft_kl_divergence = soft_cross_entropy - soft_entropy
-
-        # Calculate number of correct soft predictions
-        soft = torch.nonzero(preds.eq(hard_targets).data)
-
         # Sum unscaled losses
         loss = sum([(1 - self.alpha) * soft_loss, self.alpha * hard_loss])
         if self.size_average:
             loss /= inputs.size(0)
-
-        # loss.extra = OrderedDict()
-        # loss.extra['alpha'] = self.alpha
-        # loss.extra['nhard'] = len(hard)
-        # loss.extra['nsoft'] = len(soft)
-        # loss.extra['hard_loss'] = hard_loss.data[0]
-        # loss.extra['soft_loss'] = soft_loss.data[0]
-        # loss.extra['unscaled_soft_loss'] = unscaled_soft_loss.data[0]
-        # loss.extra['soft_entropy_mean'] = soft_entropy.mean().data[0]
-        # loss.extra['soft_entropy_std'] = soft_entropy.std().data[0]
-        # loss.extra['soft_cross_entropy_mean'] = soft_cross_entropy.mean().data[0]
-        # loss.extra['soft_cross_entropy_std'] = soft_cross_entropy.std().data[0]
-        # loss.extra['soft_kl_divergence_mean'] = soft_kl_divergence.mean().data[0]
-        # loss.extra['soft_kl_divergence_std'] = soft_kl_divergence.std().data[0]
 
         return loss
 

@@ -1,21 +1,6 @@
 from collections import OrderedDict
-
-
-def copy_parameters(net, original_net):
-    ''' If net and original net have the same architecture, it copies all data in parameters in original net to net '''
-    net_parameters = list(net.parameters())
-    org_net_parameters = list(original_net.parameters())
-
-    i = 0
-    for net_parameter in net_parameters:
-        if net_parameter.data.size() == org_net_parameters[i].size():    # There are no large gamma in fp_net
-            net_parameter.data = org_net_parameters[i].clone().detach()
-            #net_parameters[i] = net_parameter[i]
-            #net_parameter = copy.deepcopy(org_net_parameters)
-            i += 1
-    if not (i == len(org_net_parameters)):
-        print('something wrong when copying the parameters')
-
+import torch
+from tqdm import tqdm
 
 def calculate_output_size(input_size, kernel_size, stride, padding):
     output_size = int((input_size - kernel_size + 2 * padding) / stride + 1)
@@ -42,3 +27,62 @@ def change_loaded_checkpoint(checkpoint, student_net):
 
     return new_checkpoint
 
+
+def calculate_accuracy(data_loader, net, topk=(1,5)):
+    net.eval()
+    n_correct = 0
+    n_total = 0
+    accuracy1 = AverageMeter()
+    accuracy5 = AverageMeter()
+    with torch.no_grad():
+        for i, data in enumerate(tqdm(data_loader)):
+
+            images, targets = data
+
+            if torch.cuda.is_available():
+                images = images.to('cuda')
+                targets = targets.to('cuda')
+
+            outputs = net(images)
+            prec1, prec5 = accuracy(outputs, targets, topk=topk)
+            accuracy1.update(prec1[0], images.size(0))
+            accuracy5.update(prec5[0], images.size(0))
+    if len(topk)>1:
+        return accuracy1.avg.item(), accuracy5.avg.item() #100 * n_correct / n_total
+    else:
+        return accuracy1.avg.item()
+
+
+def accuracy(output, target, topk=(1,5)):
+    """Computes the precision@k for the specified values of k"""
+    with torch.no_grad():
+        maxk = max(topk)
+        batch_size = target.size(0)
+
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+        res = []
+        for k in topk:
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
+        return res
+
+
+class AverageMeter(object):
+    """Computes and stores the average and current value"""
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count

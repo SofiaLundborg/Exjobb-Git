@@ -6,10 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
 from binaryUtils import myConv2d, myMaxPool2d
-import matplotlib.pyplot as plt
 import torch
 import math
-import seaborn as sns
 
 
 class LambdaLayer(nn.Module):
@@ -21,17 +19,10 @@ class LambdaLayer(nn.Module):
         return self.lambd(x)
 
 
-def conv3x3(in_planes, out_planes, stride=1):
-    """3x3 convolution with padding"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                     padding=1, bias=False)
-
-
 def my_conv3x3(in_planes, out_planes, input_size, stride=1, net_type='full_precision', bias=False, factorized_gamma=False):
     """3x3 convolution with padding"""
     return myConv2d(in_planes, out_planes, input_size, kernel_size=3, stride=stride,
                     padding=1, net_type=net_type, bias=bias, factorized_gamma=factorized_gamma)
-
 
 class BasicBlock(nn.Module):
     """An implementation of a basic residual block
@@ -122,66 +113,21 @@ class BasicBlockForTeacher(nn.Module):
 
         x = F.relu(x)
 
-        sns.set()
-        sns.set_style("white")
-        sns.set_context("notebook")
+        x_to_shortcut = x
+        out = self.bn1(self.conv1(x))
+        out = F.relu(out)
 
-        with sns.color_palette("bright"):
-            # print(i_layer)
-            # if i_layer == 5:
-            #     fig, ax = plt.subplots(1, 3, figsize=[9, 3])
-            #     ax[1].hist(x.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
-            #     ax[1].set_title('Output from previous layer')
-            #     ax[1].set_ylabel('density')
-            #     ax[1].set_xlabel('value')
-            #     ax[1].set_xlim([-8, 8])
+        i_layer += 1
+        if cut_network:
+            if cut_network == i_layer:
+                return [out, i_layer, feature_layers_to_extract, features, cut_network]
 
-            x_to_shortcut = x
-            out = self.bn1(self.conv1(x))
-            out = F.relu(out)
+        out = self.bn2(self.conv2(out))
 
-            i_layer += 1
-            if cut_network:
-                if cut_network == i_layer:
-                    return [out, i_layer, feature_layers_to_extract, features, cut_network]
+        res_shortcut = self.shortcut(x_to_shortcut)
+        i_layer += 1
 
-            out = self.bn2(self.conv2(out))
-
-            # if i_layer == 6:
-            #     ax[0].hist(out.view(-1), range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
-            #     ax[0].set_title('Before summation')
-            #     ax[0].set_ylabel('density')
-            #     ax[0].set_xlabel('value')
-            #     ax[0].set_xlim([-8, 8])
-
-
-            res_shortcut = self.shortcut(x_to_shortcut)
-
-
-            i_layer += 1
-
-            out += res_shortcut
-
-            # if i_layer == 7:
-            #     ax[2].hist(out.view(-1),range=[-8,8], bins=50, alpha=1, density=True, label='Student', color='black')
-            #     ax[2].set_title('After summation')
-            #     ax[2].set_ylabel('density')
-            #     ax[2].set_xlabel('value')
-            #     ax[2].set_xlim([-8, 8])
-            #
-            #     plt.tight_layout(h_pad=3)
-            #     plt.show()
-            #     fig.savefig('distribution_shortcut.eps', format='eps')
-
-        #if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
-        #    out[out < 0] = out[out < 0]*0.5
-
-        # if plot:
-        #     ax_combined.hist(out.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
-        #     ax_combined.hist(out_abs.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_abs, label='abs*0.6')
-        #     ax_combined.hist(out_no_relu.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_no_relu, label='none')
-        #     ax_combined.legend(frameon=False)
-        #     plt.show()
+        out += res_shortcut
 
         if cut_network:
             if cut_network == i_layer:
@@ -232,25 +178,17 @@ class BasicBlockReluFirst(nn.Module):
 
         if self.conv1.conv2d.weight.do_binarize:
             x_abs = torch.abs(x)*self.move_average_factor
-            # x_no_relu = x
-            # x = F.relu(x)
 
             x_to_shortcut = x_abs
         else:
             x = F.relu(x)
-            #x_to_shortcut = torch.abs(x)
-            # x = F.relu(x)
+
             x_to_shortcut = x
 
         out = self.bn1(self.conv1(x))
 
         if not self.conv2.conv2d.weight.do_binarize:
             out = F.relu(out)
-
-        if self.conv2.conv2d.weight.do_binarize:
-            # out_mid = torch.abs(out)/2
-            # out_mid = self.shortcut(x_to_shortcut)/2
-            out_mid = out
 
         i_layer += 1
         if cut_network:
@@ -259,71 +197,16 @@ class BasicBlockReluFirst(nn.Module):
 
         out = self.bn2(self.conv2(out))
 
-        if self.conv2.conv2d.weight.do_binarize:
-            # res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
-            res_shortcut = self.shortcut(x_to_shortcut)
-        else:
-            res_shortcut = self.shortcut(x_to_shortcut)
-            #res_shortcut = (out_mid + self.shortcut(x_to_shortcut) / 2)
-
+        res_shortcut = self.shortcut(x_to_shortcut)
 
         if self.conv2.conv2d.weight.do_binarize:
             res_shortcut = res_shortcut * self.move_average_factor
-
-        # res_shortcut_abs = out_mid_abs + self.shortcut(x_abs)/2
-        # res_shortcut_no_relu = out_mid + self.shortcut(x_no_relu)
         i_layer += 1
 
-        #if i_layer == 19:
-        #    fig, ax = plt.subplots()
-        #    ax.hist(res_shortcut.view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='shortcut')
-        #    plt.show()
-        #     plot = False
-        # else:
-        #     plot = False
-        # if plot:
-        #     fig, (ax_shortcut, ax_out, ax_combined) = plt.subplots(1, 3, figsize=(11, 3))
-        #     ax_shortcut.set_title('Shortcut')
-        #     ax_out.set_title('Output before addition')
-        #     ax_combined.set_title('Output after addition')
-        #
-        #     alpha = 0.25
-        #     color = 'black'
-        #     color_abs = 'green'
-        #     color_no_relu = 'blue'
-        #     ax_out.hist(out.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
-        #     ax_shortcut.hist(res_shortcut_abs.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_abs, label='abs*0.6')
-        #     ax_shortcut.hist(res_shortcut.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
-        #     ax_shortcut.hist(res_shortcut_no_relu.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_no_relu, label='none')
-        #     ax_shortcut.legend(frameon=False)
-
-        # out_abs = out + res_shortcut_abs
-        # out_no_relu = out + res_shortcut_no_relu
-        #out_abs[out_abs > 0] = out_abs[out_abs > 0]
-
         if self.conv2.conv2d.weight.do_binarize:
-            # plt.hist(out.view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='before', color='green')
-            # plt.hist(((out/2 + out_mid/2)*2).view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='before', color='blue')
-            # plt.hist(out_mid.view(-1), 50, alpha=0.4, histtype='stepfilled', density=True, label='before', color='red')
-
-
-            # out = res_shortcut + out + out_mid
             out = res_shortcut + out
-
         else:
             out += res_shortcut
-
-
-
-        #if self.conv2.conv2d.weight.do_binarize:  # divide all values less than 0 by 2 to be similar to relu-addition
-        #    out[out < 0] = out[out < 0]*0.5
-
-        # if plot:
-        #     ax_combined.hist(out.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color, label='relu')
-        #     ax_combined.hist(out_abs.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_abs, label='abs*0.6')
-        #     ax_combined.hist(out_no_relu.view(-1), 50, alpha=alpha, histtype='stepfilled', density=True, color=color_no_relu, label='none')
-        #     ax_combined.legend(frameon=False)
-        #     plt.show()
 
         if cut_network:
             if cut_network == i_layer:
@@ -903,81 +786,6 @@ class Bottleneck(nn.Module):
         return out
 
 
-class ResNet1layer(nn.Module):
-    def __init__(self, block, layers, net_type='full_precision', dataset="cifar10", num_classes=10, in_planes=None):
-        super(ResNet1layer, self).__init__()
-        self.dataset = dataset
-        self.net_type = net_type
-
-        if in_planes:
-            self.in_planes = in_planes
-        elif "cifar" in dataset:
-            self.in_planes = 16
-        else:
-            self.in_planes = 64
-
-        if dataset == "cifar10":
-            num_classes = 10
-            input_size = [32]
-        elif dataset == "imagenet":
-            num_classes = 1000
-            input_size = [224]
-
-        self.relu = nn.ReLU(inplace=True)
-        self.bn1 = nn.BatchNorm2d(self.in_planes)
-        ip = self.in_planes
-        if ("cifar" in dataset) or ("svhn" in dataset):
-            self.linear = nn.Linear(ip * 4 * block.expansion, num_classes)
-            self.conv1 = myConv2d(3, ip, input_size, kernel_size=3, stride=1, padding=1, net_type=net_type,
-                                  bias=False)
-            self.layer4 = None
-        else:
-            self.linear = nn.Linear(ip * 8 * block.expansion, num_classes)
-            self.conv1 = nn.Conv2d(3, ip, kernel_size=7, stride=2, padding=3, bias=False)
-            self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-            self.layer4 = self._make_layer(block, ip * 8, layers[3], input_size, stride=2)
-            self.avgpool = nn.AvgPool2d(7, stride=1)
-
-        self.layer1 = self._make_layer(block, ip, input_size, layers[0], stride=1, net_type=net_type)
-        self.layer2 = self._make_layer(block, ip * 2, input_size, layers[1], stride=2, net_type=net_type)
-        self.layer3 = self._make_layer(block, ip * 4, input_size, layers[2], stride=2, net_type=net_type)
-
-        if ("cifar" in dataset) or ("svhn" in dataset):
-            self.linear = nn.Linear(ip * 4 * block.expansion, num_classes)
-
-        # Initialize the weights
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, nn.BatchNorm2d):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
-
-        # No update of weights
-        for p in list(self.parameters()):
-            p.requires_grad = False
-
-    def _make_layer(self, block, planes, input_size, num_blocks, stride, net_type):
-        strides = [stride] + [1] * (num_blocks - 1)
-        layers = []
-        for i in range(len(strides)):
-            stride = strides[i]
-            layers.append(block(self.in_planes, planes, input_size, stride, self.dataset, net_type))
-            if i == 0: self.in_planes = planes * block.expansion
-
-        return nn.Sequential(*layers)
-
-    def forward(self, x, feature_layers_to_extract=None, cut_network=None):
-
-        features = OrderedDict()
-
-        out = self.relu(self.bn1(self.conv1(x)))
-        i_layer = 1
-
-        output = self.layer1([out, i_layer, feature_layers_to_extract, features, cut_network])
-        return output[0]
-
-
 class ResNetReluFirst(nn.Module):
     def __init__(self, block, layers, net_type='full_precision', dataset="cifar10", num_classes=10, in_planes=None, factorized_gamma=False):
         super(ResNetReluFirst, self).__init__()
@@ -1258,7 +1066,6 @@ class CifarModel():
     @staticmethod
     def resnet20BiReal(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
         return ResNetReluFirst(BasicBlockBiReal, [3, 3, 3], net_type, dataset=dataset, factorized_gamma=factorized_gamma, **kwargs)
-
     @staticmethod
     def resnet18ReluDoubleShortcut(net_type, dataset, factorized_gamma=False, **kwargs):
         return ResNetReluFirst(BasicBlockReluDoubleShortcut, [2, 2, 2, 2], net_type, dataset=dataset,
@@ -1266,7 +1073,6 @@ class CifarModel():
     @staticmethod
     def resnet18ForTeacher(net_type, dataset, **kwargs):
         return ResNetReluFirst(BasicBlockForTeacher, [2, 2, 2, 2], net_type, dataset=dataset, **kwargs)
-
     @staticmethod
     def resnet32(net_type, **kwargs):
         return ResNet(BasicBlock, [5, 5, 5], net_type, **kwargs)
@@ -1303,13 +1109,3 @@ resnet_models = {
         "resnet110": CifarModel.resnet110,
         "resnet1202": CifarModel.resnet1202
 }
-
-
-def test(net):
-    import numpy as np
-    total_params = 0
-
-    for x in filter(lambda p: p.requires_grad, net.parameters()):
-        total_params += np.prod(x.data.numpy().shape)
-    print("Total number of params", total_params)
-    print("Total layers", len(list(filter(lambda p: p.requires_grad and len(p.data.size()) > 1, net.parameters()))))
