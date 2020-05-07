@@ -8,8 +8,9 @@ import torchvision.models as models
 from tqdm import tqdm
 import warnings
 from binaryUtils import *
-from extraUtils import change_loaded_checkpoint, calculate_accuracy
+from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device
 from loadUtils import save_training, load_model_from_saved_training, get_one_sample, load_cifar10, load_imageNet
+import numpy as np
 
 
 
@@ -1057,13 +1058,6 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
     return train_results, validation_results
 
 
-def get_device():
-    if torch.cuda.is_available():
-        return 'cuda'
-    else:
-        return 'cpu'
-
-
 def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None, eps=False):
     ax.clear()
     ax.plot(np.arange(max_epochs+1) + 1, train_results[:max_epochs+1], label='train')
@@ -1090,20 +1084,12 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
-    dataset = 'cifar10'
-    max_epochs = 200
-    scaling_factor_total = 0.75     # LIT: 0.75
-    scaling_factor_kd_loss = 0.95   # LIT: 0.95
-    temperature_kd_loss = 6.0       # LIT: 6.0
+    net_type = 'Xnor++'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
 
-    resnet18 = models.resnet18(pretrained=True)
-    torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
-    original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
-    print('pretrained model loaded')
-    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
 
-    train_loader, validation_loader, test_loader = load_cifar10()
+
+
+    train_loader, validation_loader, test_loader = load_cifar10(test_as_validation=True)
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
@@ -1122,7 +1108,7 @@ def main():
 
     print('Accuracy teacher network: ' + str(calculate_accuracy(train_loader, teacher_ResNet20)))
 
-    filename = 'finetuning_initial_learning_rate_0.01_long_training_Xnor'
+    filename = 'finetuning_train_set_as_validation'
 
     # training_kd(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader, filename=filename, saved_training=None, max_epochs=110)
 
@@ -1131,322 +1117,12 @@ def main():
 
     finetuning(student_ResNet20, train_loader, validation_loader, train_loader, 120, filename=filename)
 
-
-
-
-
-    distResNet = resNet.resnet_models['resnet20ForTeacher']('full_precision','cifar10')
-    sample = get_one_sample(train_loader)
-
-    #res = distResNet(sample)
-
-
-    # train_loader, validation_loader, train_loader_not_disturbed = load_imageNet()
-    print('ImageNet loaded')
-
-
-    #teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
-    #checkpoint_teacher = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
-    #teacher_ResNet18.load_state_dict(checkpoint_teacher)
-
-    # # Initialize distributed training
-    # if torch.cuda.device_count() > 1:
-    #     teacher_ResNet18 = torch.nn.DataParallel(teacher_ResNet18)
-    #     resnet18 = torch.nn.DataParallel(resnet18)
-
-    if torch.cuda.is_available():
-        resnet18 = resnet18.cuda()
-        teacher_ResNet18 = teacher_ResNet18.cuda()
-    device = get_device()
-    sample = get_one_sample(train_loader).to(device)
-
-
-
-    train_loader_subset, validation_loader_subset, train_loader_not_disturbed_subset= load_imageNet(subsets=True)
-    #torch.save(train_loader_subset, 'train_loader_subset.pth')
-    #torch.save(validation_loader_subset, 'validation_loader_subset.pth')
-
-
-    filename = 'method_a_double_shortcut_with_finetuning_' + str(net_type)
-    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet')
-    checkpoint_student = change_loaded_checkpoint(original_teacher_dict, student_ResNet18)
-    student_ResNet18.load_state_dict(checkpoint_student)
-    if torch.cuda.is_available():
-        student_ResNet18 = student_ResNet18.cuda()
-
-    filename = 'finetuning_no_method_a_complete_set_initial_lr_0.001___' + str(net_type)
-    saved_training = './saved_training/ImageNet/finetuning_after_method_a_complete_set_initial_lr_0.001_Xnor++_lr0.0001_20200426'
-    #student_ResNet18 = load_model_from_saved_training(student_ResNet18, PATH='./saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
-
-    # lr = 0.001
-    # weight_decay = 0  # 0.00001
-    # optimizer = optim.Adam(student_ResNet18.parameters(), lr=lr, weight_decay=weight_decay)
-    #
-    # epoch, student_ResNet18, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
-    #     student_ResNet18, optimizer, './saved_training/ImageNet/finetuning_after_method_a_double_shortcut_complete_setXnor++_20200424')
-
-    #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 35, filename=filename, saved_model='./saved_training/ImageNet/method_a_double_shortcut_with_relu_long_Xnor++_20200421', saved_training=saved_training)
-    #finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_disturbed, 25, filename=filename)
-
-
-    filename = 'method_a_correct_shortcut_factorized_Xnor++_'
-    #path = training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, filename, saved_training='./saved_training/ImageNet/method_a_correct_shortcut_factorized_Xnor++__20200427')
-
-    print('finished training')
-
-    #
-    # accuracy_org = calculate_accuracy(validation_loader, resnet18)
-    # print('accuracy org: ' + str(accuracy_org))
-    # accuracy_teacher = calculate_accuracy(validation_loader, teacher_ResNet18)
-    # print('accuracy teacher: ' + str(accuracy_teacher))
-    #
-    # # initailize_networks
-    # teacher_net = resNet.resnet_models['resnet20ForTeacher']('full_precision', dataset)
-    # student_net = resNet.resnet_models[net_name + 'relufirst'](net_type)
-    #
-    # # load pretrained network into student and techer network
-    # teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
-    # teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
-    # new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_net)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # teacher_net.load_state_dict(new_checkpoint_teacher)
-    # student_net.load_state_dict(new_checkpoint_student)
-    #
-    # checkpoint = torch.load('./Trained_Models/lit_finetuning_binary_20200316.pth', map_location='cpu')
-    #
-    # teacher_net_org = originalResnet.resnet_models["cifar"][net_name]()
-    # teacher_pth = './pretrained_resnet_cifar10_models/student/' + net_name + '.pth'
-    # teacher_checkpoint_org = torch.load(teacher_pth, map_location='cpu')
-    # teacher_net_org.load_state_dict(teacher_checkpoint_org)
-    #
-    # if torch.cuda.is_available():
-    #     teacher_net = teacher_net.cuda()
-    #     student_net = student_net.cuda()
-    #     teacher_net_org = teacher_net_org.cuda()
-    #
-    # trained_student_checkpoint = torch.load('Trained_Models/1_to_7layers_bin_Xnor++_20200302.pth', map_location='cpu')
-    # trained_student_net = resNet.resnet_models[net_name]('Xnor++')
-    # trained_student_net.load_state_dict(trained_student_checkpoint)
-    #
-    #
-    #
-    # #teacher_net_pretrained = models.resnet18(pretrained=True)
-    #
-    # teacher_net.eval()
-
-    #acc_teacher = calculate_accuracy(train_loader, teacher_net)
-    #print(acc_teacher)
-
-    #acc_teacher_org = calculate_accuracy(train_loader, teacher_net_org)
-    #print(acc_teacher_org)
-
-    # res_teacher = teacher_net(sample)
-    # res_org = teacher_net_org(sample)
-
-    # print(str(res_teacher == res_org))
-
-    # print('hej')
-
-    # layers_to_train = ['layer1', 'layer2', 'layer3']
-    # set_layers_to_binarize(student_net, layers_to_train)
-    # set_layers_to_update(student_net, layers_to_train)
-    # binarize_weights(student_net)
-    #
-    # with torch.no_grad():
-    #     fig, ax = plt.subplots(1, 3)
-    #     # fig, ax = plt.subplots()
-    #
-    #
-    #     teacher_res = teacher_net(sample, cut_network=7)
-    #     student_res = student_net(sample, cut_network=7)
-    #     ax[0].hist(teacher_res.view(-1), bins=100, alpha=0.5, density=True, label='Teacher', color='grey')
-    #     ax[0].plot([0,0], [0, 0.30], linestyle='dashed', color='black')
-    #     ax[0].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student', color='green')
-    #
-    #     teacher_res = teacher_net(sample, cut_network=13)
-    #     student_res = student_net(sample, cut_network=13)
-    #     ax[1].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher', color='grey')
-    #     ax[1].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student', color='green')
-    #
-    #     teacher_res = teacher_net(sample, cut_network=19)
-    #     student_res = student_net(sample, cut_network=19)
-    #     ax[2].hist(teacher_res.view(-1), bins=50, alpha=0.3, density=True, label='Teacher', color='grey')
-    #     ax[2].hist(student_res.view(-1), bins=50, alpha=0.3, density=True, label='Student', color='green')
-    #
-    #     plt.show()
-
-    # set_layers_to_binarize(trained_student_net, 1, 7)
-    # out = trained_student_net(sample)
-
-    # criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd_loss, temperature_kd_loss)
-
-    # train_one_block(student_net, train_loader, validation_loader, max_epochs, criterion, teacher_net=teacher_net,
-    #                intermediate_layers=intermediate_layers, cut_network=None, filename='hejhej', title=None)
-
-    # train_first_layers(start_layer, end_layer, student_net, teacher_net, train_loader, validation_loader, max_epochs, net_type)
-    # lit_training(student_net, train_loader, validation_loader, max_epochs, teacher_net)
-
-    #finetuning(student_net, train_loader, validation_loader, 60)
-
-    #training_c(student_net, teacher_net, train_loader, validation_loader, max_epochs=200)
-
-    # training_a(student_net, teacher_net, train_loader, validation_loader)
-
-    # training_c(student_net, teacher_net, train_loader, validation_loader)
-    # test_heatmap(student_net, teacher_net, train_loader)
-
-    #
-    # filename = 'method_a_with_relu_block' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20WithRelu'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
-    # filename = 'method_a_with_relu_block_finetuning_' + str(net_type)
-    # finetuning(student_net, train_loader, validation_loader, 60, path, filename)
-    #
-    # filename = 'method_a_with_abs_block' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20Abs'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
-    # filename = 'method_a_with_abs_block_finetuning_' + str(net_type)
-    # finetuning(student_net, train_loader, validation_loader, 60, path, filename)
-    #
-    # filename = 'method_a_with_double_shortcut_block' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20AbsDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
-    # filename = 'method_a_with_double_shortcut_block_finetuning_' + str(net_type)
-    # finetuning(student_net, train_loader, validation_loader, 60, path, filename)
-    #
-
-    learning_rate_change = [50, 70, 90, 100]
-    #
-
-
-    #
-    # net_type = 'Xnor++'
-    # factorized_gamma = True
-    # filename = 'no_method_double_shortcut_with_relu_factorized_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, factorized_gamma=factorized_gamma)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
-    #            learning_rate_change=learning_rate_change)
-    # filename = 'method_a_double_shortcut_with_relu_factorized_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type, factorized_gamma=factorized_gamma)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
-    #
-    #
-    # net_type = 'binary'
-    # filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
-    #            learning_rate_change=learning_rate_change)
-    # filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
-    # filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
-    # #finetuning(student_net, train_loader, validation_loader, 110, path, filename,
-    # #           learning_rate_change=learning_rate_change)
-    #
-    # net_type = 'Xnor'
-    # filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
-    #            learning_rate_change=learning_rate_change)
-    # filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
-    # filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
-    # #finetuning(student_net, train_loader, validation_loader, 110, path, filename,
-    # #           learning_rate_change=learning_rate_change)
-    #
-    # net_type = 'Xnor++'
-    # filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # finetuning(student_net, train_loader, validation_loader, 110, filename=filename,
-    #            learning_rate_change=learning_rate_change)
-
-    # filename = 'method_a_double_shortcut_with_relu_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # path = training_a(student_net, teacher_net, train_loader, validation_loader, filename)
-    # filename = 'method_a_double_shortcut_with_relu_finetuning_' + str(net_type)
-    #finetuning(student_net, train_loader, validation_loader, 110, path, filename,
-    #           learning_rate_change=learning_rate_change)
-
-
-    scaling_factors = [0, 0.2, 0.4, 0.6, 0.8, 1]
-
-    # for scaling_factor in scaling_factors:
-    #
-    #     filename = 'method_c_double_shortcut_with_relu_' + str(net_type)
-    #     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    #     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    #     student_net.load_state_dict(new_checkpoint_student)
-    #     if torch.cuda.is_available():
-    #         student_net = student_net.cuda()
-    #     training_c(student_net, teacher_net, train_loader, validation_loader, filename=filename, scaling_factor_total=scaling_factor)
-
-    # for scaling_factor in scaling_factors:
-    #     filename = 'method_b_double_shortcut_with_relu_' + str(net_type)
-    #     student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    #     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    #     student_net.load_state_dict(new_checkpoint_student)
-    #     if torch.cuda.is_available():
-    #         student_net = student_net.cuda()
-    #     path = lit_training(student_net, train_loader, validation_loader, max_epochs=100, teacher_net=teacher_net, filename=filename, scaling_factor_total=scaling_factor)
-    #     filename = 'method_b_finetuning_double_shortcut_with_relu_tot_scaling_' + str(scaling_factor) + '_' + str(net_type)
-    #     finetuning(student_net, train_loader, validation_loader, 60, path, filename)
-
-
-    # learning_rate_change = [50, 70, 90, 100]
-    # filename = 'no_method_double_shortcut_with_relu_' + str(net_type)
-    # student_net = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_net)
-    # student_net.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_net = student_net.cuda()
-    # finetuning(student_net, train_loader, validation_loader, 110, filename=filename, learning_rate_change=learning_rate_change)
-
-
+    # ImageNet
+    resnet18 = models.resnet18(pretrained=True)
+    torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
+    original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
+    print('pretrained model loaded')
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore", message="The PostScript backend does not support transparency; partially "

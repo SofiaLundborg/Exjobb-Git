@@ -2,6 +2,14 @@ from collections import OrderedDict
 import torch
 from tqdm import tqdm
 
+
+def get_device():
+    if torch.cuda.is_available():
+        return 'cuda'
+    else:
+        return 'cpu'
+
+
 def calculate_output_size(input_size, kernel_size, stride, padding):
     output_size = int((input_size - kernel_size + 2 * padding) / stride + 1)
     return output_size

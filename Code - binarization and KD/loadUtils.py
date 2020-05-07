@@ -49,7 +49,7 @@ def load_imageNet(subsets=False):
     return train_loader, validation_loader, train_loader_not_disturbed
 
 
-def load_cifar10(subsets=False):
+def load_cifar10(subsets=False, test_as_validation=False):
     # Load data
     normalizing_mean = [0.485, 0.456, 0.406]
     normalizing_std = [0.229, 0.224, 0.225]
@@ -80,9 +80,12 @@ def load_cifar10(subsets=False):
                                             download=True, transform=transform_test)
 
     # divide into train and validation data (80% train)
-    train_size = int(0.8 * len(train_set))
-    validation_size = len(train_set) - train_size
-    train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
+    if not test_as_validation:
+        train_size = int(0.8 * len(train_set))
+        validation_size = len(train_set) - train_size
+        train_set, validation_set = torch.utils.data.random_split(train_set, [train_size, validation_size])
+    else:
+        validation_set = test_set
 
     if subsets:
         train_set, _ = torch.utils.data.random_split(train_set, [200, len(train_set) - 200])

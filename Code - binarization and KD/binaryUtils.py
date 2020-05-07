@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 from extraUtils import calculate_output_size
-import numpy as np
 
 
 def binarize_weights(net):
@@ -15,7 +14,6 @@ def binarize_weights(net):
                 else:
                     p.real_weights = p.data.clone()
                     p.data.sign_()
-
 
 
 def set_layers_to_binarize(net, layers):
