@@ -76,7 +76,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
 
     train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
                                              download=True, transform=transform_train)
-    train_set_not_disturbed = torchvision.datasets.CIFAR10(root='./data', train=True,
+    train_set_not_augmented = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                            download=True, transform=transform_test)
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
                                             download=True, transform=transform_test)
@@ -89,6 +89,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
     else:
         validation_set = test_set
 
+    # make a small subset of the data
     if subsets:
         train_set, _ = torch.utils.data.random_split(train_set, [200, len(train_set) - 200])
         validation_set, _ = torch.utils.data.random_split(validation_set, [50, len(validation_set)-50])
@@ -100,7 +101,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=8, pin_memory=pin_memory)
-    train_loader_not_disturbed = torch.utils.data.DataLoader(train_set_not_disturbed, batch_size=batch_size_validation,
+    train_loader_not_disturbed = torch.utils.data.DataLoader(train_set_not_augmented, batch_size=batch_size_validation,
                                                shuffle=False, num_workers=8, pin_memory=pin_memory)
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
                                                     shuffle=False, num_workers=8, pin_memory=pin_memory)
