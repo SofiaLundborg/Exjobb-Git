@@ -16,7 +16,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'xnor++_with_bias'
+    filename = 'xnor++_with_bias_naive'
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 120,
                learning_rate_change=[70, 100, 110], filename=filename)
 
