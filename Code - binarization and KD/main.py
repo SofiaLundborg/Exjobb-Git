@@ -12,13 +12,13 @@ def main():
 
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
 
-    student_ResNet18 = resNet.resnet_models['resnet18Naive'](net_type=net_type, dataset='cifar10', factorized_gamma=True)
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type=net_type, dataset='cifar10', factorized_gamma=True)
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'xnor++_with_bias_naive_conv_in_shortcut'
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 120,
-               learning_rate_change=[70, 100, 110], filename=filename)
+    filename = 'xnor++_double_shortcut_conv_in_shortcut'
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 100,
+               learning_rate_change=[50, 70, 90], filename=filename)
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
     student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10', factorized_gamma=False)
