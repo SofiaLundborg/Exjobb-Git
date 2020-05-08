@@ -55,7 +55,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 512
+        batch_size_training = 128
         batch_size_validation = 512
     else:
         batch_size_training = 4

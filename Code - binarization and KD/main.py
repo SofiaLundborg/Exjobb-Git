@@ -306,7 +306,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     if not learning_rate_change:
         learning_rate_change = [50, 70, 90, 100]
         learning_rate_change = [70, 100, 120, 130]
-        learning_rate_change = [100, 150, 200, 250]
+        learning_rate_change = [50, 200, 250]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -1069,7 +1069,7 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor++'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
 
 
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
@@ -1079,7 +1079,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'finetuning_resnet18_long_training'
+    filename = 'same_as_MXN'
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 300, filename=filename)
 
 
