@@ -551,7 +551,7 @@ class BasicBlockReluDoubleShortcut(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
 
-        # self.shortcut = nn.Sequential()
+        self.shortcut = nn.Sequential()
         # if stride != 1 or in_planes != planes:
         #     if option == 'cifar10':
         #         self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
