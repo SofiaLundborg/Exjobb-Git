@@ -1056,7 +1056,7 @@ def main():
         student_ResNet18 = student_ResNet18.cuda()
 
     filename = 'xnor++_with_bias'
-    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 300, filename=filename)
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 120, filename=filename)
 
 
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')

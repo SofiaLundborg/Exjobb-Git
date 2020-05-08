@@ -2,7 +2,7 @@ from collections import OrderedDict
 import torch
 from tqdm import tqdm
 import numpy as np
-import datetime
+from datetime import datetime
 
 
 def get_device():
