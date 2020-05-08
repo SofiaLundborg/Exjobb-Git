@@ -96,7 +96,7 @@ class BasicBlockNaive(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+    def __init__(self, in_planes, planes, input_size, stride=1, n_layers=18, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockNaive, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -115,11 +115,15 @@ class BasicBlockNaive(nn.Module):
         #         )
 
         if stride != 1 or in_planes != planes:
-            self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
-                         net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
-                nn.BatchNorm2d(self.expansion * planes)
-            )
+            if n_layers == 20:
+                self.shortcut = LambdaLayer(
+                    lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes // 4, planes // 4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                    myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
+                             net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
+                    nn.BatchNorm2d(self.expansion * planes)
+                )
 
 
     def forward(self, inp):
@@ -173,7 +177,7 @@ class BasicBlockWithRelu(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+    def __init__(self, in_planes, planes, input_size, stride=1, n_layers=20, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockWithRelu, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -184,11 +188,15 @@ class BasicBlockWithRelu(nn.Module):
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
-            self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, self.input_size_temp, kernel_size=1, stride=stride, padding=0,
-                         net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
-                nn.BatchNorm2d(self.expansion * planes)
-            )
+            if n_layers == 20:
+                self.shortcut = LambdaLayer(
+                    lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes // 4, planes // 4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                    myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
+                             net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
+                    nn.BatchNorm2d(self.expansion * planes)
+                )
 
     def forward(self, inp):
         x, i_layer, feature_layers_to_extract, features, cut_network = inp
@@ -241,7 +249,7 @@ class BasicBlockAbs(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+    def __init__(self, in_planes, planes, input_size, stride=1, n_layers=20, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockAbs, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -254,11 +262,15 @@ class BasicBlockAbs(nn.Module):
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
-            self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, self.input_size_temp, kernel_size=1, stride=stride, padding=0,
-                         net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
-                nn.BatchNorm2d(self.expansion * planes)
-            )
+            if n_layers == 20:
+                self.shortcut = LambdaLayer(
+                    lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes // 4, planes // 4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                    myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
+                             net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
+                    nn.BatchNorm2d(self.expansion * planes)
+                )
 
     def forward(self, inp):
         x, i_layer, feature_layers_to_extract, features, cut_network = inp
@@ -311,7 +323,7 @@ class BasicBlockAbsDoubleShortcut(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+    def __init__(self, in_planes, planes, input_size, stride=1, n_layers=20, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockAbsDoubleShortcut, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -323,11 +335,15 @@ class BasicBlockAbsDoubleShortcut(nn.Module):
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
-            self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride,
-                         net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
-                nn.BatchNorm2d(self.expansion * planes)
-            )
+            if n_layers == 20:
+                self.shortcut = LambdaLayer(
+                    lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes // 4, planes // 4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                    myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
+                             net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
+                    nn.BatchNorm2d(self.expansion * planes)
+                )
 
     def forward(self, inp):
         x, i_layer, feature_layers_to_extract, features, cut_network = inp
@@ -457,7 +473,7 @@ class BasicBlockBiReal(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+    def __init__(self, in_planes, planes, input_size, stride=1, n_layers=20, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockBiReal, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -467,11 +483,16 @@ class BasicBlockBiReal(nn.Module):
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
-            self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
-                         net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
-                nn.BatchNorm2d(self.expansion * planes)
-            )
+            if stride != 1 or in_planes != planes:
+                if n_layers == 20:
+                    self.shortcut = LambdaLayer(
+                        lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes // 4, planes // 4), "constant", 0))
+                else:
+                    self.shortcut = nn.Sequential(
+                        myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
+                                 net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
+                        nn.BatchNorm2d(self.expansion * planes)
+                    )
     def forward(self, inp):
         x, i_layer, feature_layers_to_extract, features, cut_network = inp
 
@@ -527,7 +548,7 @@ class BasicBlockReluDoubleShortcut(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+    def __init__(self, in_planes, planes, input_size, stride=1, n_layers=20, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockReluDoubleShortcut, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -536,12 +557,17 @@ class BasicBlockReluDoubleShortcut(nn.Module):
         self.out_size = planes
         self.input_size_temp = input_size.copy()
 
+        self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
-            self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, self.input_size_temp, kernel_size=1, stride=stride, padding=0,
-                         net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
-                nn.BatchNorm2d(self.expansion * planes)
-            )
+            if n_layers == 20:
+                self.shortcut = LambdaLayer(
+                    lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes // 4, planes // 4), "constant", 0))
+            else:
+                self.shortcut = nn.Sequential(
+                    myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
+                             net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
+                    nn.BatchNorm2d(self.expansion * planes)
+                )
 
     def forward(self, inp):
         x, i_layer, feature_layers_to_extract, features, cut_network = inp
@@ -697,7 +723,7 @@ class ResNetReluFirst(nn.Module):
         layers = []
         for i in range(len(strides)):
             stride = strides[i]
-            layers.append(block(self.in_planes, planes, input_size, stride, self.dataset, net_type, factorized_gamma=self.factorized_gamma))
+            layers.append(block(self.in_planes, planes, input_size, stride, self.n_layers, net_type, factorized_gamma=self.factorized_gamma))
             if i == 0: self.in_planes = planes * block.expansion
 
         return nn.Sequential(*layers)
