@@ -7,7 +7,7 @@ from train import finetuning, training_a, lit_training, training_c, training_kd
 
 
 def main():
-    net_type = 'Xnor++'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
 
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
 
@@ -16,7 +16,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'xnor++_double_shortcut_not_binarized_first_layer'
+    filename = 'xnor_double_shortcut_not_binarized_first_layer_bin_conv_in_shortcut'
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 100,
                learning_rate_change=[50, 70, 90], filename=filename)
 
