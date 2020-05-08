@@ -30,15 +30,8 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     device = get_device()
 
     lr = 1e-2
-    weight_decay = 1e-8
+    weight_decay = 0
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
-
-    if saved_model:
-        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(
-            net, optimizer, saved_model)
-        for param_group in optimizer.param_groups:
-            lr = param_group['lr']
-            print('current learning rate is ' + str(lr))
 
     train_loss = np.empty(max_epochs+1)
     validation_loss = np.empty(max_epochs+1)

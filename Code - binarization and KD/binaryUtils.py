@@ -7,7 +7,7 @@ def binarize_weights(net):
     """ Binarizes all parameters with attribute do_binarize == True """
     for p in list(net.parameters()):
         if hasattr(p, 'do_binarize'):
-            if 'do_binarize':
+            if p.do_binarize:
                 if ((torch.sum(p.data == 1) + torch.sum(p.data == -1)).item() == torch.numel(p.data)):
                     print('Error: Binarizing already binary weights, keeping old weights')
                     p.data.sign_()
@@ -144,9 +144,8 @@ class myConv2d(nn.Module):
 
         if self.net_type == 'Xnor':
             if self.conv2d.weight.do_binarize:
-                w = self.conv2d.weight.real_weights.detach()
-                mean_across_channels = torch.mean(x.abs(), 1, keepdim=True)
 
+                mean_across_channels = torch.mean(x.abs(), 1, keepdim=True)
                 kConv2d = nn.Conv2d(1, self.output_channels,
                                          kernel_size=self.kernel_size, stride=self.stride, padding=self.padding)
                 kConv2d.weight.data = kConv2d.weight.data.zero_().add(1 / (self.kernel_size * self.kernel_size))
@@ -159,7 +158,9 @@ class myConv2d(nn.Module):
 
                 k = kConv2d(mean_across_channels)
 
+                w = self.conv2d.weight.real_weights.detach()
                 alpha_values = torch.mean(w.abs(), [1, 2, 3], keepdim=True).flatten()
+
                 for i in range(self.output_channels):
                     k[:, i, :, :].mul_(alpha_values[i])
 

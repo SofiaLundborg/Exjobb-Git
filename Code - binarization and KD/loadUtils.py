@@ -51,8 +51,8 @@ def load_imageNet(subsets=False):
 
 def load_cifar10(subsets=False, test_as_validation=False):
     # Load data
-    normalizing_mean = [0.485, 0.456, 0.406]
-    normalizing_std = [0.229, 0.224, 0.225]
+    normalizing_mean = [0.485, 0.456, 0.406]        # for ImageNet, used in some models
+    normalizing_std = [0.229, 0.224, 0.225]         # for ImageNet, used in some models
 
     if torch.cuda.is_available():
         batch_size_training = 512

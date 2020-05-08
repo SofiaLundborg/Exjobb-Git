@@ -809,7 +809,6 @@ class CifarModel():
     @staticmethod
     def resnet20BiReal(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
         return ResNetReluFirst(BasicBlockBiReal, [3, 3, 3], net_type, dataset=dataset, factorized_gamma=factorized_gamma, **kwargs)
-
     @staticmethod
     def resnet18Naive(net_type, dataset='cifar10', factorized_gamma=False, **kwargs):
         return ResNetReluFirst(BasicBlockNaive, [2, 2, 2, 2], net_type, dataset=dataset,
