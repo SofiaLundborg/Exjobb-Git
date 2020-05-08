@@ -55,8 +55,8 @@ def load_cifar10(subsets=False, test_as_validation=False):
     normalizing_std = [0.229, 0.224, 0.225]
 
     if torch.cuda.is_available():
-        batch_size_training = 128
-        batch_size_validation = 512
+        batch_size_training = 512
+        batch_size_validation = 1024
     else:
         batch_size_training = 4
         batch_size_validation = 4
@@ -100,7 +100,7 @@ def load_cifar10(subsets=False, test_as_validation=False):
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=8, pin_memory=pin_memory)
-    train_loader_not_disturbed = torch.utils.data.DataLoader(train_set_not_disturbed, batch_size=batch_size_training,
+    train_loader_not_disturbed = torch.utils.data.DataLoader(train_set_not_disturbed, batch_size=batch_size_validation,
                                                shuffle=False, num_workers=8, pin_memory=pin_memory)
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
                                                     shuffle=False, num_workers=8, pin_memory=pin_memory)

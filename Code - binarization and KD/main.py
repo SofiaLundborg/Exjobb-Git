@@ -8,7 +8,7 @@ import torchvision.models as models
 from tqdm import tqdm
 import warnings
 from binaryUtils import *
-from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device
+from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device, plot_results
 from loadUtils import save_training, load_model_from_saved_training, get_one_sample, load_cifar10, load_imageNet
 import numpy as np
 
@@ -306,7 +306,6 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     if not learning_rate_change:
         learning_rate_change = [50, 70, 90, 100]
         learning_rate_change = [70, 100, 120, 130]
-        learning_rate_change = [50, 200, 250]
 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -317,7 +316,6 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     while epoch < max_epochs:
         epoch += 1
         print('training for epoch ' + str(epoch) + 'has started')
-    #for epoch in range(max_epochs):
         net.train()
         for p in list(net.parameters()):
             p.requires_grad = True
@@ -1043,33 +1041,11 @@ def train_one_block(student_net, train_loader, validation_loader, max_epochs, cr
     return train_results, validation_results
 
 
-def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None, eps=False):
-    ax.clear()
-    ax.plot(np.arange(max_epochs+1) + 1, train_results[:max_epochs+1], label='train')
-    if validation_results is not None:
-        ax.plot(np.arange(max_epochs+1) + 1, validation_results[:max_epochs+1], label='validation')
-    ax.legend()
-
-    if title:
-        ax.set_title(title)
-
-    if eps:
-        if not filename:
-            f_name = 'latest_plot.eps'
-        else:
-            f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.eps'
-        fig.savefig(f_name, format='eps')
-    else:
-        if not filename:
-            f_name = 'latest_plot.png'
-        else:
-            f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.png'
-        fig.savefig(f_name)
 
 
 def main():
     net_name = 'resnet20'           # 'leNet', 'ninNet', 'resnetX' where X = 20, 32, 44, 56, 110, 1202
-    net_type = 'Xnor'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
+    net_type = 'Xnor++'             # 'full_precision', 'binary', 'binary_with_alpha', 'Xnor' or 'Xnor++'
 
 
     train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
@@ -1079,7 +1055,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'same_as_MXN'
+    filename = 'xnor++_with_bias'
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 300, filename=filename)
 
 

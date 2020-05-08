@@ -22,7 +22,7 @@ class LambdaLayer(nn.Module):
 def my_conv3x3(in_planes, out_planes, input_size, stride=1, net_type='full_precision', bias=False, factorized_gamma=False):
     """3x3 convolution with padding"""
     return myConv2d(in_planes, out_planes, input_size, kernel_size=3, stride=stride,
-                    padding=1, net_type=net_type, bias=bias, factorized_gamma=factorized_gamma)
+                    padding=1, net_type=net_type, bias=True, factorized_gamma=factorized_gamma)
 
 
 class BasicBlock(nn.Module):

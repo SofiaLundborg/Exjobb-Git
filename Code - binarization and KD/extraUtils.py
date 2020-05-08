@@ -1,6 +1,8 @@
 from collections import OrderedDict
 import torch
 from tqdm import tqdm
+import numpy as np
+import datetime
 
 
 def get_device():
@@ -94,3 +96,27 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+
+
+def plot_results(ax, fig, train_results, validation_results, max_epochs, filename=None, title=None, eps=False):
+    ax.clear()
+    ax.plot(np.arange(max_epochs+1) + 1, train_results[:max_epochs+1], label='train')
+    if validation_results is not None:
+        ax.plot(np.arange(max_epochs+1) + 1, validation_results[:max_epochs+1], label='validation')
+    ax.legend()
+
+    if title:
+        ax.set_title(title)
+
+    if eps:
+        if not filename:
+            f_name = 'latest_plot.eps'
+        else:
+            f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.eps'
+        fig.savefig(f_name, format='eps')
+    else:
+        if not filename:
+            f_name = 'latest_plot.png'
+        else:
+            f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.png'
+        fig.savefig(f_name)
