@@ -16,7 +16,7 @@ def main():
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda()
 
-    filename = 'xnor++_double_shortcut_conv_in_shortcut'
+    filename = 'xnor++_double_shortcut_conv_in_shortcut_eith_weight_decay'
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 100,
                learning_rate_change=[50, 70, 90], filename=filename)
 

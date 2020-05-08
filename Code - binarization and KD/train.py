@@ -30,7 +30,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     device = get_device()
 
     lr = 1e-2
-    weight_decay = 0
+    weight_decay = 0.00001
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
     if saved_model:
