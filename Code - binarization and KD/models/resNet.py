@@ -116,7 +116,7 @@ class BasicBlockNaive(nn.Module):
 
         if stride != 1 or in_planes != planes:
             self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride,
+                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
                          net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
                 nn.BatchNorm2d(self.expansion * planes)
             )
@@ -184,7 +184,7 @@ class BasicBlockWithRelu(nn.Module):
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
             self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride,
+                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
                          net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
                 nn.BatchNorm2d(self.expansion * planes)
             )
@@ -253,7 +253,7 @@ class BasicBlockAbs(nn.Module):
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
             self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride,
+                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
                          net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
                 nn.BatchNorm2d(self.expansion * planes)
             )
@@ -395,7 +395,7 @@ class BasicBlockNaiveDoubleShortcut(nn.Module):
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
             self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride,
+                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
                          net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
                 nn.BatchNorm2d(self.expansion * planes)
             )
@@ -466,7 +466,7 @@ class BasicBlockBiReal(nn.Module):
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
             self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride,
+                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
                          net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
                 nn.BatchNorm2d(self.expansion * planes)
             )
@@ -535,7 +535,7 @@ class BasicBlockReluDoubleShortcut(nn.Module):
 
         if stride != 1 or in_planes != planes:
             self.shortcut = nn.Sequential(
-                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride,
+                myConv2d(in_planes, self.expansion * planes, [-1], kernel_size=1, stride=stride, padding=0,
                          net_type=net_type, bias=False, factorized_gamma=factorized_gamma),
                 nn.BatchNorm2d(self.expansion * planes)
             )
