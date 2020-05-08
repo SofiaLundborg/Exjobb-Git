@@ -39,7 +39,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     train_accuracy_top5 = np.empty(max_epochs+1)
     validation_accuracy = np.empty(max_epochs+1)
     validation_accuracy_top5 = np.empty(max_epochs+1)
-    best_validation_loss = np.inf
+    best_validation_accuracy = 0
     best_epoch = 0
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -124,11 +124,12 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         torch.save(train_accuracy_top5[:epoch + 1], './Results/' + folder + 'train_accuracy_top5_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
         torch.save(validation_accuracy_top5[:epoch + 1], './Results/' + folder + 'validation_accuracy_top5_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
 
-        if validation_loss_for_epoch < best_validation_loss:
+
+        if accuracy_validation_epoch > best_validation_accuracy:
             # save network
             PATH = './Trained_Models/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
             torch.save(net.state_dict(), PATH)
-            best_validation_loss = validation_loss_for_epoch
+            best_validation_accuracy = accuracy_validation_epoch
             best_epoch = epoch
 
         print('Epoch: ' + str(epoch))
