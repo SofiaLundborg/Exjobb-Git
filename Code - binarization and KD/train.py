@@ -169,7 +169,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
 
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
-        lr = 0.0001
+        lr = 0.01
         epoch = total_epoch % max_epoch_layer
     else:
         train_loss = np.empty(max_epochs)
