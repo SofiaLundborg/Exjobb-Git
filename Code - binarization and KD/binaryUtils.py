@@ -155,7 +155,7 @@ class myConv2d(nn.Module):
                 kConv2d.bias.requires_grad = False
 
                 if torch.cuda.is_available():
-                    kConv2d = kConv2d.cuda()
+                    kConv2d = kConv2d.cuda(device=get_device_id())
 
                 k = kConv2d(mean_across_channels)
 

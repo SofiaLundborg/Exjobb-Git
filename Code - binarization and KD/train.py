@@ -5,7 +5,7 @@ from datetime import datetime
 import time
 from tqdm import tqdm
 from binaryUtils import *
-from extraUtils import calculate_accuracy, get_device, plot_results
+from extraUtils import calculate_accuracy, get_device, plot_results, get_device_id
 from loadUtils import save_training, load_training
 import numpy as np
 
@@ -183,7 +183,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
     PATH = None
 
     if torch.cuda.is_available():
-        criterion = criterion.cuda()
+        criterion = criterion.cuda(device=get_device_id())
         device = get_device()
     teacher_net.eval()
 

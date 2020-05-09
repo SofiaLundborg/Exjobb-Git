@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.cuda
 import torch.optim
 import torch.utils.data
-
+from extraUtils import get_device_id
 
 class Loss(nn.Module):
     def __init__(self, scaling_factor_total, scaling_factor_kd, temperature_kd):
@@ -15,8 +15,8 @@ class Loss(nn.Module):
         self.ce_loss = nn.CrossEntropyLoss()
 
         if torch.cuda.is_available():
-            self.mse_loss = self.mse_loss.cuda()
-            self.ce_loss = self.ce_loss.cuda()
+            self.mse_loss = self.mse_loss.cuda(device=get_device_id())
+            self.ce_loss = self.ce_loss.cuda(device=get_device_id())
 
     def forward(self, inputs, targets, student_net, teacher_net=None, intermediate_layers=None, lit_training=False, input_from_teacher=False, cut_network=None, training=True, training_c = False):
 

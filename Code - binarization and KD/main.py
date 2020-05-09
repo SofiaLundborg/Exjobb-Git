@@ -4,7 +4,7 @@ import warnings
 from binaryUtils import *
 from loadUtils import load_cifar10
 from train import finetuning, training_a, lit_training, training_c, training_kd
-from extraUtils import change_loaded_checkpoint, calculate_accuracy
+from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device_id
 
 
 def main():
@@ -48,7 +48,7 @@ def main():
     new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_ResNet20)
     teacher_ResNet20.load_state_dict(new_checkpoint_teacher)
     if torch.cuda.is_available():
-        teacher_ResNet20 = teacher_ResNet20.cuda()
+        teacher_ResNet20 = teacher_ResNet20.cuda(device=get_device_id())
     teacher_ResNet20.eval()
 
     print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
@@ -59,7 +59,7 @@ def main():
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
     student_ResNet20.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
-        student_ResNet20 = student_ResNet20.cuda()
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
     filename = 'resnet20_xnor++_factorized_naive_training_a__'
     training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
                filename=filename, modified=True)
@@ -69,7 +69,7 @@ def main():
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
     student_ResNet20.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
-        student_ResNet20 = student_ResNet20.cuda()
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
     filename = 'resnet20_xnor++_factorized_with_relu_single_training_a__'
     training_a(student_ResNet20,teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
                filename=filename, modified=True)
@@ -80,7 +80,7 @@ def main():
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
     student_ResNet20.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
-        student_ResNet20 = student_ResNet20.cuda()
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
     filename = 'resnet20_xnor++_factorized_abs_training_a__'
     training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
                filename=filename, modified=True)
@@ -91,7 +91,7 @@ def main():
     new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
     student_ResNet20.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
-        student_ResNet20 = student_ResNet20.cuda()
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
     filename = 'resnet20_xnor++_factorized_relu_double_training_a__'
     training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
                filename=filename, modified=True)

@@ -5,9 +5,17 @@ import numpy as np
 from datetime import datetime
 
 
+def get_device_id():
+    return 1
+
+
 def get_device():
     if torch.cuda.is_available():
-        return 'cuda:1'
+        if get_device_id() == 0:
+            return 'cuda:0'
+        else:
+            return 'cuda:1'
+
     else:
         return 'cpu'
 
