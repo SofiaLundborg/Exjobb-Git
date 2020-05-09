@@ -51,7 +51,7 @@ def main():
     if torch.cuda.is_available():
         teacher_ResNet20 = teacher_ResNet20.cuda()
     teacher_ResNet20.eval()
-    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader)))
+    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
 
     net_type = 'Xnor++'
