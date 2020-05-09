@@ -139,7 +139,8 @@ class myConv2d(nn.Module):
             x = self.dropout(x)
 
         if self.net_type == 'binary':
-            x = binarize(x)
+            if self.conv2d.weight.do_binarize:
+                x = binarize(x)
             x = self.conv2d(x)
 
         if self.net_type == 'Xnor':
