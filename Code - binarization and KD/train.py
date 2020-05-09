@@ -585,7 +585,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
                     param_group['lr'] = lr
 
             running_loss = 0
-            for i, data in enumerate(train_loader, 0):
+            print('Trainging for epoch ' + str(total_epoch) + ' has started')
+            for i, data in enumerate(tqdm(train_loader)):
                 inputs, targets = data
 
                 # cpu / gpu
@@ -611,7 +612,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
 
             running_validation_loss = 0
             binarize_weights(student_net)
-            for i, data in enumerate(validation_loader, 0):
+            print('Validation loss calculation has started')
+            for i, data in enumerate(tqdm(validation_loader)):
                 inputs, targets = data
                 inputs = inputs.to(device)
                 targets = targets.to(device)
@@ -624,19 +626,20 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             validation_loss_for_epoch = running_validation_loss / len(validation_loader)
             validation_loss[total_epoch] = validation_loss_for_epoch
 
+            print('Accuracy calculation has started')
             accuracy_train_epoch, accuracy_train_epoch_top_5 = calculate_accuracy(train_loader_non_augmented, student_net)
             accuracy_validation_epoch, accuracy_validation_epoch_top_5 = calculate_accuracy(validation_loader, student_net)
             train_accuracy[total_epoch] = accuracy_train_epoch
             validation_accuracy[total_epoch] = accuracy_validation_epoch
             make_weights_real(student_net)
 
-            plot_results(ax_loss, fig, train_loss[:total_epoch+1], validation_loss[:total_epoch+1], total_epoch, filename=filename, title=title_loss)
-            plot_results(ax_acc, fig, train_accuracy[:total_epoch+1], validation_accuracy[:total_epoch+1], total_epoch, filename=filename, title=title_accuracy)
-
             if student_net.dataset == 'ImageNet':
                 folder = 'ImageNet/'
             else:
                 folder = 'cifar10/'
+            plot_results(ax_loss, fig, train_loss[:total_epoch+1], validation_loss[:total_epoch+1], total_epoch, filename=folder+filename, title=title_loss)
+            plot_results(ax_acc, fig, train_accuracy[:total_epoch+1], validation_accuracy[:total_epoch+1], total_epoch, filename=folder+filename, title=title_accuracy)
+
             torch.save(validation_loss[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_loss_' + filename + '.pt')
             torch.save(train_loss[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_loss_' + filename + '.pt')
             torch.save(validation_accuracy[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_accuracy_' + filename + '.pt')
@@ -772,7 +775,7 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
     validation_loss = np.empty(max_epochs)
     train_accuracy = np.empty(max_epochs)
     validation_accuracy = np.empty(max_epochs)
-    best_validation_accuracy = 0
+    best_validation_loss = np.inf
     best_epoch = 0
 
     PATH = None
@@ -788,8 +791,8 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
             for p in list(student_net.parameters()):
                 p.requires_grad = True
 
-        learning_rate_change = [30, 50, 70, 90]
-        learning_rate_change = [70, 90, 100, 110]
+        learning_rate_change = [30, 40, 50, 55]
+        #learning_rate_change = [70, 90, 100, 110]
         if epoch in learning_rate_change:
             lr = lr*0.1
             for param_group in optimizer.param_groups:
@@ -857,11 +860,11 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
         torch.save(validation_accuracy[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_accuracy_' + filename + '.pt')
         torch.save(train_accuracy[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_accuracy_' + filename + '.pt')
 
-        if accuracy_validation_epoch > best_validation_accuracy:
+        if validation_loss_for_epoch < best_validation_loss:
             # save network
             PATH = './Trained_Models/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pth'
             torch.save(student_net.state_dict(), PATH)
-            best_validation_accuracy = accuracy_validation_epoch
+            best_validation_loss = validation_loss_for_epoch
             best_epoch = epoch
 
         print('Epoch: ' + str(epoch))

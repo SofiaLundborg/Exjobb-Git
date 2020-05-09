@@ -138,7 +138,9 @@ def training_network_architecture_method_a():
 
 def main():
     #training_network_architecture_method_a()
+    method_c_training()
     method_b_training()
+
 
 
 
