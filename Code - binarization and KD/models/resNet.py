@@ -34,7 +34,7 @@ class BasicBlockForTeacher(nn.Module):
     """
     expansion = 1
 
-    def __init__(self, in_planes, planes, input_size, stride=1, option='cifar10', net_type='full_precision', factorized_gamma=False):
+    def __init__(self, in_planes, planes, input_size, stride=1, n_layers=20, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockForTeacher, self).__init__()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -44,7 +44,7 @@ class BasicBlockForTeacher(nn.Module):
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
-            if option == 'cifar10':
+            if n_layers == 20:
                 self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
             else:
                 self.shortcut = nn.Sequential(

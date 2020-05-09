@@ -1,4 +1,4 @@
-from models import resNet
+from models import resNet, originalResnet
 import torchvision.models as models
 import warnings
 from binaryUtils import *
@@ -41,7 +41,6 @@ def main():
     #            learning_rate_change=[70, 90, 100, 110], filename=filename)
     #
 
-    net_name = 'resnet20'
     teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
     # load pretrained network into student and techer network
     teacher_pth = './pretrained_resnet_cifar10_models/student/' + 'resnet20' + '.pth'
@@ -51,8 +50,13 @@ def main():
     if torch.cuda.is_available():
         teacher_ResNet20 = teacher_ResNet20.cuda()
     teacher_ResNet20.eval()
-    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
+    teacher_ResNet20_org = originalResnet.resnet_models["cifar"]["resnet20"]()
+    teacher_ResNet20_org.load_state_dict(teacher_checkpoint)
+    teacher_ResNet20.eval()
+
+    print('accuracy_teacher_org: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20_org)))
+    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
     net_type = 'Xnor++'
     student_ResNet20 = resNet.resnet_models['resnet20Naive'](net_type=net_type, dataset='cifar10',
