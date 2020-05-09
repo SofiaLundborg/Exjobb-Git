@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 def get_device_id():
-    return 0
+    return 1
 
 
 def get_device():
