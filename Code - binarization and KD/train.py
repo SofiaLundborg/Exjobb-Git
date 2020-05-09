@@ -145,7 +145,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
 
 
-def training_a(student_net, teacher_net, train_loader, validation_loader, filename=None, saved_training=None, modified=False):
+def training_a(student_net, teacher_net, train_loader, validation_loader, train_loader_not_augmented, filename=None, saved_training=None, modified=False):
 
     if not filename:
         filename = 'method_a_' + str(student_net.net_type)
@@ -164,8 +164,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
     else:
         layers = ['layer1', 'layer2', 'layer3', 'all']
-    max_epoch_layer = 30
-    max_epochs = max_epoch_layer * 3 + 60
+    max_epoch_layer = 40
+    max_epochs = max_epoch_layer * 3 + 120
 
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
@@ -197,7 +197,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
             else:
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
-            max_epoch_layer = 60
+            max_epoch_layer = 120
             criterion = torch.nn.CrossEntropyLoss()
         else:
             max_epoch_layer = max_epoch_layer
@@ -224,7 +224,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
         best_validation_loss = np.inf
         best_epoch = 0
 
-
         print(layer + " is training")
 
         while (epoch < max_epoch_layer-1):
@@ -244,10 +243,10 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 else:
                     set_layers_to_update(student_net, [layer])
 
-            learning_rate_change = [15, 20, 25]
+            learning_rate_change = [25, 30, 35]
             if layer == 'all':
                 learning_rate_change = [50, 70, 90, 100]
-                learning_rate_change = [30, 40, 50]
+                learning_rate_change = [70, 90, 100, 110]
 
             if epoch in learning_rate_change:
                 lr = lr * 0.1
@@ -256,7 +255,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                     print('learning rate decreased to: ' + str(lr))
 
             running_loss = 0
-            start_training_time = time.time()
             print('Training of epoch ' + str(total_epoch) + " has started")
             for i, data in enumerate(tqdm(train_loader)):
                 inputs, targets = data
@@ -282,17 +280,10 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 make_weights_real(student_net)
                 optimizer.step()
 
-            end_training_time = time.time()
-            log = open("timelog.txt", "a+")
-            log.write(
-                "Training time for epoch " + str(total_epoch) + ": " + str(end_training_time - start_training_time) + "seconds \n\r")
-            log.close()
-
             training_loss_for_epoch = running_loss / len(train_loader)
             train_loss[total_epoch] = training_loss_for_epoch
 
             print("validation loss calculation has started")
-            start_validation_loss = time.time()
             running_validation_loss = 0
             binarize_weights(student_net)
             for i, data in enumerate(tqdm(validation_loader)):
@@ -308,13 +299,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                         running_validation_loss += criterion(output_student, output_teacher).item()
             validation_loss_for_epoch = running_validation_loss / len(validation_loader)
             validation_loss[total_epoch] = validation_loss_for_epoch
-            end_validation_loss = time.time()
-
-            log = open("timelog.txt", "a+")
-            log.write(
-                "Validation loss calculation time for epoch " + str(total_epoch) + ": " + str(
-                    end_validation_loss - start_validation_loss) + " seconds \n\r")
-            log.close()
 
             if student_net.dataset == 'ImageNet':
                 folder = 'ImageNet/'
@@ -322,9 +306,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 folder = 'cifar10/'
 
             print("accuracy calculation has started")
-            start_accuracy_time = time.time()
             if layer == 'all':
-                accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader, student_net, topk=(1,5))
+                accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader_not_augmented, student_net, topk=(1,5))
                 accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, student_net, topk=(1,5))
                 train_accuracy[epoch] = accuracy_train_epoch
                 validation_accuracy[epoch] = accuracy_validation_epoch
@@ -332,17 +315,11 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                              title=title_accuracy)
 
                 torch.save(validation_accuracy[:total_epoch + 1],
-                           './Results/' + folder + 'validation_accuracy_' + filename + '_' + datetime.today().strftime(
-                               '%Y%m%d') + '.pt')
+                           './Results/' + folder + datetime.today().strftime(
+                               '%Y%m%d') + '_validation_accuracy_' + filename  + '.pt')
                 torch.save(train_accuracy[:total_epoch + 1],
-                           './Results/' + folder + 'train_accuracy_' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.pt')
-            end_accuracy_time = time.time()
-
-            log = open("timelog.txt", "a+")
-            log.write(
-                "Accuracy calculation time for epoch " + str(total_epoch) + ": " + str(
-                    end_accuracy_time - start_accuracy_time) + " seconds\n\r")
-            log.close()
+                           './Results/' + folder +  datetime.today().strftime(
+                               '%Y%m%d') + '_train_accuracy_' + filename + '.pt')
 
             make_weights_real(student_net)
 
@@ -352,8 +329,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
                 folder = 'ImageNet/'
             else:
                 folder = 'cifar10/'
-            torch.save(validation_loss[:total_epoch+1], './Results/' + folder + 'validation_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') +  '.pt')
-            torch.save(train_loss[:total_epoch+1], './Results/' + folder + 'train_loss_' + filename+ '_' + datetime.today().strftime('%Y%m%d') + '.pt')
+            torch.save(validation_loss[:total_epoch+1], './Results/' + folder +  datetime.today().strftime('%Y%m%d') + 'validation_loss_' + filename +   '.pt')
+            torch.save(train_loss[:total_epoch+1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_loss_' + filename + '.pt')
 
             if validation_loss_for_epoch < best_validation_loss:
                 # save network
@@ -368,8 +345,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             else:
                 n_not_improved += 1
 
-            # save_training(total_epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx,
-            #               'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
+            save_training(total_epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, None, None, layer_idx,
+                          'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
             print('Epoch: ' + str(total_epoch))
             print('Best epoch: ' + str(best_epoch))
@@ -378,12 +355,6 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, filena
             if layer == 'all':
                 print('Accuracy on train images: %d %%' % accuracy_train_epoch)
                 print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
-
-            end_time_epoch = time.time()
-
-            log = open("timelog.txt", "a+")
-            log.write("TOTAL TIME for epoch " + str(total_epoch) + ": " + str(end_time_epoch-start_time_epoch) + " seconds\n\n\r" )
-            log.close()
 
         layer_idx += 1
         changed_layer = True
