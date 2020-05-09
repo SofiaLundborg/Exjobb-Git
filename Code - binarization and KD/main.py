@@ -68,7 +68,7 @@ def method_c_training():
             student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
 
         filename = 'resnet20_xnor++_factorized_naive_training_c_scaling_factor_' + str(scaling_factor)
-        training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, filename=filename, max_epochs=120,
+        training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented, filename=filename, max_epochs=120,
                    scaling_factor_total=scaling_factor)
 
         filename = 'resnet20_xnor++_factorized_naive_training_c_finetuning_scaling_factor_' + str(scaling_factor)
