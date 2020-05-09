@@ -174,8 +174,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
-        train_accuracy = np.empty(100)
-        validation_accuracy = np.empty(100)
+        train_accuracy = np.empty(120)
+        validation_accuracy = np.empty(120)
         layer_idx = 0
         total_epoch = -1
         epoch = -1
@@ -197,7 +197,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
             else:
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
-            max_epoch_layer = 100
+            max_epoch_layer = 120
             criterion = torch.nn.CrossEntropyLoss()
         else:
             max_epoch_layer = max_epoch_layer
@@ -246,6 +246,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
             learning_rate_change = [25, 30, 35, 39]
             if layer == 'all':
                 learning_rate_change = [50, 70, 80, 90]
+                learning_rate_change = [70, 90, 100, 110]
 
             if epoch in learning_rate_change:
                 lr = lr * 0.1
@@ -354,6 +355,9 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
             if layer == 'all':
                 print('Accuracy on train images: ' + str(accuracy_train_epoch))
                 print('Accuracy on validation images: ' + str(accuracy_validation_epoch))
+
+            if get_device() == 'cuda:1':
+                time.sleep(10)
 
         layer_idx += 1
         changed_layer = True
