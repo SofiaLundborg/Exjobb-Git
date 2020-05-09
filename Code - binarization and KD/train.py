@@ -795,7 +795,8 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-        for i, data in enumerate(train_loader, 0):
+        print('Training of epoch ' + str(epoch) + ' has started')
+        for i, data in enumerate(tqdm(train_loader)):
             inputs, targets = data
 
             # cpu / gpu
@@ -821,7 +822,9 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
 
         running_validation_loss = 0
         binarize_weights(student_net)
-        for i, data in enumerate(validation_loader, 0):
+
+        print('Validation loss calculation has started')
+        for i, data in enumerate(tqdm(validation_loader)):
             inputs, targets = data
             inputs = inputs.to(device)
             targets = targets.to(device)
@@ -834,6 +837,7 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
         validation_loss_for_epoch = running_validation_loss / len(validation_loader)
         validation_loss[epoch] = validation_loss_for_epoch
 
+        print('Accuracy calculation has started')
         accuracy_train_epoch, accuracy_train_epoch_top5 = calculate_accuracy(train_loader_non_augmented, student_net, topk=(1,5))
         accuracy_validation_epoch, accuracy_validation_epoch_top5 = calculate_accuracy(validation_loader, student_net, topk=(1,5))
         train_accuracy[epoch] = accuracy_train_epoch
