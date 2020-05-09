@@ -243,7 +243,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
                 else:
                     set_layers_to_update(student_net, [layer])
 
-            learning_rate_change = [25, 30, 35]
+            learning_rate_change = [25, 30, 35, 40]
             if layer == 'all':
                 learning_rate_change = [50, 70, 90, 100]
                 learning_rate_change = [70, 90, 100, 110]
