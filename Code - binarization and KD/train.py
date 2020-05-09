@@ -356,7 +356,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
                 print('Accuracy on train images: ' + str(accuracy_train_epoch))
                 print('Accuracy on validation images: ' + str(accuracy_validation_epoch))
 
-            if get_device() == 'cuda:2':
+            if get_device() == 'cuda:1':
                 time.sleep(10)
 
         layer_idx += 1

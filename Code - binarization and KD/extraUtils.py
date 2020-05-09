@@ -7,7 +7,7 @@ from datetime import datetime
 
 def get_device():
     if torch.cuda.is_available():
-        return 'cuda:2'
+        return 'cuda:1'
     else:
         return 'cpu'
 
