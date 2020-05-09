@@ -747,7 +747,7 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
         criterion = criterion.cuda(device=get_device_id())
     device = get_device()
 
-    if student_net.n_layer == 20:
+    if student_net.n_layers == 20:
         layers_to_train = ['layer1', 'layer2', 'layer3']
         intermediate_layers = [1, 7, 13, 19]
 
