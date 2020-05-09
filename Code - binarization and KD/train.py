@@ -740,7 +740,7 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
     if not filename:
         filename = 'method_b_' + str(student_net.net_type)
 
-    #filename = filename + 'scaling_tot_' + str(scaling_factor_total) + '_scaling_kd_' + str(scaling_factor_kd)
+    filename = filename + 'scaling_tot_' + str(scaling_factor_total) + '_scaling_kd_' + str(scaling_factor_kd)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():

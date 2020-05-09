@@ -33,11 +33,11 @@ def method_b_training():
         if torch.cuda.is_available():
             student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
 
-        filename = 'resnet20_xnor++_factorized_naive_training_b_scaling_factor_' + str(scaling_factor)
+        filename = 'resnet20_xnor++_factorized_naive_training_b_' + str(scaling_factor)
         lit_training(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, max_epochs=120,
                      teacher_net=teacher_ResNet20, filename=filename, scaling_factor_total=scaling_factor, scaling_factor_kd=0.95)
 
-        filename = 'resnet20_xnor++_factorized_naive_training_b_finetuning_scaling_factor_' + str(scaling_factor)
+        filename = 'resnet20_xnor++_factorized_naive_training_b_finetuning_' + str(scaling_factor)
         finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
                    learning_rate_change=[70, 90, 100, 110], filename=filename)
 
