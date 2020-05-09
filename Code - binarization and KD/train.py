@@ -197,7 +197,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
             else:
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
-            max_epoch_layer = 120
+            max_epoch_layer = 100
             criterion = torch.nn.CrossEntropyLoss()
         else:
             max_epoch_layer = max_epoch_layer
@@ -245,8 +245,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
 
             learning_rate_change = [25, 30, 35, 40]
             if layer == 'all':
-                learning_rate_change = [50, 70, 90, 100]
-                learning_rate_change = [70, 90, 100, 110]
+                learning_rate_change = [50, 70, 80, 90]
 
             if epoch in learning_rate_change:
                 lr = lr * 0.1
@@ -353,8 +352,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
             print('Loss on train images: ' + str(training_loss_for_epoch))
             print('Loss on validation images: ' + str(validation_loss_for_epoch))
             if layer == 'all':
-                print('Accuracy on train images: %d %%' % accuracy_train_epoch)
-                print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
+                print('Accuracy on train images: ' + str(accuracy_train_epoch))
+                print('Accuracy on validation images: ' + str(accuracy_validation_epoch))
 
         layer_idx += 1
         changed_layer = True
