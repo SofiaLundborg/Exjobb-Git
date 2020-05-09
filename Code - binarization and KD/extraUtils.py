@@ -58,8 +58,8 @@ def calculate_accuracy(data_loader, net, topk=(1,5)):
             images, targets = data
 
             if torch.cuda.is_available():
-                images = images.to('cuda')
-                targets = targets.to('cuda')
+                images = images.to(get_device())
+                targets = targets.to(get_device())
 
             outputs = net(images)
             prec1, prec5 = accuracy(outputs, targets, topk=topk)
