@@ -528,7 +528,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     if not filename:
         filename = 'method_c_' + str(student_net.net_type)
 
-    filename = filename 
+    filename = filename
 
     layers = ['layer1', 'layer2', 'layer3']
     max_epoch_layer = 40

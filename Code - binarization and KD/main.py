@@ -23,7 +23,7 @@ def method_b_training():
 
     print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
-    scaling_factors = [0, 0.2, 0.4, 0.6, 0.8, 1]
+    scaling_factors = [0.2, 0.4, 0.6, 0.8, 1]
     for scaling_factor in scaling_factors:
         net_type = 'Xnor++'
         student_ResNet20 = resNet.resnet_models['resnet20Naive'](net_type=net_type, dataset='cifar10',
@@ -37,7 +37,7 @@ def method_b_training():
         lit_training(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, max_epochs=120,
                      teacher_net=teacher_ResNet20, filename=filename, scaling_factor_total=scaling_factor, scaling_factor_kd=0.95)
 
-        filename = 'resnet20_xnor++_factorized_naive_training_b_finetuning_'
+        filename = 'resnet20_xnor++_factorized_naive_training_b_finetuning_scaling_factor_' + str(scaling_factor)
         finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
                    learning_rate_change=[70, 90, 100, 110], filename=filename)
 
