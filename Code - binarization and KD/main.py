@@ -62,7 +62,7 @@ def main():
         student_ResNet20 = student_ResNet20.cuda()
     filename = 'resnet20_xnor++_factorized_naive_training_a'
     training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, modified=True, saved_training='/saved_training/cifar10/resnet20_xnor++_factorized_naive_training_a_20200509')
+               filename=filename, modified=True, saved_training='./saved_training/cifar10/resnet20_xnor++_factorized_naive_training_a_20200509')
 
     net_type = 'Xnor++'
     student_ResNet20 = resNet.resnet_models['resnet20withRelu'](net_type=net_type, dataset='cifar10', factorized_gamma=False)

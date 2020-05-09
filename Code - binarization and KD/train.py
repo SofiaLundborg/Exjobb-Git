@@ -174,8 +174,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
-        train_accuracy = np.empty(110)
-        validation_accuracy = np.empty(110)
+        train_accuracy = np.empty(100)
+        validation_accuracy = np.empty(100)
         layer_idx = 0
         total_epoch = -1
         epoch = -1
