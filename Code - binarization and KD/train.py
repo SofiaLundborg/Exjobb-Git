@@ -740,7 +740,7 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
     if not filename:
         filename = 'method_b_' + str(student_net.net_type)
 
-    filename = filename + 'scaling_tot_' + str(scaling_factor_total) + '_scaling_kd_' + str(scaling_factor_kd)
+    #filename = filename + 'scaling_tot_' + str(scaling_factor_total) + '_scaling_kd_' + str(scaling_factor_kd)
 
     criterion = distillation_loss.Loss(scaling_factor_total, scaling_factor_kd, temperature_kd)
     if torch.cuda.is_available():
@@ -851,7 +851,7 @@ def lit_training(student_net, train_loader, validation_loader, train_loader_non_
 
         plot_results(ax_loss, fig, train_loss[:epoch+1], validation_loss[:epoch+1], epoch, filename=folder+filename, title=title_loss)
         plot_results(ax_acc, fig, train_accuracy[:epoch+1], validation_accuracy[:epoch+1], epoch, filename=folder+filename, title=title_accuracy)
-        
+
         torch.save(validation_loss[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_loss_' + filename + '.pt')
         torch.save(train_loss[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_loss_' + filename + '.pt')
         torch.save(validation_accuracy[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_accuracy_' + filename + '.pt')
