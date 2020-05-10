@@ -146,6 +146,8 @@ def method_c_training():
     print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
     scaling_factors = [0, 0.2, 0.4, 0.6, 0.8, 1]
+    scaling_factors = [0.8, 1]
+
     for scaling_factor in scaling_factors:
         net_type = 'Xnor++'
         student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
@@ -155,13 +157,19 @@ def method_c_training():
         if torch.cuda.is_available():
             student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
 
-        filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
-        training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented, filename=filename, max_epochs=120,
-                   scaling_factor_total=scaling_factor)
+        if scaling_factor == 0.8:
+            filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(
+                scaling_factor)
+            finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
+                       learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2, saved_training='./saved_training/cifar10/resnet20_xnor++_factorized_double_shortcut_training_c_finetuning_scaling_factor_0.8_lr0.01_20200510')
+        else:
+            filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
+            training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented, filename=filename, max_epochs=120,
+                           scaling_factor_total=scaling_factor)
 
-        filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(scaling_factor)
-        finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
-                   learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
+            filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(scaling_factor)
+            finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
+                       learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
 
 
 def training_network_architecture_method_a():
@@ -226,13 +234,13 @@ def training_network_architecture_method_a():
 
 def main():
     #training_network_architecture_method_a()
-    #method_b_training()
 
-    #method_c_training()
+    method_c_training()
+    method_b_training()
+
     #finetuning_no_method()
-
     #method_a_ImageNet()
-    imagenet_without_pre_training()
+    #imagenet_without_pre_training()
 
 
 
