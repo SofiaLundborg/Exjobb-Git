@@ -23,7 +23,7 @@ def method_b_training():
 
     print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
-    scaling_factors = [0.2, 0.4, 0.6, 0.8, 1]
+    scaling_factors = [1]
     for scaling_factor in scaling_factors:
         net_type = 'Xnor++'
         student_ResNet20 = resNet.resnet_models['resnet20Naive'](net_type=net_type, dataset='cifar10',
@@ -34,7 +34,7 @@ def method_b_training():
             student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
 
         filename = 'resnet20_xnor++_factorized_naive_training_b_'
-        lit_training(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, max_epochs=120,
+        lit_training(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, max_epochs=60,
                      teacher_net=teacher_ResNet20, filename=filename, scaling_factor_total=scaling_factor, scaling_factor_kd=0.95)
 
         filename = 'resnet20_xnor++_factorized_naive_training_b_finetuning_scaling_factor_' + str(scaling_factor)
@@ -140,7 +140,7 @@ def main():
     #training_network_architecture_method_a()
     #method_b_training()
 
-    method_c_training()
+    method_b_training()
 
 
 
