@@ -32,7 +32,38 @@ def method_a_ImageNet():
 
     filename = 'resnet18_method_a_training'
     training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
-               modified=True, max_epoch_layer=6, max_epoch_finetuning=0, learning_rate_change=learning_rate_change)
+               modified=True, max_epoch_layer=6, max_epoch_finetuning=0, learning_rate_change=learning_rate_change, saved_training='./saved_training/ImageNet/resnet18_method_a_training_20200510')
+
+
+def imagenet_without_pre_training():
+
+    train_loader, validation_loader, train_loader_not_augmented = load_imageNet()
+
+    # ImageNet
+    resnet18 = models.resnet18(pretrained=True)
+    torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
+    original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
+    print('pretrained model loaded')
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet',
+                                                                          factorized_gamma=True)
+    teacher_checkpoint = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
+
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet',
+                                                                          factorized_gamma=True)
+    student_ResNet18.load_state_dict(teacher_checkpoint)
+
+    if torch.cuda.is_available():
+        student_ResNet18 = student_ResNet18.cuda(device=get_device_id())
+
+    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet18)))
+
+    lr = 1e-3
+    learning_rate_change = [15, 20, 23]
+
+    filename = 'resnet18_finetuning_no_pretraining'
+
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 25, learning_rate_change,
+                   path=None, filename=filename, saved_training=None, saved_model=None, initial_learning_rate=lr)
 
 
 
@@ -98,7 +129,7 @@ def method_b_training():
 
         filename = 'resnet20_xnor++_factorized_double_shortcut_training_b_finetuning_scaling_factor_' + str(scaling_factor)
         finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
-                   learning_rate_change=[70, 90, 100, 110], filename=filename)
+                   learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
 
 
 def method_c_training():
@@ -132,7 +163,7 @@ def method_c_training():
 
         filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(scaling_factor)
         finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
-                   learning_rate_change=[70, 90, 100, 110], filename=filename)
+                   learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
 
 
 def training_network_architecture_method_a():
@@ -203,6 +234,8 @@ def main():
     #finetuning_no_method()
 
     method_a_ImageNet()
+    imagenet_without_pre_training()
+
 
 
 

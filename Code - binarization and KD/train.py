@@ -10,7 +10,7 @@ from loadUtils import save_training, load_training
 import numpy as np
 
 
-def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, max_epochs, learning_rate_change, path=None, filename=None, saved_training = None, saved_model=None):
+def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, max_epochs, learning_rate_change, path=None, filename=None, saved_training = None, saved_model=None, initial_learning_rate=0.01):
 
     if net.n_layers == 18:
         layers_to_train = ['layer1', 'layer2', 'layer3', 'layer4']
@@ -29,7 +29,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
         criterion = criterion.cuda()
     device = get_device()
 
-    lr = 1e-2
+    lr = initial_learning_rate
     weight_decay = 0
     optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -165,12 +165,20 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
     else:
         layers = ['layer1', 'layer2', 'layer3', 'all']
     #max_epoch_layer = 40
-    max_epochs = max_epoch_layer * 3 + max_epoch_finetuning
+    max_epochs = max_epoch_layer * 4 + max_epoch_finetuning
 
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
         lr = 0.01
         epoch = total_epoch % max_epoch_layer
+
+        train_loss_temp = np.empty(max_epochs)
+        validation_loss_temp = np.empty(max_epochs)
+        train_loss_temp[:len(train_loss)] = train_loss
+        validation_loss_temp[:len(validation_loss)] = validation_loss
+        train_loss = train_loss_temp
+        validation_loss = validation_loss_temp
+
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
