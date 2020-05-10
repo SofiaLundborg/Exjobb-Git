@@ -21,7 +21,8 @@ def method_a_ImageNet():
 
     net_type = 'Xnor++'
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
-    student_ResNet18.load_state_dict(teacher_checkpoint)
+    student_checkpoint = change_loaded_checkpoint(original_teacher_dict, student_ResNet18)
+    student_ResNet18.load_state_dict(student_checkpoint)
 
     if torch.cuda.is_available():
         teacher_ResNet18 = teacher_ResNet18.cuda(device=get_device_id())
@@ -45,18 +46,14 @@ def imagenet_without_pre_training():
     torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
     original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
     print('pretrained model loaded')
-    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet',
-                                                                          factorized_gamma=True)
-    teacher_checkpoint = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
 
     net_type = 'Xnor++'
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
-    student_ResNet18.load_state_dict(teacher_checkpoint)
+    student_checkpoint = change_loaded_checkpoint(original_teacher_dict, student_ResNet18)
+    student_ResNet18.load_state_dict(student_checkpoint)
 
     if torch.cuda.is_available():
         student_ResNet18 = student_ResNet18.cuda(device=get_device_id())
-
-    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet18)))
 
     lr = 1e-3
     learning_rate_change = [15, 20, 23]
