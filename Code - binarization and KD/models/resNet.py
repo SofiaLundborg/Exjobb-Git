@@ -558,12 +558,12 @@ class BasicBlockReluDoubleShortcut(nn.Module):
 
     def __init__(self, in_planes, planes, input_size, stride=1, n_layers=20, net_type='full_precision', factorized_gamma=False):
         super(BasicBlockReluDoubleShortcut, self).__init__()
+        self.input_size_temp = input_size.copy()
         self.conv1 = my_conv3x3(in_planes, planes, input_size, net_type=net_type, stride=stride, bias=False, factorized_gamma=factorized_gamma)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = my_conv3x3(planes, planes, input_size, net_type=net_type, bias=False, factorized_gamma=factorized_gamma)
         self.bn2 = nn.BatchNorm2d(planes)
         self.out_size = planes
-        self.input_size_temp = input_size.copy()
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
