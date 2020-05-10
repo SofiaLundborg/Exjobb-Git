@@ -170,8 +170,8 @@ def main():
     #training_network_architecture_method_a()
     #method_b_training()
 
-    #method_b_training()
-    finetuning_no_method()
+    method_c_training()
+    #finetuning_no_method()
 
 
 
