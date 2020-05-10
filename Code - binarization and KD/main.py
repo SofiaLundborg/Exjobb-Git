@@ -19,7 +19,8 @@ def method_a_ImageNet():
     teacher_checkpoint = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
     teacher_ResNet18.load_state_dict(teacher_checkpoint)
 
-    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet', factorized_gamma=True)
+    net_type = 'Xnor++'
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
     student_ResNet18.load_state_dict(teacher_checkpoint)
 
     if torch.cuda.is_available():
@@ -32,7 +33,7 @@ def method_a_ImageNet():
 
     filename = 'resnet18_method_a_training'
     training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
-               modified=True, max_epoch_layer=6, max_epoch_finetuning=0, learning_rate_change=learning_rate_change, saved_training='./saved_training/ImageNet/resnet18_method_a_training_20200510')
+               modified=True, max_epoch_layer=6, max_epoch_finetuning=0, learning_rate_change=learning_rate_change, saved_training=None)
 
 
 def imagenet_without_pre_training():
@@ -48,8 +49,8 @@ def imagenet_without_pre_training():
                                                                           factorized_gamma=True)
     teacher_checkpoint = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
 
-    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet',
-                                                                          factorized_gamma=True)
+    net_type = 'Xnor++'
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
     student_ResNet18.load_state_dict(teacher_checkpoint)
 
     if torch.cuda.is_available():
@@ -233,7 +234,7 @@ def main():
     #method_c_training()
     #finetuning_no_method()
 
-    method_a_ImageNet()
+    #method_a_ImageNet()
     imagenet_without_pre_training()
 
 
