@@ -8,7 +8,7 @@ from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device_
 
 
 def method_a_ImageNet():
-    train_loader, validation_loader, test_loader, train_loader_not_augmented = load_imageNet()
+    train_loader, validation_loader, train_loader_not_augmented = load_imageNet()
 
     # ImageNet
     resnet18 = models.resnet18(pretrained=True)
