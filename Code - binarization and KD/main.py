@@ -39,7 +39,7 @@ def method_a_ImageNet():
 
 def imagenet_without_pre_training():
 
-    train_loader, validation_loader, train_loader_not_augmented = load_imageNet(subsets=True)
+    train_loader, validation_loader, train_loader_not_augmented = load_imageNet()
 
     # ImageNet
     resnet18 = models.resnet18(pretrained=True)
