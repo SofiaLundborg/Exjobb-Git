@@ -145,7 +145,7 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
 
 
-def training_a(student_net, teacher_net, train_loader, validation_loader, train_loader_not_augmented, filename=None, saved_training=None, modified=False):
+def training_a(student_net, teacher_net, train_loader, validation_loader, train_loader_not_augmented, filename=None, saved_training=None, modified=False, max_epoch_layer=40, max_epoch_finetuning=120, learning_rate_change=None):
 
     if not filename:
         filename = 'method_a_' + str(student_net.net_type)
@@ -161,11 +161,11 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
     optimizer = optim.Adam(student_net.parameters(), lr=0.01, weight_decay=0)
 
     if student_net.dataset == 'ImageNet':
-        layers = ['layer1', 'layer2', 'layer3', 'layer4', 'all']
+        layers = ['layer1', 'layer2', 'layer3', 'layer4']
     else:
         layers = ['layer1', 'layer2', 'layer3', 'all']
-    max_epoch_layer = 40
-    max_epochs = max_epoch_layer * 3 + 120
+    #max_epoch_layer = 40
+    max_epochs = max_epoch_layer * 3 + max_epoch_finetuning
 
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
@@ -174,8 +174,8 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
-        train_accuracy = np.empty(120)
-        validation_accuracy = np.empty(120)
+        train_accuracy = np.empty(max_epoch_finetuning)
+        validation_accuracy = np.empty(max_epoch_finetuning)
         layer_idx = 0
         total_epoch = -1
         epoch = -1
@@ -197,7 +197,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3', 'layer4'])
             else:
                 set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
-            max_epoch_layer = 120
+            max_epoch_layer = max_epoch_finetuning
             criterion = torch.nn.CrossEntropyLoss()
         else:
             max_epoch_layer = max_epoch_layer
@@ -243,7 +243,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
                 else:
                     set_layers_to_update(student_net, [layer])
 
-            learning_rate_change = [25, 30, 35, 39]
+            #learning_rate_change = [25, 30, 35, 39]
             if layer == 'all':
                 learning_rate_change = [50, 70, 80, 90]
                 learning_rate_change = [70, 90, 100, 110]

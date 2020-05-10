@@ -2,9 +2,34 @@ from models import resNet, originalResnet
 import torchvision.models as models
 import warnings
 from binaryUtils import *
-from loadUtils import load_cifar10
+from loadUtils import load_cifar10, load_imageNet
 from train import finetuning, training_a, lit_training, training_c, training_kd
 from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device_id
+
+
+def method_a_ImageNet():
+    train_loader, validation_loader, test_loader, train_loader_not_augmented = load_imageNet()
+
+    # ImageNet
+    resnet18 = models.resnet18(pretrained=True)
+    torch.save(resnet18.state_dict(), './pretrained_resnet_models_imagenet/resnet18.pth')
+    original_teacher_dict = torch.load('./pretrained_resnet_models_imagenet/resnet18.pth')
+    print('pretrained model loaded')
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet', factorized_gamma=True)
+    teacher_checkpoint = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
+    teacher_ResNet18.load_dict(teacher_checkpoint)
+
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet', factorized_gamma=True)
+    student_ResNet18.load_dict(teacher_checkpoint)
+
+    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet18)))
+
+    learning_rate_change = [2, 4, 5, 6]
+
+    filename = 'resnet18_method_a_training'
+    training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
+               modified=True, max_epoch_layer=6, max_epoch_finetuning=None, learning_rate_change=learning_rate_change)
+
 
 
 def finetuning_no_method():
@@ -170,8 +195,10 @@ def main():
     #training_network_architecture_method_a()
     #method_b_training()
 
-    method_c_training()
+    #method_c_training()
     #finetuning_no_method()
+
+    method_a_ImageNet()
 
 
 
