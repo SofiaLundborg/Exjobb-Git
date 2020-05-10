@@ -17,10 +17,14 @@ def method_a_ImageNet():
     print('pretrained model loaded')
     teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet', factorized_gamma=True)
     teacher_checkpoint = change_loaded_checkpoint(original_teacher_dict, teacher_ResNet18)
-    teacher_ResNet18.load_dict(teacher_checkpoint)
+    teacher_ResNet18.load_state_dict(teacher_checkpoint)
 
     student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'ImageNet', factorized_gamma=True)
-    student_ResNet18.load_dict(teacher_checkpoint)
+    student_ResNet18.load_state_dict(teacher_checkpoint)
+
+    if torch.cuda.is_available():
+        teacher_ResNet18 = teacher_ResNet18.cuda(device=get_device_id())
+        student_ResNet18 = student_ResNet18.cuda(device=get_device_id())
 
     print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet18)))
 
