@@ -32,7 +32,7 @@ def method_a_ImageNet():
 
     filename = 'resnet18_method_a_training'
     training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
-               modified=True, max_epoch_layer=6, max_epoch_finetuning=None, learning_rate_change=learning_rate_change)
+               modified=True, max_epoch_layer=6, max_epoch_finetuning=0, learning_rate_change=learning_rate_change)
 
 
 
