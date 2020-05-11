@@ -232,6 +232,59 @@ def training_network_architecture_method_a():
                filename=filename, modified=True, saved_training='./saved_training/cifar10/resnet20_xnor++_factorized_relu_double_training_a_20200509')
 
 
+def training_a_double_shortcut_and_double_no_method():
+    train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
+
+    teacher_ResNet20 = resNet.resnet_models['resnet20ForTeacher'](net_type='full_precision', dataset='cifar10')
+    # load pretrained network into student and techer network
+    teacher_pth = './pretrained_resnet_cifar10_models/student/' + 'resnet20' + '.pth'
+    teacher_checkpoint = torch.load(teacher_pth, map_location='cpu')
+    new_checkpoint_teacher = change_loaded_checkpoint(teacher_checkpoint, teacher_ResNet20)
+    teacher_ResNet20.load_state_dict(new_checkpoint_teacher)
+    if torch.cuda.is_available():
+        teacher_ResNet20 = teacher_ResNet20.cuda(device=get_device_id())
+    teacher_ResNet20.eval()
+
+    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
+
+    net_type = 'Xnor++'
+    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+                                                                          factorized_gamma=True)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    student_ResNet20.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
+    filename = 'resnet20_xnor++_factorized_relu_double_training_a_2'
+    training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename, modified=True)
+
+    net_type = 'Xnor++'
+    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+                                                                          factorized_gamma=True)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    student_ResNet20.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
+    filename = 'resnet20_xnor++_factorized_relu_double_training_a_not_modified'
+    training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename, modified=False)
+
+
+    net_type = 'Xnor++'
+    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+                                                                          factorized_gamma=True)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    student_ResNet20.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
+    filename = 'resnet20_xnor++_factorized_relu_double_no_method_times2'
+    finetuning(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename,
+               saved_training='./saved_training/cifar10/resnet20_xnor++_factorized_double_shortcut_finetuning_no_method_lr1.0000000000000002e-06_20200510')
+
+#def different_architectures_method_c():
+
+
 def main():
     #training_network_architecture_method_a()
 
@@ -240,8 +293,8 @@ def main():
 
     #finetuning_no_method()
     #method_a_ImageNet()
-    imagenet_without_pre_training()
-
+    #imagenet_without_pre_training()
+    training_a_double_shortcut_and_double_no_method()
 
 
 

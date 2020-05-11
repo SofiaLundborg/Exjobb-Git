@@ -668,7 +668,6 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
 
 
-
 def test_heatmap(student_net, teacher_net, train_loader):
 
     student_dict = torch.load('./Trained_Models/' + 'method_a_one_shortcut_distribution_scaling_Xnor++_20200331.pth',
