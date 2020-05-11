@@ -247,27 +247,27 @@ def training_a_double_shortcut_and_double_no_method():
 
     print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
-    net_type = 'Xnor++'
-    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
-                                                                          factorized_gamma=True)
-    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
-    student_ResNet20.load_state_dict(new_checkpoint_student)
-    if torch.cuda.is_available():
-        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
-    filename = 'resnet20_xnor++_factorized_relu_double_training_a_2'
-    training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, modified=True, learning_rate_change=[25, 30, 35, 39])
-
-    net_type = 'Xnor++'
-    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
-                                                                          factorized_gamma=True)
-    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
-    student_ResNet20.load_state_dict(new_checkpoint_student)
-    if torch.cuda.is_available():
-        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
-    filename = 'resnet20_xnor++_factorized_relu_double_training_a_not_modified'
-    training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, modified=False, learning_rate_change=[25, 30, 35, 39])
+    # net_type = 'Xnor++'
+    # student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+    #                                                                       factorized_gamma=True)
+    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    # student_ResNet20.load_state_dict(new_checkpoint_student)
+    # if torch.cuda.is_available():
+    #     student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
+    # filename = 'resnet20_xnor++_factorized_relu_double_training_a_2'
+    # training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+    #            filename=filename, modified=True, learning_rate_change=[25, 30, 35, 39])
+    #
+    # net_type = 'Xnor++'
+    # student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+    #                                                                       factorized_gamma=True)
+    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    # student_ResNet20.load_state_dict(new_checkpoint_student)
+    # if torch.cuda.is_available():
+    #     student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
+    # filename = 'resnet20_xnor++_factorized_relu_double_training_a_not_modified'
+    # training_a(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+    #            filename=filename, modified=False, learning_rate_change=[25, 30, 35, 39])
 
 
     net_type = 'Xnor++'
@@ -278,9 +278,12 @@ def training_a_double_shortcut_and_double_no_method():
     if torch.cuda.is_available():
         student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
     filename = 'resnet20_xnor++_factorized_relu_double_no_method_times2'
-    finetuning(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, learning_rate_change=[25, 30, 35, 39], initial_learning_rate=0.01,
-               saved_training='./saved_training/cifar10/resnet20_xnor++_factorized_double_shortcut_finetuning_no_method_lr1.0000000000000002e-06_20200510')
+    finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+               max_epochs=120, learning_rate_change=[70, 90, 100, 110], filename=filename,
+               saved_training='./saved_training/cifar10/resnet20_xnor++_factorized_double_shortcut_finetuning_no_method_lr1.0000000000000002e-06_20200510',
+               initial_learning_rate=0.01)
+
+
 
 #def different_architectures_method_c():
 
