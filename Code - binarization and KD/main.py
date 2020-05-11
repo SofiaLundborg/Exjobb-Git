@@ -280,7 +280,7 @@ def training_a_double_shortcut_and_double_no_method():
     filename = 'resnet20_xnor++_factorized_relu_double_no_method_times2'
     finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
                max_epochs=120, learning_rate_change=[70, 90, 100, 110], filename=filename,
-               saved_training='./saved_training/cifar10/resnet20_xnor++_factorized_double_shortcut_finetuning_no_method_lr1.0000000000000002e-06_20200510',
+               saved_model='./Trained_Models/cifar10/resnet20_xnor++_factorized_double_shortcut_finetuning_no_method_20200510.pth',
                initial_learning_rate=0.01)
 
 
