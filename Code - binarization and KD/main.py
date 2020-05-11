@@ -275,7 +275,7 @@ def training_a_double_shortcut_and_double_no_method():
                                                                           factorized_gamma=True)
     trained_student_checkpoint = torch.load('./Trained_Models/cifar10/resnet20_xnor++_factorized_double_shortcut_finetuning_no_method_20200510.pth')
     new_checkpoint_student = change_loaded_checkpoint(trained_student_checkpoint, student_ResNet20)
-    student_ResNet20.load_state_dict(new_checkpoint_student)
+    student_ResNet20.load_state_dict(trained_student_checkpoint)
     if torch.cuda.is_available():
         student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
     filename = 'resnet20_xnor++_factorized_relu_double_no_method_times2'
