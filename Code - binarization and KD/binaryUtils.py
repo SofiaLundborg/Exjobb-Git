@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from extraUtils import calculate_output_size
+from extraUtils import get_device_id
 
 
 def binarize_weights(net):
