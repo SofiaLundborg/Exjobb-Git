@@ -352,8 +352,8 @@ def different_architectures_method_c():
     #            filename=filename, max_epochs=120,
     #            scaling_factor_total=scaling_factor)
 
-
-    student_ResNet20.load_state_dict('./Trained_Models/resnet20_xnor_double_shortcut_training_c_finetuning_scaling_factor_0.4_20200511.pth')
+    checkp = torch.load('./Trained_Models/resnet20_xnor_double_shortcut_training_c_finetuning_scaling_factor_0.4_20200511.pth', map_location='cpu')
+    student_ResNet20.load_state_dict(checkp)
     filename = 'resnet20_binary_double_shortcut_training_c_finetuning_scaling_factor_' + str(
         scaling_factor)
     finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
