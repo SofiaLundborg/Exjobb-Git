@@ -530,7 +530,7 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
 
 
-def training_c(student_net, teacher_net, train_loader, validation_loader, train_loader_non_augmented, filename=None, max_epochs=200, scaling_factor_total=0.5):
+def training_c(student_net, teacher_net, train_loader, validation_loader, train_loader_non_augmented, filename=None, max_epochs=200, scaling_factor_total=0.5, max_epoch_layer=40, learning_rate_change=None):
     title_loss = 'method c) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method c) - accuracy, ' + str(student_net.net_type)
     if not filename:
@@ -538,8 +538,11 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
 
     filename = filename
 
-    layers = ['layer1', 'layer2', 'layer3']
-    max_epoch_layer = 40
+    if student_net.n_layers==20:
+        layers = ['layer1', 'layer2', 'layer3']
+    else:
+        layers = ['layer1', 'layer2', 'layer3', 'layer4']
+    #max_epoch_layer = 40
     max_epochs = max_epoch_layer * 6
     train_loss = np.empty(max_epochs)
     validation_loss = np.empty(max_epochs)
@@ -583,7 +586,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             else:
                 set_layers_to_update(student_net, layers[:layer_idx+1])
 
-            learning_rate_change = [20, 30, 35]
+            if student_net.n_layers == 20:
+                learning_rate_change = [20, 30, 35]
             if layer == 'all':
                 learning_rate_change = [30, 40, 50]
 
@@ -666,6 +670,10 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             print('Loss on validation images: ' + str(validation_loss_for_epoch))
             print('Accuracy on train images: %d %%' % accuracy_train_epoch)
             print('Accuracy on validation images: %d %%' % accuracy_validation_epoch)
+
+            save_training(total_epoch, student_net, optimizer, train_loss, validation_loss, train_accuracy,
+                          validation_accuracy, accuracy_train_epoch_top_5, accuracy_validation_epoch_top_5, layer_idx,
+                          'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
 
 def test_heatmap(student_net, teacher_net, train_loader):
