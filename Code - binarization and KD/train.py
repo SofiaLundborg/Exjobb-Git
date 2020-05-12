@@ -557,7 +557,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     if saved_training:
         total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(
             student_net, optimizer, saved_training)
-        lr = 0.01
+        for param_group in optimizer.param_groups:
+            lr = param_group['lr']
         epoch = total_epoch % max_epoch_layer
 
     else:
