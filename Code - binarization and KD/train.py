@@ -542,7 +542,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     filename = filename
 
     if student_net.n_layers==20:
-        layers = ['layer1', 'layer2', 'layer3']
+        layers = ['layer1', 'layer2']
     else:
         layers = ['layer1', 'layer2', 'layer3', 'layer4']
     #max_epoch_layer = 40
@@ -625,11 +625,11 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             if changed_layer or (not saved_training):
                 lr = 0.01
                 epoch = -1
-                print(str(epoch))
                 if layer == 'all':
                     lr = 0.01
                 weight_decay = 0  # 0.00001
                 optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
+                changed_layer = False
             else:
                 for param_group in optimizer.param_groups:
                     lr = param_group['lr']
@@ -698,10 +698,10 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             plot_results(ax_loss, fig, train_loss[:total_epoch+1], validation_loss[:total_epoch+1], total_epoch, filename=folder+filename, title=title_loss)
             plot_results(ax_acc, fig, train_accuracy[:total_epoch+1], validation_accuracy[:total_epoch+1], total_epoch, filename=folder+filename, title=title_accuracy)
 
-            torch.save(validation_loss[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_loss_' + filename + '.pt')
-            torch.save(train_loss[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_loss_' + filename + '.pt')
-            torch.save(validation_accuracy[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_accuracy_' + filename + '.pt')
-            torch.save(train_accuracy[:epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_accuracy_' + filename + '.pt')
+            torch.save(validation_loss[:total_epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_loss_' + filename + '.pt')
+            torch.save(train_loss[:total_epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_loss_' + filename + '.pt')
+            torch.save(validation_accuracy[:total_epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'validation_accuracy_' + filename + '.pt')
+            torch.save(train_accuracy[:total_epoch + 1], './Results/' + folder + datetime.today().strftime('%Y%m%d') + 'train_accuracy_' + filename + '.pt')
 
             if accuracy_validation_epoch > best_validation_accuracy:
                 # save network

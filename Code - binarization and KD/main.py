@@ -322,63 +322,54 @@ def different_architectures_method_c():
 
     scaling_factor = 0.4
 
-    # net_type = 'Xnor++'
-    # student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
-    #                                                                       factorized_gamma=False)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
-    # student_ResNet20.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
-    #
-    # filename = 'resnet20_xnor++_non_factorized_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
-    # training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-    #            filename=filename, max_epochs=120,
-    #            scaling_factor_total=scaling_factor)
-    #
-    # filename = 'resnet20_xnor++_non_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(
-    #     scaling_factor)
-    # finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
-    #            learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
-    #
-    #
-    #
-    # net_type = 'Xnor'
-    # student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
-    #                                                                       factorized_gamma=False)
-    # new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
-    # student_ResNet20.load_state_dict(new_checkpoint_student)
-    # if torch.cuda.is_available():
-    #     student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
-    #
-    # filename = 'resnet20_xnor_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
-    # training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-    #            filename=filename, max_epochs=120,
-    #            scaling_factor_total=scaling_factor)
-    #
-    # filename = 'resnet20_xnor_double_shortcut_training_c_finetuning_scaling_factor_' + str(
-    #     scaling_factor)
-    # finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
-    #            learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
-    #
-    net_type = 'binary'
+    net_type = 'Xnor++'
     student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
-                                                                        factorized_gamma=False)
-    #new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
-    #student_ResNet20.load_state_dict(new_checkpoint_student)
+                                                                          factorized_gamma=False)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    student_ResNet20.load_state_dict(new_checkpoint_student)
     if torch.cuda.is_available():
         student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
 
-    # filename = 'resnet20_binary_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
-    # training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-    #            filename=filename, max_epochs=120,
-    #            scaling_factor_total=scaling_factor)
+    filename = 'resnet20_xnor++_non_factorized_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
+    training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename, max_epochs=120,
+               scaling_factor_total=scaling_factor)
 
-    checkp = torch.load('./Trained_Models/cifar10/resnet20_xnor_double_shortcut_training_c_finetuning_scaling_factor_0.4_20200511.pth', map_location='cpu')
-    student_ResNet20.load_state_dict(checkp)
-    filename = 'resnet20_binary_double_shortcut_training_c_finetuning_scaling_factor_' + str(
+    filename = 'resnet20_xnor++_non_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(
         scaling_factor)
-    finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
-               learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
+    #finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
+    #           learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
+
+    net_type = 'Xnor'
+    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+                                                                          factorized_gamma=False)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    student_ResNet20.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
+
+    filename = 'resnet20_xnor_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
+    training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename, max_epochs=120,
+               scaling_factor_total=scaling_factor)
+
+    filename = 'resnet20_xnor_double_shortcut_training_c_finetuning_scaling_factor_' + str(
+        scaling_factor)
+    #finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
+    #           learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
+
+    net_type = 'binary'
+    student_ResNet20 = resNet.resnet_models['resnet20ReluDoubleShortcut'](net_type=net_type, dataset='cifar10',
+                                                                        factorized_gamma=False)
+    new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
+    student_ResNet20.load_state_dict(new_checkpoint_student)
+    if torch.cuda.is_available():
+        student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
+
+    filename = 'resnet20_binary_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
+    training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename, max_epochs=120,
+               scaling_factor_total=scaling_factor)
 
 
 def get_mean_and_std_at_layer():
@@ -476,13 +467,13 @@ def main():
     #method_b_training()
 
     #finetuning_no_method()
-    imagenet_without_pre_training()
+    # imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
-    #different_architectures_method_c()
 
     #get_mean_and_std_at_layer()
 
-    #training_c_imagenet()
+    different_architectures_method_c()
+    training_c_imagenet()
 
 
 

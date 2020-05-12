@@ -11,9 +11,9 @@ def load_imageNet(subsets=False):
         batch_size_training = 64    #64
         batch_size_validation = 64  #64
         if get_device_id() == 0:
-            batch_size_validation = 256
+            batch_size_validation = 64
         else:
-            batch_size_validation = 16
+            batch_size_validation = 64
     else:
         batch_size_training = 4
         batch_size_validation = 4
