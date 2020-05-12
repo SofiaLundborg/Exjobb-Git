@@ -533,7 +533,7 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
 
 
-def training_c(student_net, teacher_net, train_loader, validation_loader, train_loader_non_augmented, filename=None, max_epochs=200, scaling_factor_total=0.5, max_epoch_layer=40, learning_rate_change=None, max_epoch_finetuning=25, saved_training=None):
+def training_c(student_net, teacher_net, train_loader, validation_loader, train_loader_non_augmented, filename=None, max_epochs=200, scaling_factor_total=0.5, max_epoch_layer=40, learning_rate_change=None, max_epoch_finetuning=200, saved_training=None):
     title_loss = 'method c) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method c) - accuracy, ' + str(student_net.net_type)
     if not filename:
