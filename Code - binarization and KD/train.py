@@ -561,6 +561,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
         epoch = total_epoch % max_epoch_layer
+        layer_idx = 2
 
     else:
         train_loss = np.empty(max_epochs)
@@ -599,6 +600,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         #for epoch in range(max_epoch_layer):
         while (epoch < max_epoch_layer):
             epoch += 1
+
+            print('layer-epoch ' + str(epoch) + ' has started')
 
             total_epoch += 1
 
