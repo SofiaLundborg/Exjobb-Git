@@ -562,7 +562,6 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             student_net, optimizer, saved_training)
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
-        total_epoch = 5
         epoch = total_epoch % max_epoch_layer - 1
         layer_idx = 1
 
