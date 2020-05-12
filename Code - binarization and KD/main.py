@@ -145,10 +145,10 @@ def method_c_training():
         teacher_ResNet20 = teacher_ResNet20.cuda(device=get_device_id())
     teacher_ResNet20.eval()
 
-    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
+    #print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet20)))
 
     scaling_factors = [0, 0.2, 0.4, 0.6, 0.8, 1]
-    scaling_factors = [0.8, 1]
+    scaling_factors = [0.4, 1]
 
     for scaling_factor in scaling_factors:
         net_type = 'Xnor++'
@@ -156,6 +156,7 @@ def method_c_training():
                                                                  factorized_gamma=True)
         new_checkpoint_student = change_loaded_checkpoint(teacher_checkpoint, student_ResNet20)
         student_ResNet20.load_state_dict(new_checkpoint_student)
+
         if torch.cuda.is_available():
             student_ResNet20 = student_ResNet20.cuda(device=get_device_id())
 
@@ -172,6 +173,25 @@ def method_c_training():
             filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(scaling_factor)
             finetuning(student_ResNet20, train_loader, validation_loader, train_loader_not_augmented, 120,
                        learning_rate_change=[70, 90, 100, 110], filename=filename, initial_learning_rate=1e-2)
+
+
+def training_c_resnet18():
+
+    train_loader, validation_loader, test_loader, train_loader_not_augmented = load_cifar10(test_as_validation=True)
+
+    teacher_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut']('full_precision', 'cifar10', factorized_gamma=True)
+
+
+    net_type = 'Xnor++'
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'cifar10', factorized_gamma=True)
+
+    if torch.cuda.is_available():
+        student_ResNet18 = student_ResNet18.cuda(device=get_device_id())
+
+    filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_scaling_factor_' + str(0.4)
+    training_c(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename, max_epochs=120,
+               scaling_factor_total=0.4, learning_rate_change=[5,10,15])
 
 
 def training_network_architecture_method_a():
@@ -455,15 +475,15 @@ def main():
     #method_c_training()
     #method_b_training()
 
-    #inetuning_no_method()
-    #method_a_ImageNet()
-    #imagenet_without_pre_training()
+    #finetuning_no_method()
+    imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
     #different_architectures_method_c()
 
     #get_mean_and_std_at_layer()
 
-    training_c_imagenet()
+    #training_c_imagenet()
+
 
 
 

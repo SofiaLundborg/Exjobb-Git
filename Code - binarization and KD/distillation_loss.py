@@ -147,7 +147,7 @@ class Loss_c(nn.Module):
             self.mse_loss = self.mse_loss.cuda()
             self.ce_loss = self.ce_loss.cuda()
 
-    def forward(self, input, target, student_net, teacher_net, cut_network=None, training=True):
+    def forward(self, input, target, student_net, teacher_net, cut_network=None,training=True):
 
         with torch.no_grad():
             teacher_net.eval()
@@ -156,7 +156,8 @@ class Loss_c(nn.Module):
         if training:
             student_net.train()
             output_student_ir = student_net(input, cut_network=cut_network)
-            output_student = student_net(input)
+            output_student = student_net(output_student_ir, cut_forward=cut_network)
+            #output_student_1 = student_net(input)
         else:
             with torch.no_grad():
                 output_student_ir = student_net(input, cut_network=cut_network)

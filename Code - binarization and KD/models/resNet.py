@@ -736,12 +736,17 @@ class ResNetReluFirst(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, x, feature_layers_to_extract=None, cut_network=None):
+    def forward(self, x, feature_layers_to_extract=None, cut_network=None, cut_forward=-1):
 
         features = OrderedDict()
 
-        out = self.bn1(self.conv1(x))
-        i_layer = 1
+        i_layer = 0
+
+        if i_layer >= cut_forward:
+            out = self.bn1(self.conv1(x))
+        else:
+            out = x
+        i_layer += 1
 
         if cut_network == i_layer:
             return out
@@ -750,35 +755,63 @@ class ResNetReluFirst(nn.Module):
             if i_layer in feature_layers_to_extract:
                 features[i_layer] = out.detach()
 
+        if i_layer >= cut_forward:
+            if self.layer4:
+                out = self.maxpool(out)
+            inp = [out, i_layer, feature_layers_to_extract, features, cut_network]
+            output = self.layer1(inp)
+            i_layer = output[1]
+        else:
+            if self.n_layers == 20:
+                i_layer += 6
+            else:
+                i_layer += 4
+            output = [out, i_layer, feature_layers_to_extract, features, cut_network]
+
+        if cut_network:
+            if cut_network <= i_layer:
+                return output[0]
+
+        if i_layer >= cut_forward:
+            output = self.layer2(output)
+            i_layer = output[1]
+        else:
+            if self.n_layers == 20:
+                i_layer += 6
+            else:
+                i_layer += 4
+            output[1] = i_layer
+
+        if cut_network:
+            if cut_network <= i_layer:
+                return output[0]
+
+        if i_layer >= cut_forward:
+            output = self.layer3(output)
+            i_layer = output[1]
+        else:
+            if self.n_layers == 20:
+                i_layer += 6
+            else:
+                i_layer += 4
+            output[1] = i_layer
+
+        if cut_network:
+            if cut_network <= i_layer:
+                return output[0]
+
+        #out, i_layer, feature_layers_to_extract, features, cut_network = output
+
         if self.layer4:
-            out = self.maxpool(out)
-
-        inp = [out, i_layer, feature_layers_to_extract, features, cut_network]
-        output = self.layer1(inp)
-        i_layer = output[1]
-        if cut_network:
-            if cut_network <= i_layer:
-                return output[0]
-        output = self.layer2(output)
-        i_layer = output[1]
-        if cut_network:
-            if cut_network <= i_layer:
-                return output[0]
-
-        output = self.layer3(output)
-        i_layer = output[1]
-        if cut_network:
-            if cut_network <= i_layer:
-                return output[0]
-
-        out, i_layer, feature_layers_to_extract, features, cut_network = output
-
-        if self.layer4:
-            out, i_layer, feature_layers_to_extract, features, cut_network = self.layer4([out, i_layer, feature_layers_to_extract, features, cut_network])
+            if i_layer >= cut_forward:
+                out, i_layer, feature_layers_to_extract, features, cut_network = self.layer4(output)
+            else:
+                #out, i_layer, feature_layers_to_extract, features, cut_network = output
+                i_layer += 4
             out = F.relu(out)
             if cut_network:
                 if cut_network <= i_layer:
-                    return output[0]
+                    return out
             out = self.avgpool(out)
         else:
             out = self.relu(out)
