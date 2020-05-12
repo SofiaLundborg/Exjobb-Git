@@ -630,6 +630,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = lr
 
+            print('lr: ' + str(lr))
+
             running_loss = 0
             print('Training of epoch ' + str(total_epoch) + ' has started')
             for i, data in enumerate(tqdm(train_loader)):
