@@ -44,7 +44,8 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     fig, (ax_loss, ax_acc, ax_acc5) = plt.subplots(1, 3, figsize=(15, 5))
 
     if saved_training:
-        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index = load_training(net, optimizer, saved_training)
+        epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,train_accuracy_top5, \
+        validation_accuracy_top5, layer_index = load_training(net, optimizer, saved_training)
     else:
         epoch = -1
     while epoch < max_epochs:
@@ -168,7 +169,7 @@ def training_a(student_net, teacher_net, train_loader, validation_loader, train_
     max_epochs = max_epoch_layer * 4 + max_epoch_finetuning
 
     if saved_training:
-        total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(student_net, optimizer, saved_training)
+        total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, accuracy_train_epoch_top5, accuracy_validation_epoch_top5, layer_idx = load_training(student_net, optimizer, saved_training)
         lr = 0.01
         epoch = total_epoch % max_epoch_layer
 
@@ -555,7 +556,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
 
     if saved_training:
-        total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(
+        total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,_, _, layer_idx = load_training(
             student_net, optimizer, saved_training)
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
@@ -711,8 +712,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
                           validation_accuracy, accuracy_train_epoch_top_5, accuracy_validation_epoch_top_5, layer_idx,
                           'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
-            layer_idx += 1
-            changed_layer = True
+        layer_idx += 1
+        changed_layer = True
 
 def test_heatmap(student_net, teacher_net, train_loader):
 

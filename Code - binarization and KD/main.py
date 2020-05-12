@@ -463,7 +463,6 @@ def main():
 
     #get_mean_and_std_at_layer()
 
-    plt.close('all')
     training_c_imagenet()
 
 

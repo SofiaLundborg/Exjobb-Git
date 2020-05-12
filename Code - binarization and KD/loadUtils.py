@@ -41,7 +41,7 @@ def load_imageNet(subsets=False):
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size_training,
                                                shuffle=True, num_workers=8, pin_memory=True)
-    train_loader_not_disturbed = torch.utils.data.DataLoader(train_set_not_disturbed, batch_size=batch_size_training,
+    train_loader_not_disturbed = torch.utils.data.DataLoader(train_set_not_disturbed, batch_size=batch_size_validation,
                                                              shuffle=False, num_workers=8, pin_memory=True)
     print('train_loader finished')
     validation_loader = torch.utils.data.DataLoader(validation_set, batch_size=batch_size_validation,
@@ -137,9 +137,11 @@ def load_training(model, optimizer, PATH):
     validation_loss = checkpoint['validation_loss']
     train_accuracy = checkpoint['train_accuracy']
     validation_accuracy = checkpoint['validation_accuracy']
+    train_accuracy_top5 = checkpoint['top5_train_accuracy']
+    validation_accuracy_top5 = checkpoint['top5_validation_accuracy']
     layer_index = checkpoint['layer_index']
 
-    return epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_index
+    return epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,train_accuracy_top5,validation_accuracy_top5, layer_index
 
 
 def load_model_from_saved_training(model, PATH):
