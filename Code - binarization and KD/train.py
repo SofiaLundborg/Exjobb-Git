@@ -606,11 +606,12 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             epoch = -1
             if layer == 'all':
                 lr = 0.01
+            print('lr: ' + str(lr))
             weight_decay = 0  # 0.00001
             optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
 
         #for epoch in range(max_epoch_layer):
-        while (epoch < max_epoch_layer):
+        while (epoch < max_epoch_layer-1):
             epoch += 1
 
             print('layer-epoch ' + str(epoch) + ' has started')
@@ -634,8 +635,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
                 lr = lr * 0.1
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = lr
-
-            print('lr: ' + str(lr))
+                print('lr: ' + str(lr))
 
             running_loss = 0
             print('Training of epoch ' + str(total_epoch) + ' has started')
