@@ -562,8 +562,12 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             student_net, optimizer, saved_training)
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
+        total_epoch = 5
         epoch = total_epoch % max_epoch_layer - 1
         layer_idx = 1
+
+        if epoch == -1:
+            changed_layer = True
 
     else:
         train_loss = np.empty(max_epochs)
@@ -573,14 +577,13 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         layer_idx = 0
         total_epoch = -1
         epoch = -1
+        changed_layer = False
 
     if torch.cuda.is_available():
         criterion = criterion.cuda(device=get_device_id())
     device = get_device()
 
     teacher_net.eval()
-
-    changed_layer = False
 
     fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
