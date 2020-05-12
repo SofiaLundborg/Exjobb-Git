@@ -593,7 +593,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         best_epoch = 0
 
         #for epoch in range(max_epoch_layer):
-        while (epoch < max_epoch_layer)-1:
+        while (epoch < max_epoch_layer):
             epoch += 1
 
             total_epoch += 1
