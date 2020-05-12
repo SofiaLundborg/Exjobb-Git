@@ -455,8 +455,8 @@ def main():
     #method_b_training()
 
     #finetuning_no_method()
-    method_a_ImageNet()
-    #imagenet_without_pre_training()
+    #method_a_ImageNet()
+    imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
     #different_architectures_method_c()
 
