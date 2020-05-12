@@ -332,7 +332,7 @@ def different_architectures_method_c():
 
     filename = 'resnet20_xnor++_factorized_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
     training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, max_epochs=120,
+               filename=filename, max_epochs=60,
                scaling_factor_total=scaling_factor)
 
     filename = 'resnet20_xnor++_non_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(
@@ -350,7 +350,7 @@ def different_architectures_method_c():
 
     filename = 'resnet20_xnor++_non_factorized_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
     training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, max_epochs=120,
+               filename=filename, max_epochs=60,
                scaling_factor_total=scaling_factor)
 
     filename = 'resnet20_xnor++_non_factorized_double_shortcut_training_c_finetuning_scaling_factor_' + str(
@@ -368,7 +368,7 @@ def different_architectures_method_c():
 
     filename = 'resnet20_xnor_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
     training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, max_epochs=120,
+               filename=filename, max_epochs=60,
                scaling_factor_total=scaling_factor)
 
     filename = 'resnet20_xnor_double_shortcut_training_c_finetuning_scaling_factor_' + str(
@@ -386,7 +386,7 @@ def different_architectures_method_c():
 
     filename = 'resnet20_binary_double_shortcut_training_c_scaling_factor_' + str(scaling_factor)
     training_c(student_ResNet20, teacher_ResNet20, train_loader, validation_loader, train_loader_not_augmented,
-               filename=filename, max_epochs=120,
+               filename=filename, max_epochs=60,
                scaling_factor_total=scaling_factor)
 
 

@@ -563,11 +563,11 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
         epoch = total_epoch % max_epoch_layer - 1
-        layer_idx = 1
-
+        #layer_idx = 1
         if epoch == -1:
             changed_layer = True
-
+        else:
+            changed_layer = False
     else:
         train_loss = np.empty(max_epochs)
         validation_loss = np.empty(max_epochs)
@@ -601,6 +601,14 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         best_validation_accuracy = 0
         best_epoch = 0
 
+        if changed_layer or (not saved_training):
+            lr = 0.01
+            epoch = -1
+            if layer == 'all':
+                lr = 0.01
+            weight_decay = 0  # 0.00001
+            optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
+
         #for epoch in range(max_epoch_layer):
         while (epoch < max_epoch_layer):
             epoch += 1
@@ -621,19 +629,6 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
                 learning_rate_change = [20, 30, 35]
             if layer == 'all':
                 learning_rate_change = [30, 40, 50]
-
-            if changed_layer or (not saved_training):
-                lr = 0.01
-                epoch = -1
-                if layer == 'all':
-                    lr = 0.01
-                weight_decay = 0  # 0.00001
-                optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
-                changed_layer = False
-            else:
-                for param_group in optimizer.param_groups:
-                    lr = param_group['lr']
-                optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=0)
 
             if epoch in learning_rate_change:
                 lr = lr * 0.1
