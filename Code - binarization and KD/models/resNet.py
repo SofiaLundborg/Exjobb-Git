@@ -814,7 +814,7 @@ class ResNetReluFirst(nn.Module):
                     return out
             out = self.avgpool(out)
         else:
-            out = self.relu(out)
+            out = self.relu(output[0])
             out = F.avg_pool2d(out, out.size()[3])
 
         out = out.view(out.size(0), -1)
