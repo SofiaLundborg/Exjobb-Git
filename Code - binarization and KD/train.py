@@ -561,7 +561,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
         epoch = total_epoch % max_epoch_layer - 1
-        layer_idx = 2
+        layer_idx = 1
 
     else:
         train_loss = np.empty(max_epochs)
