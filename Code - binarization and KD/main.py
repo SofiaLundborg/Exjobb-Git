@@ -441,11 +441,11 @@ def training_c_imagenet():
 
     print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet18)))
 
-    learning_rate_change = [2, 4, 6]
+    learning_rate_change = [2, 4, 5]
 
     filename = 'resnet18_method_c_training'
     training_c(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
-               max_epochs=6, scaling_factor_total=0.4, max_epoch_layer=6, learning_rate_change=learning_rate_change)
+               max_epochs=20, scaling_factor_total=0.4, max_epoch_layer=5, learning_rate_change=learning_rate_change, saved_training='./saved_training/ImageNet/resnet18_method_c_training_20200512')
 
 
 def main():
@@ -456,13 +456,13 @@ def main():
 
     #finetuning_no_method()
     #method_a_ImageNet()
-    imagenet_without_pre_training()
+    #imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
     #different_architectures_method_c()
 
     #get_mean_and_std_at_layer()
 
-    #training_c_imagenet()
+    training_c_imagenet()
 
 
 

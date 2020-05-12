@@ -530,7 +530,7 @@ def training_kd(studet_net, teacher_net, train_loader, validation_loader, train_
                       None, 'saved_training/' + folder + filename + '_' + 'lr' + str(lr) + '_' + datetime.today().strftime('%Y%m%d'))
 
 
-def training_c(student_net, teacher_net, train_loader, validation_loader, train_loader_non_augmented, filename=None, max_epochs=200, scaling_factor_total=0.5, max_epoch_layer=40, learning_rate_change=None):
+def training_c(student_net, teacher_net, train_loader, validation_loader, train_loader_non_augmented, filename=None, max_epochs=200, scaling_factor_total=0.5, max_epoch_layer=40, learning_rate_change=None, max_epoch_finetuning=25, saved_training=None):
     title_loss = 'method c) - loss, ' + str(student_net.net_type)
     title_accuracy = 'method c) - accuracy, ' + str(student_net.net_type)
     if not filename:
@@ -550,6 +550,24 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     validation_accuracy = np.empty(max_epochs)
 
     criterion = distillation_loss.Loss_c(scaling_factor_total)
+    lr = 0.01
+    weight_decay = 0  # 0.00001
+    optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
+
+    if saved_training:
+        total_epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy, layer_idx = load_training(
+            student_net, optimizer, saved_training)
+        lr = 0.01
+        epoch = total_epoch % max_epoch_layer
+
+    else:
+        train_loss = np.empty(max_epochs)
+        validation_loss = np.empty(max_epochs)
+        train_accuracy = np.empty(max_epoch_finetuning)
+        validation_accuracy = np.empty(max_epoch_finetuning)
+        layer_idx = 0
+        total_epoch = -1
+        epoch = -1
 
     if torch.cuda.is_available():
         criterion = criterion.cuda(device=get_device_id())
@@ -557,7 +575,11 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
 
     teacher_net.eval()
 
-    for layer_idx, layer in enumerate(layers):
+    changed_layer = False
+
+    while layer_idx < len(layers):
+        layer = layers[layer_idx]
+
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
             max_epoch_layer = 60
@@ -565,18 +587,16 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         cut_network = 1 + 6 * (layer_idx+1)
 
-        lr = 0.01
-        weight_decay = 0  # 0.00001
-        optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
-
         fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
         best_validation_accuracy = 0
         best_epoch = 0
 
-        for epoch in range(max_epoch_layer):
+        #for epoch in range(max_epoch_layer):
+        while (epoch < max_epoch_layer - 1):
+            epoch += 1
 
-            total_epoch = epoch + 40*layer_idx
+            total_epoch += 1
 
             if layer == 'all':
                 criterion = torch.nn.CrossEntropyLoss()
@@ -591,13 +611,25 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             if layer == 'all':
                 learning_rate_change = [30, 40, 50]
 
+            if changed_layer or (not saved_training):
+                lr = 0.01
+                epoch = -1
+                if layer == 'all':
+                    lr = 0.01
+                weight_decay = 0  # 0.00001
+                optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=weight_decay)
+            else:
+                for param_group in optimizer.param_groups:
+                    lr = param_group['lr']
+                optimizer = optim.Adam(student_net.parameters(), lr=lr, weight_decay=0)
+
             if epoch in learning_rate_change:
                 lr = lr * 0.1
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = lr
 
             running_loss = 0
-            print('Trainging for epoch ' + str(total_epoch) + ' has started')
+            print('Training of epoch ' + str(total_epoch) + ' has started')
             for i, data in enumerate(tqdm(train_loader)):
                 inputs, targets = data
 
@@ -675,6 +707,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
                           validation_accuracy, accuracy_train_epoch_top_5, accuracy_validation_epoch_top_5, layer_idx,
                           'saved_training/' + folder + filename + '_' + datetime.today().strftime('%Y%m%d'))
 
+            layer_idx += 1
+            changed_layer = True
 
 def test_heatmap(student_net, teacher_net, train_loader):
 

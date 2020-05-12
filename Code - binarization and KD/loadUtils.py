@@ -1,7 +1,7 @@
 import torchvision
 import torchvision.transforms as transforms
 import torch
-
+from extraUtils import get_device_id
 
 def load_imageNet(subsets=False):
     normalizing_mean = [0.485, 0.456, 0.406]
@@ -10,6 +10,8 @@ def load_imageNet(subsets=False):
     if torch.cuda.is_available():
         batch_size_training = 64    #64
         batch_size_validation = 64  #64
+        if get_device_id() == 0:
+            batch_size_validation = 256
     else:
         batch_size_training = 4
         batch_size_validation = 4
