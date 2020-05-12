@@ -3,6 +3,7 @@ import torch
 from tqdm import tqdm
 import numpy as np
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 
 def get_device_id():
@@ -128,3 +129,4 @@ def plot_results(ax, fig, train_results, validation_results, max_epochs, filenam
         else:
             f_name = './Figures/' + filename + '_' + datetime.today().strftime('%Y%m%d') + '.png'
         fig.savefig(f_name)
+    plt.close('all')
