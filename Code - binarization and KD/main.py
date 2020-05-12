@@ -6,6 +6,7 @@ from loadUtils import load_cifar10, load_imageNet
 from train import finetuning, training_a, lit_training, training_c, training_kd
 from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device_id
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 def method_a_ImageNet():
@@ -462,6 +463,7 @@ def main():
 
     #get_mean_and_std_at_layer()
 
+    plt.close('all')
     training_c_imagenet()
 
 
