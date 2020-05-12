@@ -476,13 +476,13 @@ def main():
     #method_b_training()
 
     #finetuning_no_method()
-    imagenet_without_pre_training()
+    # imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
     #different_architectures_method_c()
 
     #get_mean_and_std_at_layer()
 
-    #training_c_imagenet()
+    training_c_imagenet()
 
 
 
