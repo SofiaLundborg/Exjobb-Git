@@ -46,6 +46,8 @@ def finetuning(net, train_loader, validation_loader, train_loader_for_accuracy, 
     if saved_training:
         epoch, model, optimizer, train_loss, validation_loss, train_accuracy, validation_accuracy,train_accuracy_top5, \
         validation_accuracy_top5, layer_index = load_training(net, optimizer, saved_training)
+        for param_group in optimizer.param_groups:
+            lr = param_group['lr']
     else:
         epoch = -1
     while epoch < max_epochs:
