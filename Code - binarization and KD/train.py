@@ -563,7 +563,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
         epoch = total_epoch % max_epoch_layer - 1
-        layer_idx = 1
+        layer_idx = 3
 
     else:
         train_loss = np.empty(max_epochs)
@@ -590,7 +590,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         print(str(layer) + ' is training')
 
         if layer == 'all':
-            set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
+            set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3','layer4'])
             max_epoch_layer = 60
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
