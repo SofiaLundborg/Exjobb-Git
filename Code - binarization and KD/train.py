@@ -576,8 +576,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     teacher_net.eval()
 
     changed_layer = False
-    
-    plt.close('all')
+
     fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
     while layer_idx < len(layers):
@@ -594,7 +593,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         best_epoch = 0
 
         #for epoch in range(max_epoch_layer):
-        while (epoch < max_epoch_layer - 1):
+        while (epoch < max_epoch_layer)-1:
             epoch += 1
 
             total_epoch += 1
@@ -615,6 +614,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             if changed_layer or (not saved_training):
                 lr = 0.01
                 epoch = -1
+                print(str(epoch))
                 if layer == 'all':
                     lr = 0.01
                 weight_decay = 0  # 0.00001
