@@ -584,6 +584,8 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     while layer_idx < len(layers):
         layer = layers[layer_idx]
 
+        print(str(layer) + ' is training')
+
         if layer == 'all':
             set_layers_to_binarize(student_net, ['layer1', 'layer2', 'layer3'])
             max_epoch_layer = 60
