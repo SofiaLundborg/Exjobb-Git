@@ -576,6 +576,9 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
     teacher_net.eval()
 
     changed_layer = False
+    
+    plt.close('all')
+    fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
     while layer_idx < len(layers):
         layer = layers[layer_idx]
@@ -586,8 +589,6 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
         cut_network = 1 + 6 * (layer_idx+1)
-
-        fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(10, 5))
 
         best_validation_accuracy = 0
         best_epoch = 0
