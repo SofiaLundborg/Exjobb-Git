@@ -62,7 +62,7 @@ def imagenet_without_pre_training():
     filename = 'resnet18_finetuning_no_pretraining'
 
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 25, learning_rate_change,
-                   path=None, filename=filename, saved_model=None, initial_learning_rate=lr, saved_training='./saved_training/ImageNet/resnet18_finetuning_no_pretraining_lr0.001_20200511')
+                   path=None, filename=filename, saved_model=None, initial_learning_rate=lr, saved_training='./saved_training/ImageNet/resnet18_finetuning_no_pretraining_lr0.001_20200512')
 
 
 
@@ -455,14 +455,14 @@ def main():
     #method_b_training()
 
     #finetuning_no_method()
-    #method_a_ImageNet()
+    method_a_ImageNet()
     #imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
-    different_architectures_method_c()
+    #different_architectures_method_c()
 
     #get_mean_and_std_at_layer()
 
-    training_c_imagenet()
+    #training_c_imagenet()
 
 
 
