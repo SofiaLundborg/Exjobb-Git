@@ -439,7 +439,7 @@ def training_c_imagenet():
         teacher_ResNet18 = teacher_ResNet18.cuda(device=get_device_id())
         student_ResNet18 = student_ResNet18.cuda(device=get_device_id())
 
-    print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet18)))
+    #print('accuracy_teacher: ' + str(calculate_accuracy(validation_loader, teacher_ResNet18)))
 
     learning_rate_change = [2, 4, 5]
 
