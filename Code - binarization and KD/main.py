@@ -473,9 +473,14 @@ def training_c_imagenet():
 
     learning_rate_change = [2, 4, 5]
 
-    filename = 'resnet18_method_c_training'
-    training_c(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
-               max_epochs=20, scaling_factor_total=0.4, max_epoch_layer=5, learning_rate_change=learning_rate_change, saved_training='./saved_training/ImageNet/resnet18_method_c_training_20200513')
+    filename = 'resnet18_method_c_training_'
+    training_c(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented,
+               filename=filename,
+               max_epochs=20, scaling_factor_total=0.4, max_epoch_layer=5, learning_rate_change=learning_rate_change)
+               #saved_training='./saved_training/ImageNet/resnet18_method_c_training_20200513')
+
+    #training_c(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
+    #           max_epochs=20, scaling_factor_total=0.4, max_epoch_layer=5, learning_rate_change=learning_rate_change, saved_training='./saved_training/ImageNet/resnet18_method_c_training_20200513')
 
 
 def main():

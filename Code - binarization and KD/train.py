@@ -596,7 +596,11 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             max_epoch_layer = 60
         else:
             set_layers_to_binarize(student_net, layers[:layer_idx+1])
-        cut_network = 1 + 6 * (layer_idx+1)
+
+        if student_net.n_layers == 20:
+            cut_network = 1 + 6 * (layer_idx+1)
+        else:
+            cut_network = 1 + 4 * (layer_idx+1)
 
         best_validation_accuracy = 0
         best_epoch = 0
