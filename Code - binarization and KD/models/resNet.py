@@ -746,6 +746,7 @@ class ResNetReluFirst(nn.Module):
             out = self.bn1(self.conv1(x))
         else:
             out = x
+            output = [out, i_layer, feature_layers_to_extract, features, cut_network]
         i_layer += 1
 
         if cut_network == i_layer:
@@ -806,7 +807,7 @@ class ResNetReluFirst(nn.Module):
             if i_layer >= cut_forward:
                 out, i_layer, feature_layers_to_extract, features, cut_network = self.layer4(output)
             else:
-                #out, i_layer, feature_layers_to_extract, features, cut_network = output
+                out, i_layer, feature_layers_to_extract, features, cut_network = output
                 i_layer += 4
             out = F.relu(out)
             if cut_network:
