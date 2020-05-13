@@ -156,6 +156,7 @@ class Loss_c(nn.Module):
         if training:
             student_net.train()
             output_student_ir = student_net(input, cut_network=cut_network)
+            print(cut_network)
             output_student = student_net(output_student_ir, cut_forward=cut_network)
             #output_student_1 = student_net(input)
         else:
