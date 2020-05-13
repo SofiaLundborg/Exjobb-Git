@@ -563,7 +563,7 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
         epoch = total_epoch % max_epoch_layer - 1
-        layer_idx = 2
+        #layer_idx = 2
         if epoch == -1:
             changed_layer = True
         else:
@@ -684,8 +684,9 @@ def training_c(student_net, teacher_net, train_loader, validation_loader, train_
             validation_loss[total_epoch] = validation_loss_for_epoch
 
             print('Accuracy calculation has started')
-            accuracy_train_epoch, accuracy_train_epoch_top_5 = calculate_accuracy(train_loader_non_augmented, student_net)
-            accuracy_validation_epoch, accuracy_validation_epoch_top_5 = calculate_accuracy(validation_loader, student_net)
+            accuracy_train_epoch, accuracy_train_epoch_top_5 = (0, 0)                #calculate_accuracy(train_loader_non_augmented, student_net)
+            accuracy_validation_epoch, accuracy_validation_epoch_top_5 = (0, 0)       #calculate_accuracy(validation_loader, student_net)
+
             train_accuracy[total_epoch] = accuracy_train_epoch
             validation_accuracy[total_epoch] = accuracy_validation_epoch
             make_weights_real(student_net)
