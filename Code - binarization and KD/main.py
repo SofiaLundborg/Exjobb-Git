@@ -511,7 +511,7 @@ def main():
     #method_b_training()
 
     #finetuning_no_method()
-    #imagenet_without_pre_training()
+    imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
 
     #get_mean_and_std_at_layer()
@@ -519,7 +519,7 @@ def main():
     #different_architectures_method_c()
     #training_c_imagenet()
 
-    imagenet_after_method_c()
+    #imagenet_after_method_c()
 
 
 
