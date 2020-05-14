@@ -2,7 +2,7 @@ from models import resNet, originalResnet
 import torchvision.models as models
 import warnings
 from binaryUtils import *
-from loadUtils import load_cifar10, load_imageNet
+from loadUtils import load_cifar10, load_imageNet, load_model_from_saved_training
 from train import finetuning, training_a, lit_training, training_c, training_kd
 from extraUtils import change_loaded_checkpoint, calculate_accuracy, get_device_id
 from tqdm import tqdm
@@ -37,6 +37,27 @@ def method_a_ImageNet():
     filename = 'resnet18_method_a_training'
     training_a(student_ResNet18, teacher_ResNet18, train_loader, validation_loader, train_loader_not_augmented, filename=filename,
                modified=True, max_epoch_layer=6, max_epoch_finetuning=0, learning_rate_change=learning_rate_change, saved_training=None)
+
+
+def imagenet_after_method_c():
+
+    train_loader, validation_loader, train_loader_not_augmented = load_imageNet()
+
+    net_type = 'Xnor++'
+    student_ResNet18 = resNet.resnet_models['resnet18ReluDoubleShortcut'](net_type, 'ImageNet', factorized_gamma=True)
+    load_model_from_saved_training(student_ResNet18, './saved_training/ImageNet/resnet18_method_c_training__20200514')
+
+    if torch.cuda.is_available():
+        student_ResNet18 = student_ResNet18.cuda(device=get_device_id())
+
+    lr = 1e-3
+    learning_rate_change = [15, 20, 23]
+
+    filename = 'resnet18_finetuning_after_method_c'
+
+    finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 25, learning_rate_change,
+                   path=None, filename=filename, saved_model=None, initial_learning_rate=lr, saved_training=None)
+
 
 
 def imagenet_without_pre_training():
@@ -490,7 +511,7 @@ def main():
     #method_b_training()
 
     #finetuning_no_method()
-    imagenet_without_pre_training()
+    #imagenet_without_pre_training()
     #training_a_double_shortcut_and_double_no_method()
 
     #get_mean_and_std_at_layer()
@@ -498,6 +519,7 @@ def main():
     #different_architectures_method_c()
     #training_c_imagenet()
 
+    imagenet_after_method_c()
 
 
 

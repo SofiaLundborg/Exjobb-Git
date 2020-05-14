@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 def get_device_id():
-    return 1
+    return 0
 
 
 def get_device():
