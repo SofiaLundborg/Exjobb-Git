@@ -84,7 +84,7 @@ def imagenet_without_pre_training():
     filename = 'resnet18_finetuning_no_pretraining'
 
     finetuning(student_ResNet18, train_loader, validation_loader, train_loader_not_augmented, 25, learning_rate_change,
-                   path=None, filename=filename, saved_model=None, initial_learning_rate=lr, saved_training='./saved_training/ImageNet/resnet18_finetuning_no_pretraining_lr0.0001_20200514')
+                   path=None, filename=filename, saved_model=None, initial_learning_rate=lr, saved_training='./saved_training/ImageNet/resnet18_finetuning_no_pretraining_lr1.0000000000000002e-06_20200515')
 
 
 
